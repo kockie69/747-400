@@ -1,0 +1,1372 @@
+//---------------------------------------------------------------------------
+// Author		: Robert Kock
+// Version		: 0
+// Description	: This is the core epl code for my boeing 747-400. 
+//---------------------------------------------------------------------------
+
+#include <modtypes.hpl>
+#include <epicdefs.hpl>
+#include "functions.hpl"
+
+//====================================================================
+// Define some constants. 
+//====================================================================
+#define OUTPUT 2 // also defined in epicdefs.hpl
+
+//====================================================================
+// Module definition.
+//====================================================================
+definemodule(0,SLOWSCAN,0,16)	// scan module 0 (first expansion module, A, B, RUDDER, and FLCS connectors
+definemodule(1,SLOWSCAN,0,8) // 64 button module
+definemodule(7,FASTSCAN,0,4)
+definemodule(7,OUTPUT,0,4)
+definemodule(0,OUTPUT,0,5)
+
+#include "747-400Devices.hpl"	// the "" says to look in the current directory
+#include "VDXCodes.inc" 
+
+//==================================================================
+// define raw values
+// for displays: 
+// bit 7 (leftmost) 	-> 1 disables, 0 enables  decimal point
+// bit 4-6		-> which digit to send data
+// bit 0-3		-> data to send
+// example: 	0100	-> decimal 4, hex 4	digit number to set
+//		1010	-> decimal 10, hex A	value to set
+// SendData(OUTPUT,1,0b01001010) sends value 0xA to digit 4 on row 1
+// SendDAta(OUTPUT,1,0b11001010) sends the same value to digit 4, but
+//				this time with decimal point disabled
+//====================================================================
+#define raw_BLANK 0xCF			
+#define raw_DASH 0xCA			
+#define raw_R 0xFA			
+#define raw_L 0xFF			
+
+
+//====================================================================
+// Definition of Rotary Types
+//====================================================================
+#define TYPE0 0b00000000	// ALPS
+#define TYPE1 0b01010101	// rotary two phase type1
+#define TYPE2 0b10101010	// rotary two phase type2
+#define TYPE3 0b11111111	// Grayhill
+
+#define SPD_FAST_DELTA		10
+#define SPD_SLOW_DELTA		1
+#define SPD_TIMER			5
+#define MACH_TIMER		5
+#define HDG_FAST_DELTA		10
+#define HDG_SLOW_DELTA		1
+#define HDG_TIMER			5
+#define ALT_FAST_DELTA		10
+#define ALT_SLOW_DELTA		1
+#define ALT_TIMER			5
+#define VS_DELTA			100
+#define VS_TIMER			5
+#define DHMDA_DELTA_CP		1
+#define DHMDA_TIMER_CP		5
+#define BARO_DELTA_CP		1
+#define BARO_TIMER_CP		5
+
+#define MCP_IAS_MIN 140		// lowest setting on the MCP
+#define MCP_IAS_MAX 380       // highest setting on the MCP
+#define MCP_MACH_MIN 25	      // lowest setting on the MCP
+#define MCP_MACH_MAX 86       // highest setting on the MCP
+
+
+//====================================================================
+// Flag definition
+//====================================================================
+flag f_SpdTiming		= false;
+flag f_MACHTiming		= false;
+flag f_HdgTiming		= false;
+flag f_AltTiming		= false;
+flag f_VSTiming		= false;
+flag f_BAROTiming_CP	= false;
+flag f_DHMDATiming_CP	= false;
+flag f_SPD_Active		= true;
+
+
+//====================================================================
+// Variable Definition
+//====================================================================
+byte byt_Tick;
+byte byt_SpdTime			= 0;
+byte byt_MACHTime			= 0;
+byte byt_HdgTime			= 0;
+byte byt_AltTime			= 0;
+byte byt_VSTime			= 0;
+byte byt_BAROTime_CP		= 0;
+byte byt_DHMDATime_CP		= 0;
+
+//=====================================================================
+// Variables to hold PM offset information. Comment includes used axis
+byte x5411;			//  X4
+byte x5412;			//  Y4
+byte x5413;			//  R6
+byte x5414;			//  Z4
+byte x541C;			//  R4
+byte x541D;			//  Y5
+byte x541E;			//  X5
+word wrd_SPD=250;		//  U5
+word wrd_MACH=70;		//  R5
+word wrd_HDG=0;		//  X6
+word wrd_ALT=60; 		//  Y6
+word wrd_VS=0;		//  Z6
+word wrd_BARO_CP=1013;	//  V6	
+word wrd_DHMDA_CP=0;	//  Z5
+word wrd_BARO_FS;
+
+//--------------------------------
+// Including Config (QProc,definebuttons etc.)
+//--------------------------------
+#include "747-400-sim.inc"  
+
+void CheckSpeedTimers (void)
+{
+	if (f_SpdTiming)							// is speed/MACH knob turning
+	{	
+		byt_SpdTime--;						// decrement byt_SpdTime by 1
+		if (!byt_SpdTime)						// if byt_SpdTime = 0 
+		{
+			f_SpdTiming = false;	
+			nqw(SetU5, wrd_SPD);		// FSUIPC_WRITE_9=U5,2,5406
+		}
+	}
+	
+	if (f_MACHTiming)							// is speed/MACH knob turning
+	{	
+		byt_MACHTime--;						// decrement byt_MACHTime by 1
+		if (!byt_MACHTime)					// if byt_MACHTime = 0 
+		{
+			f_MACHTiming = false;	
+			nqw(SetR5, wrd_MACH);		// FSUIPC_WRITE_10=R5,2,540E
+		}
+	}
+
+	if (f_HdgTiming)
+	{
+		byt_HdgTime--;
+		if (!byt_HdgTime)
+		{
+			f_HdgTiming = false;
+			nqw(SetX6, wrd_HDG);		// FSUIPC_WRITE_11=X6,2,5408
+		}
+	}
+	
+	if (f_AltTiming)
+	{
+		byt_AltTime--;
+		if (!byt_AltTime)
+		{
+			f_AltTiming = false;
+			nqw(SetY6, wrd_ALT);	// FSUIPC_WRITE_16=Y6,2,540A
+		}
+	}
+	
+	if (f_VSTiming)
+	{
+		byt_VSTime--;
+		if (!byt_VSTime)
+		{
+			f_VSTiming = false;
+			nqw(SetZ6, wrd_VS);			// FSUIPC_WRITE_12=Z6,2,540C
+		}
+	}
+	
+	if (f_BAROTiming_CP)
+	{
+		byt_BAROTime_CP--;
+		if (!byt_BAROTime_CP)
+		{
+			f_BAROTiming_CP = false;
+			wrd_BARO_FS = wrd_BARO_CP * 16;		// FS requires the value * 16. Why? No idea.
+			nqw(SetV6, wrd_BARO_FS);			// FSUIPC_WRITE_14=V6,2,0EC6
+		}
+	}
+	
+	if (f_DHMDATiming_CP)
+	{
+		byt_DHMDATime_CP--;
+		if (!byt_DHMDATime_CP)
+		{
+			f_DHMDATiming_CP = false;
+			nqw(SetZ5, wrd_DHMDA_CP);			// FSUIPC_WRITE_15=Z5,2,3428
+		}
+	}
+}
+
+
+
+//-------------------------------------------------------------------------
+// Main Timing Loop
+//-------------------------------------------------------------------------
+void MainLoop (void)
+{
+	call(CheckSpeedTimers);			// check to see if switch timers have expired and if so , handle them
+	byt_Tick++;
+	if (byt_Tick > 49)
+	{
+		byt_Tick = 0;
+	}
+	delay(1);					// wait 20msec
+	jump(MainLoop);				// restart the main Loop
+}
+
+
+:INIT
+{
+	MCP_Output.Rotary1.R2Type = TYPE2;
+	MCP_Output.Rotary1.R3Type = TYPE2;
+	MCP_Output.Rotary2.R4Type = TYPE2;
+	MCP_Output.Rotary2.R5Type = TYPE2;
+	CP_EFIS_Output.Rotary.R0Type = TYPE2;
+	CP_EFIS_Output.Rotary.R1Type = TYPE2;
+	MCP_Output.leds0 = 0;
+	MCP_Output.leds1 = 0;
+
+	jump(MainLoop);				// once finished, jump to the main timing loop
+
+}
+
+
+
+//====================================================================
+// Function Definition 
+// Name:		AP1Off
+// Called by:	defineqproc(142,AP1Off) 
+//====================================================================
+void AP1Off(void){
+	MCP_Output.leds1.led_AP1 = off;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		AP1On
+// Called by:	defineqproc(143,AP1On) 
+//====================================================================
+:AP1On{
+	MCP_Output.leds1.led_AP1 = on;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		AP2Off
+// Called by:	defineqproc(144,AP2Off) 
+//====================================================================
+:AP2Off {
+	MCP_Output.leds1.led_AP2 = off;
+}
+
+
+//====================================================================
+// Function Definition 
+// Name:		AP2On
+// Called by:	defineqproc(145,AP2On) 
+//====================================================================
+:AP2On{
+	MCP_Output.leds1.led_AP2 = on;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		VSOff
+// Called by:	defineqproc(50,VSOff) 
+//====================================================================
+:VSOff {
+	MCP_Output.leds0.led_VS = off;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		VSOn
+// Called by:	defineqproc(51,VSOn) 
+//====================================================================
+:VSOn{
+	MCP_Output.leds0.led_VS = on;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		ALTOff
+// Called by:	defineqproc(20,ALTOff) 
+//====================================================================
+:ALTOff {
+	MCP_Output.leds0.led_ALT = off;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		ALTOn
+// Called by:	defineqproc(21,ALTOn) 
+//====================================================================
+:ALTOn{
+	MCP_Output.leds0.led_ALT = on;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		APPOff
+
+
+// Called by:	defineqproc(40,APPOff) 
+//====================================================================
+:APPOff {
+	MCP_Output.leds1.led_APPR = off;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		APPOn
+// Called by:	defineqproc(41,APPOn) 
+//====================================================================
+
+:APPOn{
+	MCP_Output.leds1.led_APPR = on;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		LOCOff
+// Called by:	defineqproc(128,LOCOff) 
+//====================================================================
+:LOCOff {
+	MCP_Output.leds1.led_LOC = off;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		LOCOn
+// Called by:	defineqproc(129,LOCOn) 
+//====================================================================
+:LOCOn{
+	MCP_Output.leds1.led_LOC = on;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		LNAVOff
+// Called by:	defineqproc(132,LNAVOff) 
+//====================================================================
+:LNAVOff {
+	MCP_Output.leds0.led_LNAV = off;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		LNAVOn
+// Called by:	defineqproc(133,LNAVOn) 
+//====================================================================
+:LNAVOn{
+	MCP_Output.leds0.led_LNAV = on;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		HDGOff
+// Called by:	defineqproc(22,HDGOff) 
+//====================================================================
+:HDGOff{
+	MCP_Output.leds0.led_HDG = off;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		HDGOn
+// Called by:	defineqproc(23,HDGOn) 
+//====================================================================
+:HDGOn{
+	MCP_Output.leds0.led_HDG = on;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		FLCHOff
+// Called by:	defineqproc(136,FLCHOff) 
+//====================================================================
+:FLCHOff {
+	MCP_Output.leds0.led_FLCH = off;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		FLCHOn
+// Called by:	defineqproc(137,FLCHOn) 
+//====================================================================
+:FLCHOn{
+	MCP_Output.leds0.led_FLCH = on;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		SPDOff
+// Called by:	defineqproc(46,SPDOff) 
+//====================================================================
+:SPDOff {
+	MCP_Output.leds0.led_SPD = off;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		SPDOn
+// Called by:	defineqproc(47,SPDOn) 
+//====================================================================
+:SPDOn{
+	MCP_Output.leds0.led_SPD = on;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		THROff
+// Called by:	defineqproc(138,THROff) 
+//====================================================================
+:THROff {
+	MCP_Output.leds0.led_THR = off;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		THROn
+// Called by:	defineqproc(139,THROn) 
+//====================================================================
+:THROn{
+	MCP_Output.leds0.led_THR = on;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		ATOff
+// Called by:	defineqproc(164,ATOff) 
+//====================================================================
+:ATOff {
+	// TODO: Uitzoeken wat er nog meer moet gebeuren
+}
+
+//====================================================================
+// Function Definition 
+// Name:		ATOn
+// Called by:	defineqproc(165,ATOn) 
+//====================================================================
+:ATOn{
+	// TODO: Uitzoeken wat er nog meer moet gebeuren
+}
+
+//====================================================================
+// Function Definition 
+// Name:		FDOff
+// Called by:	defineqproc(166,FDOff) 
+//====================================================================
+:FDOff {
+	// TODO: Uitzoeken wat er nog meer moet gebeuren
+}
+
+//====================================================================
+// Function Definition 
+// Name:		FDOn
+// Called by:	defineqproc(167,FDOn) 
+//====================================================================
+:FDOn{
+	// TODO: Uitzoeken wat er nog meer moet gebeuren
+}
+
+//====================================================================
+// Function Definition 
+// Name:		AP3Off
+// Called by:	defineqproc(146,AP3Off) 
+//====================================================================
+:AP3Off{
+	MCP_Output.leds1.led_AP3 = off;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		AP3On
+// Called by:	defineqproc(147,AP3On) 
+//====================================================================
+:AP3On{
+	MCP_Output.leds1.led_AP3 = on;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		VNAVOff
+// Called by:	defineqproc(134,VNAVOff) 
+//====================================================================
+:VNAVOff {
+	MCP_Output.leds0.led_VNAV = off;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		VNAVOn
+// Called by:	defineqproc(135,VNAVOn) 
+//====================================================================
+:VNAVOn{
+	MCP_Output.leds0.led_VNAV = on;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		MACHOff
+// Called by:	defineqproc(172,MACHOff) 
+//====================================================================
+:MACHOff {
+// TODO: Toon wrd_IAS op Display D_AP_IAS
+}
+
+//====================================================================
+// Function Definition 
+// Name:		MACHOn
+// Called by:	defineqproc(173,MACHOn) 
+//====================================================================
+:MACHOn{
+// TODO: Toon wrd_MACH op Display D_AP_IAS
+}
+
+
+void MCP.b_CP_FD.Off(void){
+	if (x5412 & 0b00000010)
+	{ 
+	x5412 &= 0b11111101;	// Bit 17 of PM 5410 off
+	}
+	else
+	{
+	x5412 |= 0b00000010;	// Bit 17 of PM 5410 on
+	}
+	nqw(SetY4,x5412);	
+}
+
+void MCP.b_CP_FD.On(void){
+	if (x5412 & 0b00000100)
+	{ 
+	x5412 &= 0b11111011;	// Bit 18 of PM 5410 off
+	}
+	else
+	{
+	x5412 |= 0b00000100;	// Bit 18 of PM 5410 on
+	}
+	nqw(SetY4,x5412);	
+}
+
+
+void MCP.b_ATHR.Off(void){
+	if (x5412 & 0b00001000)
+	{ 
+	x5412 &= 0b11110111;	// Bit 19 of PM 5410 off
+	}
+	else
+	{
+	x5412 |= 0b00001000;	// Bit 19 of PM 5410 on
+	}
+	nqw(SetY4,x5412);	
+}
+
+void MCP.b_ATHR.On(void){
+	if (x5412 & 0b00010000)
+	{ 
+	x5412 &= 0b11101111;	// Bit 20 of PM 5410 off
+	}
+	else
+	{
+	x5412 |= 0b00010000;	// Bit 20 of PM 5410 on
+	}
+	nqw(SetY4,x5412);		
+}
+
+void l_handle_b_THR(void){
+	if (x5412 & 0b00100000)
+	{ 
+	x5412 &= 0b11011111;	// Bit 21 of PM 5410 off
+	}
+	else
+	{
+	x5412 |= 0b00100000;	// Bit 21 of PM 5410 on
+	}
+	nqw(SetY4,x5412);
+}
+
+void MCP.b_THR.Off(void){
+	jump(l_handle_b_THR);
+}
+
+void MCP.b_THR.On(void){
+	jump(l_handle_b_THR);
+}
+
+void l_handle_b_SPD(void){
+	if (x5411 & 0b00000100)
+	{ 
+	x5411 &= 0b11111011;	// Bit 10 of PM 5410 off
+	}
+	else
+	{
+	x5411 |= 0b00000100;	// Bit 10 of PM 5410 on
+	}
+	nqw(SetX4,x5411);
+}
+
+void MCP.b_SPD.On(void){
+	jump(l_handle_b_SPD);
+}
+
+void MCP.b_SPD.Off(void){
+	jump(l_handle_b_SPD);
+}
+
+void MCP.b_SPD_MACH.On(void)
+{
+	if(x5412 & 0b10000000)
+	{					// IAS was set, so clear IAS and set MACH
+
+		x5412 &= 0b01111111;  //bit 23 of 5410 off
+		//TODO: Schrijf de MACH waarde naar FS
+	} 
+	else 
+	{					// MACH was set, so clear MACH and set IAS
+		x5412 |= 0b10000000;  //bit 23 of 5410 on				
+		//TODO: Schrijf de IAS waarde naar FS
+	}
+	nqw(SetY4,x5412);			
+}
+
+void MCP.b_SPD_ROT.On(void){
+	// TODO: Uitzoeken wat er nog meer moet gebeuren
+	
+}
+
+void l_handle_b_LNAV(void){
+	if (x5413 & 0b00001000)
+	{ 
+	x5413 &= 0b11110111;	// Bit 27 of PM 5410 off
+	}
+	else
+	{
+	x5413 |= 0b00001000;	// Bit 27 of PM 5410 on
+	}
+	nqw(SetR6,x5413);
+}
+
+
+void MCP.b_LNAV.On(void){
+	jump(l_handle_b_LNAV);
+}
+
+void MCP.b_LNAV.Off(void){
+	jump(l_handle_b_LNAV);
+}
+
+void l_handle_b_VNAV(void){
+	if (x5413 & 0b00000100)
+	{ 
+	x5413 &= 0b11111011;	// Bit 26 of PM 5410 off
+	}
+	else
+	{
+	x5413 |= 0b00000100;	// Bit 26 of PM 5410 on
+	}
+	nqw(SetR6,x5413);
+}
+
+void MCP.b_VNAV.On(void){
+	jump(l_handle_b_VNAV);
+}
+
+void MCP.b_VNAV.Off(void){
+	jump(l_handle_b_VNAV);
+}
+
+void l_handle_b_FLCH(void){
+	if (x5413 & 0b00000001)
+	{ 
+	x5413 &= 0b11111110;	// Bit 24 of PM 5410 off
+	}
+	else
+	{
+	x5413 |= 0b00000001;	// Bit 24 of PM 5410 on
+	}
+	nqw(SetR6,x5413);
+}
+
+void MCP.b_FLCH.On(void){
+	jump(l_handle_b_FLCH);
+}
+
+void MCP.b_FLCH.Off(void){
+	jump(l_handle_b_FLCH);
+}
+
+void MCP.b_HDG_ROT.On(void){
+	// TODO: Uitzoeken wat er nog meer moet gebeuren
+}
+
+void l_handle_b_HDG(void){
+	if (x5413 & 0b00000010)
+	{ 
+	x5413 &= 0b11111101;	// Bit 25 of PM 5410 off
+	}
+	else
+	{
+	x5413 |= 0b00000010;	// Bit 25 of PM 5410 on
+	}
+	nqw(SetR6,x5413);
+}
+
+void MCP.b_HDG.On(void){
+	jump(l_handle_b_HDG);
+}
+
+void MCP.b_HDG.Off(void){
+	jump(l_handle_b_HDG);
+}
+
+void l_handle_b_VS(void){
+	if (x5413 & 0b10000000)
+	{ 
+	x5413 &= 0b01111111;	// Bit 31 of PM 5410 off
+	}
+	else
+	{
+	x5413 |= 0b10000000;	// Bit 31 of PM 5410 on
+	}
+	nqw(SetR6,x5413);
+}
+
+void MCP.b_VS.On(void){
+	jump(l_handle_b_VS);
+}
+
+void MCP.b_VS.Off(void){
+	jump(l_handle_b_VS);
+}
+
+void l_handle_b_ALT(void){
+	if (x5413 & 0b01000000)
+	{ 
+	x5413 &= 0b10111111;	// Bit 30 of PM 5410 off
+	}
+	else
+	{
+	x5413 |= 0b01000000;	// Bit 30 of PM 5410 on
+	}
+	nqw(SetR6,x5413);
+}
+
+void MCP.b_ALT.On(void){
+	jump(l_handle_b_ALT);
+}
+
+void MCP.b_ALT.Off(void){
+	jump(l_handle_b_ALT);
+}
+
+void MCP.b_ALT_ROT.On(void){
+		// TODO: Uitzoeken wat er nog meer moet gebeuren
+}
+
+void l_handle_b_LOC(void){
+	if (x5413 & 0b00010000)
+	{ 
+	x5413 &= 0b11101111;	// Bit 28 of PM 5410 off
+	}
+	else
+	{
+	x5413 |= 0b00010000;	// Bit 28 of PM 5410 on
+	}
+	nqw(SetR6,x5413);
+}
+
+void MCP.b_LOC.On(void){
+	jump(l_handle_b_LOC);
+}
+
+void MCP.b_LOC.Off(void){
+	jump(l_handle_b_LOC);
+}
+
+void l_handle_b_APP(void){
+	if (x5413 & 0b00100000)
+	{ 
+	x5413 &= 0b11011111;	// Bit 29 of PM 5410 off
+	}
+	else
+	{
+	x5413 |= 0b00100000;	// Bit 29 of PM 5410 on
+	}
+	nqw(SetR6,x5413);
+}
+
+void MCP.b_APP.On(void){
+	jump(l_handle_b_APP);
+}
+
+void MCP.b_APP.Off(void){
+	jump(l_handle_b_APP);
+}
+
+void l_handle_b_AP1(void){
+	if (x5414 & 0b00000001)
+	{ 
+	x5414 &= 0b11111110;	// Bit 0 of PM 5414 off
+	}
+	else
+	{
+	x5414 |= 0b00000001;	// Bit 0 of PM 5414 on
+	}
+	nqw(SetZ4,x5414);
+}
+
+
+void MCP.b_AP1.On(void){
+	jump(l_handle_b_AP1);
+}
+
+void MCP.b_AP1.Off(void){
+	jump(l_handle_b_AP1);
+}
+
+void l_handle_b_AP2(void){
+	if (x5414 & 0b00000010)
+	{ 
+	x5414 &= 0b11111101;	// Bit 1 of PM 5414 off
+	}
+	else
+	{
+	x5414 |= 0b00000010;	// Bit 1 of PM 5414 on
+	}
+	nqw(SetZ4,x5414);
+}
+
+void MCP.b_AP2.On(void){
+	jump(l_handle_b_AP2);
+}
+
+void MCP.b_AP2.Off(void){
+	jump(l_handle_b_AP2);
+}
+
+void l_handle_b_AP3(void){
+	if (x5414 & 0b00000100)
+	{ 
+	x5414 &= 0b11111011;	// Bit 2 of PM 5414 off
+	}
+	else
+	{
+	x5414 |= 0b00000100;	// Bit 2 of PM 5414 on
+	}
+	nqw(SetZ4,x5414);
+}
+
+void MCP.b_AP3.On(void){
+	jump(l_handle_b_AP3);
+}
+
+void MCP.b_AP3.Off(void){
+	jump(l_handle_b_AP3);
+}
+
+void MCP.b_FO_FD.On(void){
+	if (x5414 & 0b01000000)
+	{ 
+	x5414 &= 0b10111111;	// Bit 6 of PM 5410 off
+	}
+	else
+	{
+	x5414 |= 0b01000000;	// Bit 6 of PM 5410 on
+	}
+	nqw(SetZ4,x5414);
+}
+
+void MCP.b_FO_FD.Off(void){
+	if (x5414 & 0b00100000)
+	{ 
+	x5414 &= 0b11011111;	// Bit 5 of PM 5414 off
+	}
+	else
+	{
+	x5414 |= 0b00100000;	// Bit 5 of PM 5414 on
+	}
+	nqw(SetZ4,x5414);
+}
+
+void MCP.b_AP_Dis_lft.On(void){
+// TODO: Not Used in 747-400 MCP (See documentation PM)	
+}
+
+void MCP.b_AP_Dis_rgt.On(void){
+// TODO: Not Used in 747-400 MCP (See documentation PM)
+}
+
+void l_handle_ALT_rot(void)
+{
+	if (MCP.r_dir_ALT)
+	{
+		if (f_AltTiming)
+		{
+			wrd_ALT -= ALT_FAST_DELTA;
+		}
+		else
+		{
+			wrd_ALT -= ALT_SLOW_DELTA;
+		}
+	}
+	else
+	{
+		if (f_AltTiming)
+		{
+			wrd_ALT += ALT_FAST_DELTA;
+		}
+		else
+		{
+			wrd_ALT += ALT_SLOW_DELTA;
+		}
+	}
+	byt_AltTime = ALT_TIMER;
+	f_AltTiming = true;
+//	Display.disp_ALT = wrd_ALT;
+}
+
+
+void MCP.r_cnt_ALT.On(void){
+jump(l_handle_ALT_rot);
+}
+
+void MCP.r_cnt_ALT.Off(void){
+jump(l_handle_ALT_rot);  
+}
+
+void l_handle_VS_rot (void)
+{
+	if (MCP.r_dir_VS)
+	{
+		wrd_VS -= VS_DELTA;
+	}
+	else
+	{
+		wrd_VS += VS_DELTA;
+	}
+	byt_VSTime = VS_TIMER;
+	f_VSTiming = true;
+}
+
+
+void MCP.r_cnt_VS.On(void){
+	jump (l_handle_VS_rot);
+}
+
+
+void MCP.r_cnt_VS.Off(void){
+	jump (l_handle_VS_rot);
+}
+
+void l_handle_SPD_rot (void)
+{
+	if (f_SPD_Active)						// speed is to be handled by the SPD rotary
+	{
+		if (MCP.r_dir_SPD)
+		{
+			if (f_SpdTiming)
+			{
+				wrd_SPD -= SPD_FAST_DELTA;
+			}
+			else
+			{
+				wrd_SPD -= SPD_SLOW_DELTA;
+			}
+		}
+		else
+		{
+			if (f_SpdTiming)
+			{
+				wrd_SPD += SPD_FAST_DELTA;
+			}
+			else
+			{
+				wrd_SPD += SPD_SLOW_DELTA;
+			}
+		}
+		byt_SpdTime = SPD_TIMER;
+		f_SpdTiming = true;
+	}
+	else								// MACH is to be handled by the SPD rotary
+	{
+		if (MCP.r_dir_SPD)				// rotary is the same for setting the speed
+		{
+			wrd_MACH -= 1;
+		}
+		else
+		{
+			wrd_MACH += 1;
+		}
+		byt_MACHTime = MACH_TIMER;
+		f_MACHTiming = true;
+	}
+}
+
+void MCP.r_cnt_SPD.On(void){
+jump(l_handle_SPD_rot);	
+}
+
+void MCP.r_cnt_SPD.Off(void){
+jump(l_handle_SPD_rot);	
+}
+
+void l_handle_HDG_rot (void)
+{
+	if (MCP.r_dir_HDG)
+	{
+		if (f_HdgTiming)
+		{
+			wrd_HDG -= HDG_FAST_DELTA;
+		}
+		else
+		{
+			wrd_HDG -= HDG_SLOW_DELTA;
+		}
+	}
+	else
+	{
+		if (f_HdgTiming)
+		{
+			wrd_HDG += HDG_FAST_DELTA;
+		}
+		else
+		{
+			wrd_HDG += HDG_SLOW_DELTA;
+		}
+	}
+	byt_HdgTime = HDG_TIMER;
+	f_HdgTiming = true;
+}
+
+
+void MCP.r_cnt_HDG.On(void){
+jump(l_handle_HDG_rot);
+}
+
+void MCP.r_cnt_HDG.Off(void){
+jump(l_handle_HDG_rot);
+}
+
+void CP_EFIS.b_VOR_1.Off(void){
+	if (x541E & 0b00001000)
+	{ 
+	x541E &= 0b11110111;	// Bit 19 of PM 541C off
+	}
+	else
+	{
+	x541E |= 0b00001000;	// Bit 19 of PM 541C on
+	}
+	nqw(SetX5,x541E);	// ADF is on
+}
+
+void CP_EFIS.b_VOR_1.On(void){
+	if (x541E & 0b00010000)
+	{ 
+	x541E &= 0b11101111;	// Bit 20 of PM 541C off
+	}
+	else
+	{
+	x541E |= 0b00010000;	// Bit 20 of PM 541C on
+	}
+	nqw(SetX5,x541E);	// ADF is off
+
+}
+
+
+void CP_EFIS.b_ADF_1.Off(void){
+	if (x541E & 0b00000100)
+	{ 
+	x541E &= 0b11111011;	// Bit 18 of PM 541C off
+	}
+	else
+	{
+	x541E |= 0b00000100;	// Bit 18 of PM 541C on
+	}
+	nqw(SetX5,x541E);	// VOR is on
+}
+
+void CP_EFIS.b_ADF_1.On(void){
+	if (x541E & 0b00010000)
+	{ 
+	x541E &= 0b11101111;	// Bit 20 of PM 541C off
+	}
+	else
+	{
+	x541E |= 0b00010000;	// Bit 20 of PM 541C on
+	}
+	nqw(SetX5,x541E);	//ADF and VOR 1 are off			
+}
+
+void CP_EFIS.b_WXR.On(void){
+	nqw(SetV4,72);	//WXR on or off	
+}
+
+void CP_EFIS.b_STA.On(void){
+	nqw(SetV4,90);	//STA on or off	
+}
+
+void CP_EFIS.b_WPT.On(void){
+	nqw(SetV4,93);	//STA on or off	
+}
+
+void CP_EFIS.b_ARPT.On(void){
+	nqw(SetV4,94);	//STA on or off	
+}
+
+void CP_EFIS.b_DATA.On(void){
+	nqw(SetV4,95);	//DATA on or off	
+}
+
+void CP_EFIS.b_POS.On(void){
+	nqw(SetV4,96);	//POS on or off	
+}
+
+void CP_EFIS.b_DMS_APP.On(void){
+	if (x541C & 0b00000010)
+	{ 
+	x541C &= 0b11111101;	// Bit 1 of PM 541C off
+	}
+	else
+	{
+	x541C |= 0b00000010;	// Bit 1 of PM 541C on
+	}
+	nqw(SetR4, x541C);
+}
+
+void CP_EFIS.b_DMS_VOR.On(void){
+	if (x541C & 0b00000100)
+	{ 
+	x541C &= 0b11111011;	// Bit 2 of PM 541C off
+	}
+	else
+	{
+	x541C |= 0b00000100;	// Bit 2 of PM 541C on
+	}
+	nqw(SetR4, x541C);
+}
+
+void CP_EFIS.b_DMS_MAP.On(void){
+	if (x541C & 0b00001000)
+	{ 
+	x541C &= 0b11110111;	// Bit 3 of PM 541C off
+	}
+	else
+	{
+	x541C |= 0b00001000;	// Bit 3 of PM 541C on
+	}
+	nqw(SetR4, x541C);
+}
+
+void CP_EFIS.b_DMS_PLN.On(void){
+	if (x541C & 0b00010000)
+	{ 
+	x541C &= 0b11101111;	// Bit 4 of PM 541C off
+	}
+	else
+	{
+	x541C |= 0b00010000;	// Bit 4 of PM 541C on
+	}
+	nqw(SetR4, x541C);
+}
+
+void CP_EFIS.b_DRS_10.On(void){
+	if (x541C & 0b00100000)
+	{ 
+	x541C &= 0b11011111;	// Bit 5 of PM 541C off
+	}
+	else
+	{
+	x541C |= 0b00100000;	// Bit 5 of PM 541C on
+	}
+	nqw(SetR4, x541C);	
+}
+
+void CP_EFIS.b_DRS_20.On(void){
+	if (x541C & 0b01000000)
+	{ 
+	x541C &= 0b10111111;	// Bit 6 of PM 541C off
+	}
+	else
+	{
+	x541C |= 0b01000000;	// Bit 6 of PM 541C on
+	}
+	nqw(SetR4, x541C);
+}
+
+void CP_EFIS.b_DRS_40.On(void){
+	if (x541C & 0b10000000)
+	{ 
+	x541C &= 0b01111111;	// Bit 7 of PM 541C off
+	}
+	else
+	{
+	x541C |= 0b10000000;	// Bit 7 of PM 541C on
+	}
+	nqw(SetR4, x541C);
+}
+
+void CP_EFIS.b_DRS_80.On(void){
+	if (x541D & 0b00000001)
+	{ 
+	x541D &= 0b11111110;	// Bit 8 of PM 541C off
+	}
+	else
+	{
+	x541D |= 0b00000001;	// Bit 8 of PM 541C on
+	}
+	nqw(SetY5, x541D);
+}
+
+void CP_EFIS.b_DRS_160.On(void){
+	if (x541D & 0b00000010)
+	{ 
+	x541D &= 0b11111101;	// Bit 9 of PM 541C off
+	}
+	else
+	{
+	x541D |= 0b00000010;	// Bit 9 of PM 541C on
+	}
+	nqw(SetY5, x541D);
+}
+
+void CP_EFIS.b_DRS_320.On(void){
+	if (x541D & 0b00000100)
+	{ 
+	x541D &= 0b11111011;	// Bit 10 of PM 541C off
+	}
+	else
+	{
+	x541D |= 0b00000100;	// Bit 10 of PM 541C on
+	}
+	nqw(SetY5, x541D);
+}
+
+void CP_EFIS.b_DRS_640.On(void){
+	if (x541D & 0b00001000)
+	{ 
+	x541D &= 0b111110111;	// Bit 11 of PM 541C off
+	}
+	else
+	{
+	x541D |= 0b00001000;	// Bit 11 of PM 541C on
+	}
+	nqw(SetY5, x541D);
+
+}
+
+void CP_EFIS.b_ADF_2.On(void){
+	enque16(BtnToggle,v_EFIS_ADF_2);            //ADF 2 switch CP side
+}
+
+void CP_EFIS.b_ADF_2.Off(void){
+	enque16(BtnToggle,v_EFIS_VORADF2);    //ADF and VOR 2 are off
+}
+
+void CP_EFIS.b_VOR_2.On(void){
+	enque16(BtnToggle,v_EFIS_VOR_2);            //VOR 2 switch CP side
+}
+
+void CP_EFIS.b_VOR_2.Off(void){
+	enque16(BtnToggle,v_EFIS_VORADF2);    //ADF and VOR 2 are off
+}
+
+void l_handle_DHMDA_CP_rot (void)
+{
+	if (CP_EFIS.r_dir_Dhmda)
+	{
+		wrd_DHMDA_CP -= DHMDA_DELTA_CP;
+	}
+	else
+	{
+		wrd_DHMDA_CP += DHMDA_DELTA_CP;
+	}
+	byt_DHMDATime_CP 	= DHMDA_TIMER_CP;
+	f_DHMDATiming_CP 	= true;
+	wrd_DHMDA_CP 		= wrd_DHMDA_CP;		
+}
+
+void CP_EFIS.b_DHMDA_ROT.On(void){
+	jump(l_handle_DHMDA_CP_rot);
+}
+
+void CP_EFIS.b_DHMDA_ROT.Off(void){
+	jump(l_handle_DHMDA_CP_rot);
+}
+
+void l_handle_Baro_P_rot (void)
+{
+	if (CP_EFIS.r_dir_Baro)
+	{
+		wrd_BARO_CP -= BARO_DELTA_CP;
+	}
+	else
+	{
+		wrd_BARO_CP += BARO_DELTA_CP;
+	}
+	byt_BAROTime_CP 	= BARO_TIMER_CP;
+	f_BAROTiming_CP 	= true;
+	wrd_BARO_CP 		= wrd_BARO_CP;		
+}
+
+void CP_EFIS.b_BARO_ROT.On(void){
+	jump(l_handle_Baro_P_rot);
+}
+
+void CP_EFIS.b_BARO_ROT.Off(void){
+	jump(l_handle_Baro_P_rot);
+}
+
+void CP_EFIS.b_metric_ALT.On(void){
+	// TODO: Uitzoeken wat er nog meer moet gebeuren
+}
+
+void CP_EFIS.r_cnt_Dhmda.On(void){
+	// TODO: Uitzoeken wat er nog meer moet gebeuren
+}
+
+void CP_EFIS.r_cnt_Baro.On(void){
+	// TODO: Uitzoeken wat er nog meer moet gebeuren
+}
+
+void EDSP.b_ENG.On(void){
+	nqw(SetV4,301);	// 4F4 ENG
+}
+
+void EDSP.b_STAT.On(void){
+	nqw(SetV4,302);	// 4F4 STAT
+}
+
+void EDSP.b_ELEC.On(void){
+	nqw(SetV4,303);	// 4F4 ELEC
+}
+
+void EDSP.b_FUEL.On(void){
+	nqw(SetV4,304);	// 4F4 FUEL
+}
+
+void EDSP.b_ECS.On(void){
+	nqw(SetV4,305);	// 4F4 ECS
+}
+
+void EDSP.b_HYD.On(void){
+	nqw(SetV4,306);	// 4F4 HYD
+}
+
+void EDSP.b_DRS.On(void){
+	nqw(SetV4,307);	// 4F4 DRS
+}
+
+void EDSP.b_GEAR.On(void){
+	nqw(SetV4,308);	// 4F4 GEAR
+}
+
+void EDSP.b_CANC.On(void){
+	nqw(SetV4,310);	// 4F4 CANC
+}
+
+void EDSP.b_RCL.On(void){
+	nqw(SetV4,311);	// 4F4 RCL
+}
+
+
+

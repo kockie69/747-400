@@ -1,0 +1,2238 @@
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ void AP1Off ( void ) ; 
+ void AP1On ( void ) ; 
+ void AP2Off ( void ) ; 
+ void AP2On ( void ) ; 
+ void VSOff ( void ) ; 
+ void VSOn ( void ) ; 
+ void ALTOff ( void ) ; 
+ void ALTOn ( void ) ; 
+ void APPOff ( void ) ; 
+ void APPOn ( void ) ; 
+ void LOCOff ( void ) ; 
+ void LOCOn ( void ) ; 
+ void LNAVOff ( void ) ; 
+ void LNAVOn ( void ) ; 
+ void HDGOff ( void ) ; 
+ void HDGOn ( void ) ; 
+ void FLCHOff ( void ) ; 
+ void FLCHOn ( void ) ; 
+ void SPDOff ( void ) ; 
+ void SPDOn ( void ) ; 
+ void THROff ( void ) ; 
+ void THROn ( void ) ; 
+ void ATOff ( void ) ; 
+ void ATOn ( void ) ; 
+ void FDOff ( void ) ; 
+ void FDOn ( void ) ; 
+ void AP3Off ( void ) ; 
+ void AP3On ( void ) ; 
+ void VNAVOff ( void ) ; 
+ void VNAVOn ( void ) ; 
+ void MACHOff ( void ) ; 
+ void MACHOn ( void ) ; 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ definemodule ( 0 , 1 , 0 , 16 ) 
+ definemodule ( 1 , 1 , 0 , 8 ) 
+ definemodule ( 7 , 0 , 0 , 4 ) 
+ definemodule ( 7 , 2 , 0 , 4 ) 
+ definemodule ( 0 , 2 , 0 , 5 ) 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ connector ( FirstExpMod ) 
+ { 
+ analog ( 0 ) ; 
+ analog ( 1 ) ; 
+ analog ( 2 ) ; 
+ analog ( 3 ) ; 
+ analog ( 4 ) ; 
+ analog ( 5 ) ; 
+ analog ( 6 ) ; 
+ analog ( 7 ) ; 
+ analog ( 8 ) ; 
+ analog ( 9 ) ; 
+ analog ( 10 ) ; 
+ analog ( 11 ) ; 
+ analog ( 12 ) ; 
+ analog ( 13 ) ; 
+ analog ( 14 ) ; 
+ analog ( 15 ) ; 
+ 
+ modrow ( 0 , 0 ) ; 
+ modrow ( 0 , 1 ) ; 
+ modrow ( 0 , 2 ) ; 
+ modrow ( 0 , 3 ) ; 
+ modrow ( 0 , 4 ) ; 
+ modrow ( 0 , 5 ) ; 
+ modrow ( 0 , 6 ) ; 
+ } ; 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ connector ( MCPconn ) 
+ { 
+ modrow ( 7 , 0 ) ; 
+ modrow ( 7 , 1 ) ; 
+ modrow ( 1 , 4 ) ; 
+ modrow ( 1 , 0 ) ; 
+ modrow ( 1 , 1 ) ; 
+ modrow ( 1 , 2 ) ; 
+ 
+ } ; 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ connector ( CP_EFISconn ) 
+ { 
+ modrow ( 7 , 0 ) ; 
+ modrow ( 1 , 7 ) ; 
+ modrow ( 1 , 6 ) ; 
+ modrow ( 1 , 5 ) ; 
+ } ; 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ connector ( EDSPconn ) 
+ { 
+ modrow ( 1 , 1 ) ; 
+ modrow ( 1 , 2 ) ; 
+ 
+ } ; 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ device ( MCP ) 
+ { 
+ 
+ connector ( MCPconn ) ; 
+ 
+ button ( 2 , 0 , b_LNAV ) ; 
+ button ( 2 , 1 , b_VNAV ) ; 
+ button ( 2 , 2 , b_FLCH ) ; 
+ button ( 2 , 3 , b_SPD_MACH ) ; 
+ button ( 2 , 4 , b_ATHR ) ; 
+ button ( 2 , 5 , b_THR ) ; 
+ button ( 2 , 6 , b_SPD ) ; 
+ button ( 2 , 7 , b_FO_FD ) ; 
+ button ( 3 , 0 , b_HDG ) ; 
+ button ( 3 , 1 , b_VS ) ; 
+ button ( 3 , 2 , b_ALT ) ; 
+ button ( 3 , 3 , b_APP ) ; 
+ button ( 3 , 4 , b_LOC ) ; 
+ button ( 3 , 5 , b_AP1 ) ; 
+ button ( 3 , 6 , b_AP2 ) ; 
+ button ( 3 , 7 , b_AP_Dis_lft ) ; 
+ button ( 4 , 0 , b_AP3 ) ; 
+ button ( 4 , 1 , b_AP_Dis_rgt ) ; 
+ button ( 4 , 2 , b_CP_FD ) ; 
+ button ( 5 , 5 , b_SPD_ROT ) ; 
+ button ( 5 , 6 , b_ALT_ROT ) ; 
+ button ( 5 , 7 , b_HDG_ROT ) ; 
+ 
+ 
+ button ( 0 , 4 , r_cnt_SPD ) ; 
+ button ( 0 , 5 , r_dir_SPD ) ; 
+ 
+ 
+ button ( 0 , 6 , r_cnt_HDG ) ; 
+ button ( 0 , 7 , r_dir_HDG ) ; 
+ 
+ 
+ 
+ button ( 1 , 0 , r_cnt_VS ) ; 
+ button ( 1 , 1 , r_dir_VS ) ; 
+ 
+ 
+ button ( 1 , 2 , r_cnt_ALT ) ; 
+ button ( 1 , 3 , r_dir_ALT ) ; 
+ 
+ 
+ } ; 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ device ( CP_EFIS ) 
+ { 
+ 
+ connector ( CP_EFISconn ) ; 
+ 
+ button ( 1 , 0 , b_POS ) ; 
+ button ( 1 , 1 , b_DATA ) ; 
+ button ( 1 , 2 , b_ARPT ) ; 
+ button ( 1 , 3 , b_WPT ) ; 
+ button ( 1 , 4 , b_STA ) ; 
+ button ( 1 , 5 , b_WXR ) ; 
+ button ( 1 , 6 , b_ADF_1 ) ; 
+ button ( 1 , 7 , b_VOR_1 ) ; 
+ button ( 2 , 0 , b_DRS_10 ) ; 
+ button ( 2 , 1 , b_DMS_PLN ) ; 
+ button ( 2 , 2 , b_DMS_MAP ) ; 
+ button ( 2 , 3 , b_DMS_VOR ) ; 
+ button ( 2 , 4 , b_DMS_APP ) ; 
+ button ( 2 , 5 , b_metric_ALT ) ; 
+ button ( 2 , 6 , b_ADF_2 ) ; 
+ button ( 2 , 7 , b_VOR_2 ) ; 
+ button ( 3 , 0 , b_BARO_ROT ) ; 
+ button ( 3 , 1 , b_DHMDA_ROT ) ; 
+ button ( 3 , 2 , b_DRS_640 ) ; 
+ button ( 3 , 3 , b_DRS_320 ) ; 
+ button ( 3 , 4 , b_DRS_160 ) ; 
+ button ( 3 , 5 , b_DRS_80 ) ; 
+ button ( 3 , 6 , b_DRS_40 ) ; 
+ button ( 3 , 7 , b_DRS_20 ) ; 
+ 
+ button ( 0 , 0 , r_cnt_Dhmda ) ; 
+ button ( 0 , 1 , r_dir_Dhmda ) ; 
+ 
+ 
+ button ( 0 , 2 , r_cnt_Baro ) ; 
+ button ( 0 , 3 , r_dir_Baro ) ; 
+ 
+ } ; 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ device ( EDSP ) 
+ { 
+ 
+ connector ( EDSPconn ) ; 
+ button ( 0 , 3 , b_ENG ) ; 
+ button ( 0 , 4 , b_ELEC ) ; 
+ button ( 0 , 5 , b_FUEL ) ; 
+ button ( 0 , 6 , b_STAT ) ; 
+ button ( 0 , 7 , b_ECS ) ; 
+ button ( 1 , 0 , b_HYD ) ; 
+ button ( 1 , 1 , b_CANC ) ; 
+ button ( 1 , 2 , b_DRS ) ; 
+ button ( 1 , 3 , b_GEAR ) ; 
+ button ( 1 , 4 , b_RCL ) ; 
+ } ; 
+ 
+ 
+ 
+ 
+ device ( MCP_Output ) 
+ { 
+ output ( Rotary1 , 7 , 0 ) 
+ { 
+ R2Type = 0b00110000 ; 
+ R3Type = 0b11000000 ; 
+ } ; 
+ 
+ 
+ output ( Rotary2 , 7 , 1 ) 
+ { 
+ R4Type = 0b00000011 ; 
+ R5Type = 0b00001100 ; 
+ } ; 
+ 
+ output ( leds0 , 0 , 0 ) 
+ { 
+ led_LNAV = 0x01 ; 
+ led_HDG = 0x02 ; 
+ led_FLCH = 0x04 ; 
+ led_VNAV = 0x08 ; 
+ led_SPD = 0x10 ; 
+ led_THR = 0x20 ; 
+ led_ALT = 0x40 ; 
+ led_VS = 0x80 ; 
+ 
+ } ; 
+ output ( leds1 , 0 , 1 ) 
+ { 
+ led_LOC = 0x01 ; 
+ led_APPR = 0x02 ; 
+ led_AP2 = 0x04 ; 
+ led_AP1 = 0x08 ; 
+ led_AP3 = 0x20 ; 
+ } ; 
+ } ; 
+ 
+ device ( CP_EFIS_Output ) 
+ { 
+ output ( Rotary , 7 , 0 ) 
+ { 
+ R0Type = 0b00000011 ; 
+ R1Type = 0b00001100 ; 
+ } ; 
+ } ; 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ flag f_SpdTiming = false ; 
+ flag f_MACHTiming = false ; 
+ flag f_HdgTiming = false ; 
+ flag f_AltTiming = false ; 
+ flag f_VSTiming = false ; 
+ flag f_BAROTiming_CP = false ; 
+ flag f_DHMDATiming_CP = false ; 
+ flag f_SPD_Active = true ; 
+ 
+ 
+ 
+ 
+ 
+ byte byt_Tick ; 
+ byte byt_SpdTime = 0 ; 
+ byte byt_MACHTime = 0 ; 
+ byte byt_HdgTime = 0 ; 
+ byte byt_AltTime = 0 ; 
+ byte byt_VSTime = 0 ; 
+ byte byt_BAROTime_CP = 0 ; 
+ byte byt_DHMDATime_CP = 0 ; 
+ 
+ 
+ 
+ byte x5411 ; 
+ byte x5412 ; 
+ byte x5413 ; 
+ byte x5414 ; 
+ byte x541C ; 
+ byte x541D ; 
+ byte x541E ; 
+ word wrd_SPD = 250 ; 
+ word wrd_MACH = 70 ; 
+ word wrd_HDG = 0 ; 
+ word wrd_ALT = 60 ; 
+ word wrd_VS = 0 ; 
+ word wrd_BARO_CP = 1013 ; 
+ word wrd_DHMDA_CP = 0 ; 
+ word wrd_BARO_FS ; 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ defineqproc ( 142 , AP1Off ) 
+ defineqproc ( 143 , AP1On ) 
+ defineqproc ( 144 , AP2Off ) 
+ defineqproc ( 145 , AP2On ) 
+ defineqproc ( 146 , AP3Off ) 
+ defineqproc ( 147 , AP3On ) 
+ defineqproc ( 50 , VSOff ) 
+ defineqproc ( 51 , VSOn ) 
+ defineqproc ( 20 , ALTOff ) 
+ defineqproc ( 21 , ALTOn ) 
+ defineqproc ( 40 , APPOff ) 
+ defineqproc ( 41 , APPOn ) 
+ defineqproc ( 128 , LOCOff ) 
+ defineqproc ( 129 , LOCOn ) 
+ defineqproc ( 132 , LNAVOff ) 
+ defineqproc ( 133 , LNAVOn ) 
+ defineqproc ( 22 , HDGOff ) 
+ defineqproc ( 23 , HDGOn ) 
+ defineqproc ( 136 , FLCHOff ) 
+ defineqproc ( 137 , FLCHOn ) 
+ defineqproc ( 46 , SPDOff ) 
+ defineqproc ( 47 , SPDOn ) 
+ defineqproc ( 138 , THROff ) 
+ defineqproc ( 139 , THROn ) 
+ 
+ 
+ 
+ 
+ defineqproc ( 134 , VNAVOff ) 
+ defineqproc ( 135 , VNAVOn ) 
+ 
+ 
+ 
+ 
+ 
+ void CheckSpeedTimers ( void ) 
+ { 
+ if ( f_SpdTiming ) 
+ { 
+ byt_SpdTime -- ; 
+ if ( ! byt_SpdTime ) 
+ { 
+ f_SpdTiming = false ; 
+ nqw ( 0x13a , wrd_SPD ) ; 
+ } 
+ } 
+ 
+ if ( f_MACHTiming ) 
+ { 
+ byt_MACHTime -- ; 
+ if ( ! byt_MACHTime ) 
+ { 
+ f_MACHTiming = false ; 
+ nqw ( 0x106 , wrd_MACH ) ; 
+ } 
+ } 
+ 
+ if ( f_HdgTiming ) 
+ { 
+ byt_HdgTime -- ; 
+ if ( ! byt_HdgTime ) 
+ { 
+ f_HdgTiming = false ; 
+ nqw ( 0x108 , wrd_HDG ) ; 
+ } 
+ } 
+ 
+ if ( f_AltTiming ) 
+ { 
+ byt_AltTime -- ; 
+ if ( ! byt_AltTime ) 
+ { 
+ f_AltTiming = false ; 
+ nqw ( 0x109 , wrd_ALT ) ; 
+ } 
+ } 
+ 
+ if ( f_VSTiming ) 
+ { 
+ byt_VSTime -- ; 
+ if ( ! byt_VSTime ) 
+ { 
+ f_VSTiming = false ; 
+ nqw ( 0x10b , wrd_VS ) ; 
+ } 
+ } 
+ 
+ if ( f_BAROTiming_CP ) 
+ { 
+ byt_BAROTime_CP -- ; 
+ if ( ! byt_BAROTime_CP ) 
+ { 
+ f_BAROTiming_CP = false ; 
+ wrd_BARO_FS = wrd_BARO_CP * 16 ; 
+ nqw ( 0x13d , wrd_BARO_FS ) ; 
+ } 
+ } 
+ 
+ if ( f_DHMDATiming_CP ) 
+ { 
+ byt_DHMDATime_CP -- ; 
+ if ( ! byt_DHMDATime_CP ) 
+ { 
+ f_DHMDATiming_CP = false ; 
+ nqw ( 0x107 , wrd_DHMDA_CP ) ; 
+ } 
+ } 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ void MainLoop ( void ) 
+ { 
+ call ( CheckSpeedTimers ) ; 
+ byt_Tick ++ ; 
+ if ( byt_Tick > 49 ) 
+ { 
+ byt_Tick = 0 ; 
+ } 
+ delay ( 1 ) ; 
+ jump ( MainLoop ) ; 
+ } 
+ 
+ 
+ : INIT 
+ { 
+ MCP_Output.Rotary1.R2Type = 0b10101010 ; 
+ MCP_Output.Rotary1.R3Type = 0b10101010 ; 
+ MCP_Output.Rotary2.R4Type = 0b10101010 ; 
+ MCP_Output.Rotary2.R5Type = 0b10101010 ; 
+ CP_EFIS_Output.Rotary.R0Type = 0b10101010 ; 
+ CP_EFIS_Output.Rotary.R1Type = 0b10101010 ; 
+ MCP_Output.leds0 = 0 ; 
+ MCP_Output.leds1 = 0 ; 
+ 
+ jump ( MainLoop ) ; 
+ 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ void AP1Off ( void ) { 
+ MCP_Output.leds1.led_AP1 = off ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : AP1On { 
+ MCP_Output.leds1.led_AP1 = on ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : AP2Off { 
+ MCP_Output.leds1.led_AP2 = off ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ : AP2On { 
+ MCP_Output.leds1.led_AP2 = on ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : VSOff { 
+ MCP_Output.leds0.led_VS = off ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : VSOn { 
+ MCP_Output.leds0.led_VS = on ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : ALTOff { 
+ MCP_Output.leds0.led_ALT = off ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : ALTOn { 
+ MCP_Output.leds0.led_ALT = on ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ : APPOff { 
+ MCP_Output.leds1.led_APPR = off ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ : APPOn { 
+ MCP_Output.leds1.led_APPR = on ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : LOCOff { 
+ MCP_Output.leds1.led_LOC = off ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : LOCOn { 
+ MCP_Output.leds1.led_LOC = on ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : LNAVOff { 
+ MCP_Output.leds0.led_LNAV = off ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : LNAVOn { 
+ MCP_Output.leds0.led_LNAV = on ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : HDGOff { 
+ MCP_Output.leds0.led_HDG = off ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : HDGOn { 
+ MCP_Output.leds0.led_HDG = on ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : FLCHOff { 
+ MCP_Output.leds0.led_FLCH = off ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : FLCHOn { 
+ MCP_Output.leds0.led_FLCH = on ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : SPDOff { 
+ MCP_Output.leds0.led_SPD = off ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : SPDOn { 
+ MCP_Output.leds0.led_SPD = on ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : THROff { 
+ MCP_Output.leds0.led_THR = off ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : THROn { 
+ MCP_Output.leds0.led_THR = on ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : ATOff { 
+ 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : ATOn { 
+ 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : FDOff { 
+ 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : FDOn { 
+ 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : AP3Off { 
+ MCP_Output.leds1.led_AP3 = off ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : AP3On { 
+ MCP_Output.leds1.led_AP3 = on ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : VNAVOff { 
+ MCP_Output.leds0.led_VNAV = off ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : VNAVOn { 
+ MCP_Output.leds0.led_VNAV = on ; 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : MACHOff { 
+ 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ : MACHOn { 
+ 
+ } 
+ 
+ 
+ void MCP.b_CP_FD.Off ( void ) { 
+ if ( x5412 & 0b00000010 ) 
+ { 
+ x5412 &= 0b11111101 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b00000010 ; 
+ } 
+ nqw ( 0x101 , x5412 ) ; 
+ } 
+ 
+ void MCP.b_CP_FD.On ( void ) { 
+ if ( x5412 & 0b00000100 ) 
+ { 
+ x5412 &= 0b11111011 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b00000100 ; 
+ } 
+ nqw ( 0x101 , x5412 ) ; 
+ } 
+ 
+ 
+ void MCP.b_ATHR.Off ( void ) { 
+ if ( x5412 & 0b00001000 ) 
+ { 
+ x5412 &= 0b11110111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b00001000 ; 
+ } 
+ nqw ( 0x101 , x5412 ) ; 
+ } 
+ 
+ void MCP.b_ATHR.On ( void ) { 
+ if ( x5412 & 0b00010000 ) 
+ { 
+ x5412 &= 0b11101111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b00010000 ; 
+ } 
+ nqw ( 0x101 , x5412 ) ; 
+ } 
+ 
+ void l_handle_b_THR ( void ) { 
+ if ( x5412 & 0b00100000 ) 
+ { 
+ x5412 &= 0b11011111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b00100000 ; 
+ } 
+ nqw ( 0x101 , x5412 ) ; 
+ } 
+ 
+ void MCP.b_THR.Off ( void ) { 
+ jump ( l_handle_b_THR ) ; 
+ } 
+ 
+ void MCP.b_THR.On ( void ) { 
+ jump ( l_handle_b_THR ) ; 
+ } 
+ 
+ void l_handle_b_SPD ( void ) { 
+ if ( x5411 & 0b00000100 ) 
+ { 
+ x5411 &= 0b11111011 ; 
+ } 
+ else 
+ { 
+ x5411 |= 0b00000100 ; 
+ } 
+ nqw ( 0x100 , x5411 ) ; 
+ } 
+ 
+ void MCP.b_SPD.On ( void ) { 
+ jump ( l_handle_b_SPD ) ; 
+ } 
+ 
+ void MCP.b_SPD.Off ( void ) { 
+ jump ( l_handle_b_SPD ) ; 
+ } 
+ 
+ void MCP.b_SPD_MACH.On ( void ) 
+ { 
+ if ( x5412 & 0b10000000 ) 
+ { 
+ 
+ x5412 &= 0b01111111 ; 
+ 
+ } 
+ else 
+ { 
+ x5412 |= 0b10000000 ; 
+ 
+ } 
+ nqw ( 0x101 , x5412 ) ; 
+ } 
+ 
+ void MCP.b_SPD_ROT.On ( void ) { 
+ 
+ 
+ } 
+ 
+ void l_handle_b_LNAV ( void ) { 
+ if ( x5413 & 0b00001000 ) 
+ { 
+ x5413 &= 0b11110111 ; 
+ } 
+ else 
+ { 
+ x5413 |= 0b00001000 ; 
+ } 
+ nqw ( 0x10a , x5413 ) ; 
+ } 
+ 
+ 
+ void MCP.b_LNAV.On ( void ) { 
+ jump ( l_handle_b_LNAV ) ; 
+ } 
+ 
+ void MCP.b_LNAV.Off ( void ) { 
+ jump ( l_handle_b_LNAV ) ; 
+ } 
+ 
+ void l_handle_b_VNAV ( void ) { 
+ if ( x5413 & 0b00000100 ) 
+ { 
+ x5413 &= 0b11111011 ; 
+ } 
+ else 
+ { 
+ x5413 |= 0b00000100 ; 
+ } 
+ nqw ( 0x10a , x5413 ) ; 
+ } 
+ 
+ void MCP.b_VNAV.On ( void ) { 
+ jump ( l_handle_b_VNAV ) ; 
+ } 
+ 
+ void MCP.b_VNAV.Off ( void ) { 
+ jump ( l_handle_b_VNAV ) ; 
+ } 
+ 
+ void l_handle_b_FLCH ( void ) { 
+ if ( x5413 & 0b00000001 ) 
+ { 
+ x5413 &= 0b11111110 ; 
+ } 
+ else 
+ { 
+ x5413 |= 0b00000001 ; 
+ } 
+ nqw ( 0x10a , x5413 ) ; 
+ } 
+ 
+ void MCP.b_FLCH.On ( void ) { 
+ jump ( l_handle_b_FLCH ) ; 
+ } 
+ 
+ void MCP.b_FLCH.Off ( void ) { 
+ jump ( l_handle_b_FLCH ) ; 
+ } 
+ 
+ void MCP.b_HDG_ROT.On ( void ) { 
+ 
+ } 
+ 
+ void l_handle_b_HDG ( void ) { 
+ if ( x5413 & 0b00000010 ) 
+ { 
+ x5413 &= 0b11111101 ; 
+ } 
+ else 
+ { 
+ x5413 |= 0b00000010 ; 
+ } 
+ nqw ( 0x10a , x5413 ) ; 
+ } 
+ 
+ void MCP.b_HDG.On ( void ) { 
+ jump ( l_handle_b_HDG ) ; 
+ } 
+ 
+ void MCP.b_HDG.Off ( void ) { 
+ jump ( l_handle_b_HDG ) ; 
+ } 
+ 
+ void l_handle_b_VS ( void ) { 
+ if ( x5413 & 0b10000000 ) 
+ { 
+ x5413 &= 0b01111111 ; 
+ } 
+ else 
+ { 
+ x5413 |= 0b10000000 ; 
+ } 
+ nqw ( 0x10a , x5413 ) ; 
+ } 
+ 
+ void MCP.b_VS.On ( void ) { 
+ jump ( l_handle_b_VS ) ; 
+ } 
+ 
+ void MCP.b_VS.Off ( void ) { 
+ jump ( l_handle_b_VS ) ; 
+ } 
+ 
+ void l_handle_b_ALT ( void ) { 
+ if ( x5413 & 0b01000000 ) 
+ { 
+ x5413 &= 0b10111111 ; 
+ } 
+ else 
+ { 
+ x5413 |= 0b01000000 ; 
+ } 
+ nqw ( 0x10a , x5413 ) ; 
+ } 
+ 
+ void MCP.b_ALT.On ( void ) { 
+ jump ( l_handle_b_ALT ) ; 
+ } 
+ 
+ void MCP.b_ALT.Off ( void ) { 
+ jump ( l_handle_b_ALT ) ; 
+ } 
+ 
+ void MCP.b_ALT_ROT.On ( void ) { 
+ 
+ } 
+ 
+ void l_handle_b_LOC ( void ) { 
+ if ( x5413 & 0b00010000 ) 
+ { 
+ x5413 &= 0b11101111 ; 
+ } 
+ else 
+ { 
+ x5413 |= 0b00010000 ; 
+ } 
+ nqw ( 0x10a , x5413 ) ; 
+ } 
+ 
+ void MCP.b_LOC.On ( void ) { 
+ jump ( l_handle_b_LOC ) ; 
+ } 
+ 
+ void MCP.b_LOC.Off ( void ) { 
+ jump ( l_handle_b_LOC ) ; 
+ } 
+ 
+ void l_handle_b_APP ( void ) { 
+ if ( x5413 & 0b00100000 ) 
+ { 
+ x5413 &= 0b11011111 ; 
+ } 
+ else 
+ { 
+ x5413 |= 0b00100000 ; 
+ } 
+ nqw ( 0x10a , x5413 ) ; 
+ } 
+ 
+ void MCP.b_APP.On ( void ) { 
+ jump ( l_handle_b_APP ) ; 
+ } 
+ 
+ void MCP.b_APP.Off ( void ) { 
+ jump ( l_handle_b_APP ) ; 
+ } 
+ 
+ void l_handle_b_AP1 ( void ) { 
+ if ( x5414 & 0b00000001 ) 
+ { 
+ x5414 &= 0b11111110 ; 
+ } 
+ else 
+ { 
+ x5414 |= 0b00000001 ; 
+ } 
+ nqw ( 0x103 , x5414 ) ; 
+ } 
+ 
+ 
+ void MCP.b_AP1.On ( void ) { 
+ jump ( l_handle_b_AP1 ) ; 
+ } 
+ 
+ void MCP.b_AP1.Off ( void ) { 
+ jump ( l_handle_b_AP1 ) ; 
+ } 
+ 
+ void l_handle_b_AP2 ( void ) { 
+ if ( x5414 & 0b00000010 ) 
+ { 
+ x5414 &= 0b11111101 ; 
+ } 
+ else 
+ { 
+ x5414 |= 0b00000010 ; 
+ } 
+ nqw ( 0x103 , x5414 ) ; 
+ } 
+ 
+ void MCP.b_AP2.On ( void ) { 
+ jump ( l_handle_b_AP2 ) ; 
+ } 
+ 
+ void MCP.b_AP2.Off ( void ) { 
+ jump ( l_handle_b_AP2 ) ; 
+ } 
+ 
+ void l_handle_b_AP3 ( void ) { 
+ if ( x5414 & 0b00000100 ) 
+ { 
+ x5414 &= 0b11111011 ; 
+ } 
+ else 
+ { 
+ x5414 |= 0b00000100 ; 
+ } 
+ nqw ( 0x103 , x5414 ) ; 
+ } 
+ 
+ void MCP.b_AP3.On ( void ) { 
+ jump ( l_handle_b_AP3 ) ; 
+ } 
+ 
+ void MCP.b_AP3.Off ( void ) { 
+ jump ( l_handle_b_AP3 ) ; 
+ } 
+ 
+ void MCP.b_FO_FD.On ( void ) { 
+ if ( x5414 & 0b01000000 ) 
+ { 
+ x5414 &= 0b10111111 ; 
+ } 
+ else 
+ { 
+ x5414 |= 0b01000000 ; 
+ } 
+ nqw ( 0x103 , x5414 ) ; 
+ } 
+ 
+ void MCP.b_FO_FD.Off ( void ) { 
+ if ( x5414 & 0b00100000 ) 
+ { 
+ x5414 &= 0b11011111 ; 
+ } 
+ else 
+ { 
+ x5414 |= 0b00100000 ; 
+ } 
+ nqw ( 0x103 , x5414 ) ; 
+ } 
+ 
+ void MCP.b_AP_Dis_lft.On ( void ) { 
+ 
+ } 
+ 
+ void MCP.b_AP_Dis_rgt.On ( void ) { 
+ 
+ } 
+ 
+ void l_handle_ALT_rot ( void ) 
+ { 
+ if ( MCP.r_dir_ALT ) 
+ { 
+ if ( f_AltTiming ) 
+ { 
+ wrd_ALT -= 10 ; 
+ } 
+ else 
+ { 
+ wrd_ALT -= 1 ; 
+ } 
+ } 
+ else 
+ { 
+ if ( f_AltTiming ) 
+ { 
+ wrd_ALT += 10 ; 
+ } 
+ else 
+ { 
+ wrd_ALT += 1 ; 
+ } 
+ } 
+ byt_AltTime = 5 ; 
+ f_AltTiming = true ; 
+ 
+ } 
+ 
+ 
+ void MCP.r_cnt_ALT.On ( void ) { 
+ jump ( l_handle_ALT_rot ) ; 
+ } 
+ 
+ void MCP.r_cnt_ALT.Off ( void ) { 
+ jump ( l_handle_ALT_rot ) ; 
+ } 
+ 
+ void l_handle_VS_rot ( void ) 
+ { 
+ if ( MCP.r_dir_VS ) 
+ { 
+ wrd_VS -= 100 ; 
+ } 
+ else 
+ { 
+ wrd_VS += 100 ; 
+ } 
+ byt_VSTime = 5 ; 
+ f_VSTiming = true ; 
+ } 
+ 
+ 
+ void MCP.r_cnt_VS.On ( void ) { 
+ jump ( l_handle_VS_rot ) ; 
+ } 
+ 
+ 
+ void MCP.r_cnt_VS.Off ( void ) { 
+ jump ( l_handle_VS_rot ) ; 
+ } 
+ 
+ void l_handle_SPD_rot ( void ) 
+ { 
+ if ( f_SPD_Active ) 
+ { 
+ if ( MCP.r_dir_SPD ) 
+ { 
+ if ( f_SpdTiming ) 
+ { 
+ wrd_SPD -= 10 ; 
+ } 
+ else 
+ { 
+ wrd_SPD -= 1 ; 
+ } 
+ } 
+ else 
+ { 
+ if ( f_SpdTiming ) 
+ { 
+ wrd_SPD += 10 ; 
+ } 
+ else 
+ { 
+ wrd_SPD += 1 ; 
+ } 
+ } 
+ byt_SpdTime = 5 ; 
+ f_SpdTiming = true ; 
+ } 
+ else 
+ { 
+ if ( MCP.r_dir_SPD ) 
+ { 
+ wrd_MACH -= 1 ; 
+ } 
+ else 
+ { 
+ wrd_MACH += 1 ; 
+ } 
+ byt_MACHTime = 5 ; 
+ f_MACHTiming = true ; 
+ } 
+ } 
+ 
+ void MCP.r_cnt_SPD.On ( void ) { 
+ jump ( l_handle_SPD_rot ) ; 
+ } 
+ 
+ void MCP.r_cnt_SPD.Off ( void ) { 
+ jump ( l_handle_SPD_rot ) ; 
+ } 
+ 
+ void l_handle_HDG_rot ( void ) 
+ { 
+ if ( MCP.r_dir_HDG ) 
+ { 
+ if ( f_HdgTiming ) 
+ { 
+ wrd_HDG -= 10 ; 
+ } 
+ else 
+ { 
+ wrd_HDG -= 1 ; 
+ } 
+ } 
+ else 
+ { 
+ if ( f_HdgTiming ) 
+ { 
+ wrd_HDG += 10 ; 
+ } 
+ else 
+ { 
+ wrd_HDG += 1 ; 
+ } 
+ } 
+ byt_HdgTime = 5 ; 
+ f_HdgTiming = true ; 
+ } 
+ 
+ 
+ void MCP.r_cnt_HDG.On ( void ) { 
+ jump ( l_handle_HDG_rot ) ; 
+ } 
+ 
+ void MCP.r_cnt_HDG.Off ( void ) { 
+ jump ( l_handle_HDG_rot ) ; 
+ } 
+ 
+ void CP_EFIS.b_VOR_1.Off ( void ) { 
+ if ( x541E & 0b00001000 ) 
+ { 
+ x541E &= 0b11110111 ; 
+ } 
+ else 
+ { 
+ x541E |= 0b00001000 ; 
+ } 
+ nqw ( 0x104 , x541E ) ; 
+ } 
+ 
+ void CP_EFIS.b_VOR_1.On ( void ) { 
+ if ( x541E & 0b00010000 ) 
+ { 
+ x541E &= 0b11101111 ; 
+ } 
+ else 
+ { 
+ x541E |= 0b00010000 ; 
+ } 
+ nqw ( 0x104 , x541E ) ; 
+ 
+ } 
+ 
+ 
+ void CP_EFIS.b_ADF_1.Off ( void ) { 
+ if ( x541E & 0b00000100 ) 
+ { 
+ x541E &= 0b11111011 ; 
+ } 
+ else 
+ { 
+ x541E |= 0b00000100 ; 
+ } 
+ nqw ( 0x104 , x541E ) ; 
+ } 
+ 
+ void CP_EFIS.b_ADF_1.On ( void ) { 
+ if ( x541E & 0b00010000 ) 
+ { 
+ x541E &= 0b11101111 ; 
+ } 
+ else 
+ { 
+ x541E |= 0b00010000 ; 
+ } 
+ nqw ( 0x104 , x541E ) ; 
+ } 
+ 
+ void CP_EFIS.b_WXR.On ( void ) { 
+ nqw ( 0x139 , 72 ) ; 
+ } 
+ 
+ void CP_EFIS.b_STA.On ( void ) { 
+ nqw ( 0x139 , 90 ) ; 
+ } 
+ 
+ void CP_EFIS.b_WPT.On ( void ) { 
+ nqw ( 0x139 , 93 ) ; 
+ } 
+ 
+ void CP_EFIS.b_ARPT.On ( void ) { 
+ nqw ( 0x139 , 94 ) ; 
+ } 
+ 
+ void CP_EFIS.b_DATA.On ( void ) { 
+ nqw ( 0x139 , 95 ) ; 
+ } 
+ 
+ void CP_EFIS.b_POS.On ( void ) { 
+ nqw ( 0x139 , 96 ) ; 
+ } 
+ 
+ void CP_EFIS.b_DMS_APP.On ( void ) { 
+ if ( x541C & 0b00000010 ) 
+ { 
+ x541C &= 0b11111101 ; 
+ } 
+ else 
+ { 
+ x541C |= 0b00000010 ; 
+ } 
+ nqw ( 0x102 , x541C ) ; 
+ } 
+ 
+ void CP_EFIS.b_DMS_VOR.On ( void ) { 
+ if ( x541C & 0b00000100 ) 
+ { 
+ x541C &= 0b11111011 ; 
+ } 
+ else 
+ { 
+ x541C |= 0b00000100 ; 
+ } 
+ nqw ( 0x102 , x541C ) ; 
+ } 
+ 
+ void CP_EFIS.b_DMS_MAP.On ( void ) { 
+ if ( x541C & 0b00001000 ) 
+ { 
+ x541C &= 0b11110111 ; 
+ } 
+ else 
+ { 
+ x541C |= 0b00001000 ; 
+ } 
+ nqw ( 0x102 , x541C ) ; 
+ } 
+ 
+ void CP_EFIS.b_DMS_PLN.On ( void ) { 
+ if ( x541C & 0b00010000 ) 
+ { 
+ x541C &= 0b11101111 ; 
+ } 
+ else 
+ { 
+ x541C |= 0b00010000 ; 
+ } 
+ nqw ( 0x102 , x541C ) ; 
+ } 
+ 
+ void CP_EFIS.b_DRS_10.On ( void ) { 
+ if ( x541C & 0b00100000 ) 
+ { 
+ x541C &= 0b11011111 ; 
+ } 
+ else 
+ { 
+ x541C |= 0b00100000 ; 
+ } 
+ nqw ( 0x102 , x541C ) ; 
+ } 
+ 
+ void CP_EFIS.b_DRS_20.On ( void ) { 
+ if ( x541C & 0b01000000 ) 
+ { 
+ x541C &= 0b10111111 ; 
+ } 
+ else 
+ { 
+ x541C |= 0b01000000 ; 
+ } 
+ nqw ( 0x102 , x541C ) ; 
+ } 
+ 
+ void CP_EFIS.b_DRS_40.On ( void ) { 
+ if ( x541C & 0b10000000 ) 
+ { 
+ x541C &= 0b01111111 ; 
+ } 
+ else 
+ { 
+ x541C |= 0b10000000 ; 
+ } 
+ nqw ( 0x102 , x541C ) ; 
+ } 
+ 
+ void CP_EFIS.b_DRS_80.On ( void ) { 
+ if ( x541D & 0b00000001 ) 
+ { 
+ x541D &= 0b11111110 ; 
+ } 
+ else 
+ { 
+ x541D |= 0b00000001 ; 
+ } 
+ nqw ( 0x105 , x541D ) ; 
+ } 
+ 
+ void CP_EFIS.b_DRS_160.On ( void ) { 
+ if ( x541D & 0b00000010 ) 
+ { 
+ x541D &= 0b11111101 ; 
+ } 
+ else 
+ { 
+ x541D |= 0b00000010 ; 
+ } 
+ nqw ( 0x105 , x541D ) ; 
+ } 
+ 
+ void CP_EFIS.b_DRS_320.On ( void ) { 
+ if ( x541D & 0b00000100 ) 
+ { 
+ x541D &= 0b11111011 ; 
+ } 
+ else 
+ { 
+ x541D |= 0b00000100 ; 
+ } 
+ nqw ( 0x105 , x541D ) ; 
+ } 
+ 
+ void CP_EFIS.b_DRS_640.On ( void ) { 
+ if ( x541D & 0b00001000 ) 
+ { 
+ x541D &= 0b111110111 ; 
+ } 
+ else 
+ { 
+ x541D |= 0b00001000 ; 
+ } 
+ nqw ( 0x105 , x541D ) ; 
+ 
+ } 
+ 
+ void CP_EFIS.b_ADF_2.On ( void ) { 
+ enque16 ( 0x006 , 43 ) ; 
+ } 
+ 
+ void CP_EFIS.b_ADF_2.Off ( void ) { 
+ enque16 ( 0x006 , 57 ) ; 
+ } 
+ 
+ void CP_EFIS.b_VOR_2.On ( void ) { 
+ enque16 ( 0x006 , 44 ) ; 
+ } 
+ 
+ void CP_EFIS.b_VOR_2.Off ( void ) { 
+ enque16 ( 0x006 , 57 ) ; 
+ } 
+ 
+ void l_handle_DHMDA_CP_rot ( void ) 
+ { 
+ if ( CP_EFIS.r_dir_Dhmda ) 
+ { 
+ wrd_DHMDA_CP -= 1 ; 
+ } 
+ else 
+ { 
+ wrd_DHMDA_CP += 1 ; 
+ } 
+ byt_DHMDATime_CP = 5 ; 
+ f_DHMDATiming_CP = true ; 
+ wrd_DHMDA_CP = wrd_DHMDA_CP ; 
+ } 
+ 
+ void CP_EFIS.b_DHMDA_ROT.On ( void ) { 
+ jump ( l_handle_DHMDA_CP_rot ) ; 
+ } 
+ 
+ void CP_EFIS.b_DHMDA_ROT.Off ( void ) { 
+ jump ( l_handle_DHMDA_CP_rot ) ; 
+ } 
+ 
+ void l_handle_Baro_P_rot ( void ) 
+ { 
+ if ( CP_EFIS.r_dir_Baro ) 
+ { 
+ wrd_BARO_CP -= 1 ; 
+ } 
+ else 
+ { 
+ wrd_BARO_CP += 1 ; 
+ } 
+ byt_BAROTime_CP = 5 ; 
+ f_BAROTiming_CP = true ; 
+ wrd_BARO_CP = wrd_BARO_CP ; 
+ } 
+ 
+ void CP_EFIS.b_BARO_ROT.On ( void ) { 
+ jump ( l_handle_Baro_P_rot ) ; 
+ } 
+ 
+ void CP_EFIS.b_BARO_ROT.Off ( void ) { 
+ jump ( l_handle_Baro_P_rot ) ; 
+ } 
+ 
+ void CP_EFIS.b_metric_ALT.On ( void ) { 
+ 
+ } 
+ 
+ void CP_EFIS.r_cnt_Dhmda.On ( void ) { 
+ 
+ } 
+ 
+ void CP_EFIS.r_cnt_Baro.On ( void ) { 
+ 
+ } 
+ 
+ void EDSP.b_ENG.On ( void ) { 
+ nqw ( 0x139 , 301 ) ; 
+ } 
+ 
+ void EDSP.b_STAT.On ( void ) { 
+ nqw ( 0x139 , 302 ) ; 
+ } 
+ 
+ void EDSP.b_ELEC.On ( void ) { 
+ nqw ( 0x139 , 303 ) ; 
+ } 
+ 
+ void EDSP.b_FUEL.On ( void ) { 
+ nqw ( 0x139 , 304 ) ; 
+ } 
+ 
+ void EDSP.b_ECS.On ( void ) { 
+ nqw ( 0x139 , 305 ) ; 
+ } 
+ 
+ void EDSP.b_HYD.On ( void ) { 
+ nqw ( 0x139 , 306 ) ; 
+ } 
+ 
+ void EDSP.b_DRS.On ( void ) { 
+ nqw ( 0x139 , 307 ) ; 
+ } 
+ 
+ void EDSP.b_GEAR.On ( void ) { 
+ nqw ( 0x139 , 308 ) ; 
+ } 
+ 
+ void EDSP.b_CANC.On ( void ) { 
+ nqw ( 0x139 , 310 ) ; 
+ } 
+ 
+ void EDSP.b_RCL.On ( void ) { 
+ nqw ( 0x139 , 311 ) ; 
+ } 
+ 
+ 
+ 
+ 
