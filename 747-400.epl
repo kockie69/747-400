@@ -1,28 +1,20 @@
 //---------------------------------------------------------------------------
 // Author		: Robert Kock
-// Version		: 0
 // Description	: This is the core epl code for my boeing 747-400. 
 //---------------------------------------------------------------------------
 
-#include <modtypes.hpl>
 #include <epicdefs.hpl>
-#include "functions.hpl"
-
-//====================================================================
-// Define some constants. 
-//====================================================================
-#define OUTPUT 2 // also defined in epicdefs.hpl
 
 //====================================================================
 // Module definition.
 //====================================================================
 definemodule(0,SLOWSCAN,0,16)	// scan module 0 (first expansion module, A, B, RUDDER, and FLCS connectors
-definemodule(1,SLOWSCAN,0,8) // 64 button module
+definemodule(1,SLOWSCAN,0,8) // 64 button module: J1 connected to J4 on module ABA => Epic inputs M1/R0/B0 to M1/R7/B7
 definemodule(7,FASTSCAN,0,4)
 definemodule(7,OUTPUT,0,4)
 definemodule(0,OUTPUT,0,5)
 
-#include "747-400Devices.hpl"	// the "" says to look in the current directory
+#include "MCPDevice.hpl"	// the "" says to look in the current directory
 #include "VDXCodes.inc" 
 
 //==================================================================
@@ -50,13 +42,6 @@ definemodule(0,OUTPUT,0,5)
 #define TYPE1 0b01010101	// rotary two phase type1
 #define TYPE2 0b10101010	// rotary two phase type2
 #define TYPE3 0b11111111	// Grayhill
-
-#define SPD_FAST_DELTA		10
-#define SPD_SLOW_DELTA		1
-#define SPD_TIMER			5
-#define MACH_TIMER		5
-#define HDG_FAST_DELTA		10
-#define HDG_SLOW_DELTA		1
 #define HDG_TIMER			5
 #define ALT_FAST_DELTA		10
 #define ALT_SLOW_DELTA		1

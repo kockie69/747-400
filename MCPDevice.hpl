@@ -1,0 +1,312 @@
+//=========================================================
+// 747-400 device file
+//=========================================================
+// Version: 0.1
+// Date: 	29-12-2003
+// Notes:	This version was changed because of the rewiring of the MCP. I also
+//		added the display definition because this hardware will be added
+//		very soon.  
+// Version: 0
+// Date: 	28-9-2003
+// Notes:	This initial version was taken from tickDevice.hpl
+//=========================================================
+
+//=========================================================
+// Start of Connector FirstExpMod
+//=========================================================
+// Notes:	This connector definition was added in the beginning by default. Maybe we
+//		can live without it ?
+//=========================================================
+connector(FirstExpMod)
+{
+	analog(0);
+	analog(1);
+	analog(2);
+	analog(3);
+	analog(4);
+	analog(5);
+	analog(6);
+	analog(7);
+	analog(8);
+	analog(9);
+	analog(10);
+	analog(11);
+	analog(12);
+	analog(13);
+	analog(14);
+	analog(15);
+
+	modrow(0,0);	// A db15 connector
+	modrow(0,1);	// B db15 connector
+	modrow(0,2);	// RUDDER db15 connector
+	modrow(0,3);	// not used
+	modrow(0,4);	// FLCS
+	modrow(0,5);	// FLCS
+	modrow(0,6);	// FLCS
+};
+//=========================================================
+// End of Connector FirstExpMod
+//=========================================================
+
+
+//=========================================================
+// Start of Connector MCPconn
+//=========================================================
+// Notes:	This connector definition defines the modules
+//		that are used by the MCP.
+//=========================================================
+connector(MCPconn)
+{
+	modrow(7,0);	// Rotary module (module 7) Scan Row 0
+	modrow(7,1);	// Rotary module (module 7) Scan Row 1
+	modrow(1,4);	// 64 button module 1 Scan Row 4 
+	modrow(1,0);	// 64 button module 1 Scan Row 0
+	modrow(1,1);	// 64 button module 1 Scan Row 1
+	modrow(1,2);	// 64 button module 1 Scan Row 2
+	
+};
+//=========================================================
+// End of Connector MCPconn
+//=========================================================
+
+
+//=========================================================
+// Start of Connector CP_EFISconn
+//=========================================================
+// Notes:	This connector definition defines the modules
+//		that are used by the EFIS used by the Captain (CP).
+//=========================================================
+connector(CP_EFISconn)
+{
+	modrow(7,0);	// Rotary module (module 7) Scan Row 0
+	modrow(1,7);	// 64 button module Scan Row 7 
+	modrow(1,6);	// 64 button module Scan Row 6 
+	modrow(1,5);	// 64 button module Scan Row 5 
+};
+//=========================================================
+// End of Connector CP_EFISconn
+//=========================================================
+
+//=========================================================
+// Start of Connector EDSPconn
+//=========================================================
+// Notes:	This connector definition defines the modules
+//		that are used by the EDSP.
+//=========================================================
+connector(EDSPconn)
+{
+	modrow(1,1);	// 64 button module Scan Row 1
+	modrow(1,2);	// 64 button module Scan Row 2
+	
+};
+//=========================================================
+// End of Connector EDSPconn
+//=========================================================
+
+
+//=========================================================
+// Start of Device MCP
+//=========================================================
+// Notes:	This device definition defines the buttons, rotarys, leds
+//		and displays that are used by the MCP.
+//=========================================================
+device(MCP)
+{
+  connector(MCPconn);
+	
+  button(2,0,b_LNAV); // 64 button module: M1/R4/B0 
+  button(2,1,b_VNAV); // 64 button module: M1/R4/B1
+  button(2,2,b_FLCH); // 64 button module: M1/R4/B2
+  button(2,3,b_SPD_MACH); // 64 button module: M1/R4/B3
+  button(2,4,b_ATHR); // 64 button module: M1/R4/B4
+  button(2,5,b_THR); // 64 button module: M1/R4/B5
+  button(2,6,b_SPD); // 64 button module: M1/R4/B6
+  button(2,7,b_FO_FD); // 64 button module: M1/R4/B7	
+  button(3,0,b_HDG); // 64 button module: M1/R0/B0
+  button(3,1,b_VS); // 64 button module: M1/R0/B1
+  button(3,2,b_ALT); // 64 button module: M1/R0/B2
+  button(3,3,b_APP); // 64 button module: M1/R0/B3
+  button(3,4,b_LOC); // 64 button module: M1/R0/B4
+  button(3,5,b_AP1); // 64 button module: M1/R0/B5
+  button(3,6,b_AP2); // 64 button module: M1/R0/B6
+  button(3,7,b_AP_Dis_lft); // 64 button module: M1/R0/B7
+  button(4,0,b_AP3); // 64 button module: M1/R1/B0
+  button(4,1,b_AP_Dis_rgt); // 64 button module: M1/R1/B1				
+  button(4,2,b_CP_FD); // 64 button module: M1/R1/B2
+  button(5,5,b_SPD_ROT);
+  button(5,6,b_ALT_ROT);
+  button(5,7,b_HDG_ROT);
+	
+  // Rotary Module 7, Scan Row 2
+  button(0,4,r_cnt_SPD);		// Speed count
+  button(0,5,r_dir_SPD);		// Speed direction
+
+  // Rotary Module 7, Scan Row 3
+  button(0,6,r_cnt_HDG);		// Heading setting count
+  button(0,7,r_dir_HDG);		// Heading setting direction	
+	
+  // Rotary Module 7, Scan Row 4
+  button(1,0,r_cnt_VS);		// Vertical Speed setting count 
+  button(1,1,r_dir_VS);		// Vertical Speed setting direction
+	
+  // Rotary Module 7, Scan Row 5
+  button(1,2,r_cnt_ALT);		// Altitude setting count
+  button(1,3,r_dir_ALT);		// Altitude setting direction
+
+  output(Rotary1,7,0)
+  {
+    R2Type = 0b00110000;
+    R3Type = 0b11000000;
+  };
+
+  output(Rotary2,7,1)
+  {
+    R4Type = 0b00000011;
+    R5Type = 0b00001100;
+  };
+	
+  output(leds0,0,0)
+  {
+    led_LNAV = 0x01; //32 Point Output Module wire #3 
+    led_HDG = 0x02; //32 Point Output Module wire #4 
+    led_FLCH = 0x04; //32 Point Output Module wire #5 
+    led_VNAV = 0x08; //32 Point Output Module wire #6 
+    led_SPD = 0x10; //32 Point Output Module wire #7
+    led_THR = 0x20; //32 Point Output Module wire #8 
+    led_ALT = 0x40; //32 Point Output Module wire #9
+    led_VS = 0x80; //32 Point Output Module wire #10
+  };
+
+  output(leds1,0,1)
+  {
+    led_LOC = 0x01; //32 Point Output Module wire #11 
+    led_APPR = 0x02; //32 Point Output Module wire #12 
+    led_AP2 = 0x04; //32 Point Output Module wire #13 
+    led_AP1 = 0x08; //32 Point Output Module wire #14
+    led_AP3 = 0x20; //32 Point Output Module wire #16 
+  };
+};
+//=========================================================
+// End of Device MCP
+//=========================================================
+
+
+//=========================================================
+// Start of Device CP_EFIS
+//=========================================================
+// Notes:	This device definition defines the buttons, rotarys, leds
+//		and displays that are used by the Captains EFIS.
+//=========================================================
+device(CP_EFIS)
+{
+
+	connector(CP_EFISconn);
+	
+	button(1,0,b_POS);
+	button(1,1,b_DATA);
+	button(1,2,b_ARPT);
+	button(1,3,b_WPT);
+	button(1,4,b_STA);
+	button(1,5,b_WXR);
+	button(1,6,b_ADF_1);
+	button(1,7,b_VOR_1);
+	button(2,0,b_DRS_10);	
+	button(2,1,b_DMS_PLN);
+	button(2,2,b_DMS_MAP);
+	button(2,3,b_DMS_VOR);
+	button(2,4,b_DMS_APP);			
+	button(2,5,b_metric_ALT);	
+	button(2,6,b_ADF_2);	
+	button(2,7,b_VOR_2);
+	button(3,0,b_BARO_ROT);
+	button(3,1,b_DHMDA_ROT);
+	button(3,2,b_DRS_640);
+	button(3,3,b_DRS_320);
+	button(3,4,b_DRS_160);							
+	button(3,5,b_DRS_80);
+	button(3,6,b_DRS_40);	
+	button(3,7,b_DRS_20);
+	// Rotary Module 7, Scan Row 0
+	button(0,0,r_cnt_Dhmda);		// DHMDA pilot count
+	button(0,1,r_dir_Dhmda);		// DHMDA pilot turn direction	
+	// Rotary Module 7, Scan Row 1
+	
+	button(0,2,r_cnt_Baro);		// Baro pilot count
+	button(0,3,r_dir_Baro);		// Baro pilot turn direction
+	
+};
+//=========================================================
+// End of Device CP_EFIS
+//=========================================================
+
+//=========================================================
+// Start of Device EDSP
+//=========================================================
+// Notes:	This device definition defines the buttons
+// 		that are used by the EDSP.
+//=========================================================
+device(EDSP)
+{
+
+	connector(EDSPconn);
+	button(0,3,b_ENG);
+	button(0,4,b_ELEC);
+	button(0,5,b_FUEL);
+	button(0,6,b_STAT);
+	button(0,7,b_ECS);
+	button(1,0,b_HYD);
+	button(1,1,b_CANC);
+	button(1,2,b_DRS);
+	button(1,3,b_GEAR);
+	button(1,4,b_RCL);
+};
+//=========================================================
+// End of Device EDSP
+//=========================================================
+
+device(MCP_Output)
+{
+	output(Rotary1,7,0)
+	{
+		R2Type = 0b00110000;
+		R3Type = 0b11000000;
+	};
+	
+
+	output(Rotary2,7,1)
+	{
+		R4Type = 0b00000011;
+		R5Type = 0b00001100;
+	};
+	
+	output(leds0,0,0)
+	{
+		led_LNAV = 0x01;
+		led_HDG = 0x02;
+		led_FLCH = 0x04;
+		led_VNAV = 0x08;
+		led_SPD = 0x10;
+		led_THR = 0x20;
+		led_ALT = 0x40;
+		led_VS = 0x80;
+
+	};
+	output(leds1,0,1)
+	{
+		led_LOC = 0x01;
+		led_APPR = 0x02;
+		led_AP2 = 0x04;
+		led_AP1 = 0x08;
+		led_AP3 = 0x20;
+	};
+};
+
+device (CP_EFIS_Output)
+{
+	output(Rotary,7,0)
+	{
+		R0Type = 0b00000011;
+		R1Type = 0b00001100;
+	};
+};
+
