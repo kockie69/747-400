@@ -252,24 +252,30 @@ device(MCP_Output)
 	
 	output(leds0,0,0)
 	{
-		led_LNAV = 0x01;
-		led_HDG = 0x02;
-		led_FLCH = 0x04;
-		led_VNAV = 0x08;
-		led_SPD = 0x10;
-		led_THR = 0x20;
-		led_ALT = 0x40;
-		led_VS = 0x80;
-
+		led_LOC = 0x01;
+		led_AP2 = 0x02;
+		led_APPR = 0x04;
+		led_ALT = 0x10;
 	};
 	output(leds1,0,1)
 	{
-		led_LOC = 0x01;
-		led_APPR = 0x02;
-		led_AP2 = 0x04;
-		led_AP1 = 0x08;
-		led_AP3 = 0x20;
+		led_AP1 = 0x01;
+		led_VS = 0x04;
+		led_HDG = 0x10;
+		led_LNAV = 0x40;
 	};
+	output(leds2,0,2)
+	{
+		led_VNAV = 0x01;
+		led_AP3 = 0x04;
+		led_FLCH = 0x10;
+		led_SPD = 0x40;
+	};
+	output(leds3,0,3)
+		{
+		led_THR = 0x01;
+	};
+
 };
 
 device (CP_EFIS_Output)
