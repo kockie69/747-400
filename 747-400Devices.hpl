@@ -172,7 +172,7 @@ device(MCP)
 	{
 		led_LOC = 0x01;
 		led_AP2 = 0x02;
-		led_APPR = 0x04;
+		led_APP = 0x04;
 		led_ALT = 0x10;
 	};
 	output(leds1,0,1)

@@ -195,16 +195,136 @@ void CheckSpeedTimers (void)
 //-------------------------------------------------------------------------
 void MainLoop (void)
 {
-	call(CheckSpeedTimers);			// check to see if switch timers have expired and if so , handle them
-	byt_Tick++;
-	if (byt_Tick > 49)
-	{
-		byt_Tick = 0;
-	}
-	delay(1);					// wait 20msec
-	jump(MainLoop);				// restart the main Loop
+  call(CheckSpeedTimers);			// check to see if switch timers have expired and if so , handle them
+  byt_Tick++;
+  if (byt_Tick > 49)
+  {
+    byt_Tick = 0;
+  }
+  delay(1);					// wait 20msec
+  jump(MainLoop);				// restart the main Loop
 }
 
+void MCPInit (void)
+{
+  if (MCP.b_LOC)
+  {
+    MCP.leds0.led_LOC = on;
+  }
+  else 
+  {  
+    MCP.leds0.led_LOC = off;
+  }
+  
+  if (MCP.b_AP2)
+  {
+    MCP.leds0.led_AP2 = on;
+  }
+  else 
+  {  
+    MCP.leds0.led_AP2 = off;
+  }
+
+  if (MCP.b_APP)
+  {
+    MCP.leds0.led_APP = on;
+  }
+  else 
+  {  
+    MCP.leds0.led_APP = off;
+  }
+  
+  if (MCP.b_ALT)
+  {
+    MCP.leds0.led_ALT = on;
+  }
+  else 
+  {  
+    MCP.leds0.led_ALT = off;
+  }
+  
+  if (MCP.b_AP1)
+  {
+    MCP.leds1.led_AP1 = on;
+  }
+  else 
+  {  
+    MCP.leds1.led_AP1 = off;
+  }
+  
+  if (MCP.b_VS)
+  {
+    MCP.leds1.led_VS = on;
+  }
+  else 
+  {  
+    MCP.leds1.led_VS = off;
+  }
+  
+  if (MCP.b_HDG)
+  {
+    MCP.leds1.led_HDG = on;
+  }
+  else 
+  {  
+    MCP.leds1.led_HDG = off;
+  }
+  
+  if (MCP.b_LNAV)
+  {
+    MCP.leds1.led_LNAV = on;
+  }
+  else 
+  {  
+    MCP.leds1.led_LNAV = off;
+  }
+  
+  if (MCP.b_VNAV)
+  {
+    MCP.leds2.led_VNAV = on;
+  }
+  else 
+  {  
+    MCP.leds2.led_VNAV = off;
+  }
+
+  if (MCP.b_AP3)
+  {
+    MCP.leds2.led_AP3 = on;
+  }
+  else 
+  {  
+    MCP.leds2.led_AP3 = off;
+  }
+  
+  if (MCP.b_FLCH)
+  {
+    MCP.leds2.led_FLCH = on;
+  }
+  else 
+  {  
+    MCP.leds2.led_FLCH = off;
+  }
+
+  if (MCP.b_SPD)
+  {
+    MCP.leds2.led_SPD = on;
+  }
+  else 
+  {  
+    MCP.leds2.led_SPD = off;
+  }
+
+  if (MCP.b_THR)
+  {
+    MCP.leds3.led_THR = on;
+  }
+  else 
+  {  
+    MCP.leds3.led_THR = off;
+  }
+
+}
 
 :INIT
 {
@@ -214,6 +334,8 @@ void MainLoop (void)
 	MCP.Rotary2.R5Type = TYPE2;
 	CP_EFIS_Output.Rotary.R0Type = TYPE2;
 	CP_EFIS_Output.Rotary.R1Type = TYPE2;
+	
+	
 	MCP.leds0 = off;
 	MCP.leds1 = off;
 	MCP.leds2 = off;
