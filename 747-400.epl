@@ -14,7 +14,7 @@ definemodule(7,FASTSCAN,0,4)
 definemodule(7,OUTPUT,0,4)
 definemodule(0,OUTPUT,0,5)
 
-#include "MCPDevice.hpl"	// the "" says to look in the current directory
+#include "747-400Devices.hpl"	// the "" says to look in the current directory
 #include "VDXCodes.inc" 
 
 //==================================================================
@@ -208,14 +208,17 @@ void MainLoop (void)
 
 :INIT
 {
-	MCP_Output.Rotary1.R2Type = TYPE2;
-	MCP_Output.Rotary1.R3Type = TYPE2;
-	MCP_Output.Rotary2.R4Type = TYPE2;
-	MCP_Output.Rotary2.R5Type = TYPE2;
+	MCP.Rotary1.R2Type = TYPE2;
+	MCP.Rotary1.R3Type = TYPE2;
+	MCP.Rotary2.R4Type = TYPE2;
+	MCP.Rotary2.R5Type = TYPE2;
 	CP_EFIS_Output.Rotary.R0Type = TYPE2;
 	CP_EFIS_Output.Rotary.R1Type = TYPE2;
-	MCP_Output.leds0 = 0;
-	MCP_Output.leds1 = 0;
+	MCP.leds0 = off;
+	MCP.leds1 = off;
+	MCP.leds2 = off;
+	MCP.leds3 = off;
+	MCP.leds1.led_LNAV = on;
 
 	jump(MainLoop);				// once finished, jump to the main timing loop
 

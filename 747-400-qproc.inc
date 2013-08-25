@@ -9,7 +9,7 @@
 // Called by:	defineqproc(142,AP1Off) 
 //====================================================================
 void AP1Off(void){
-	MCP_Output.leds1.led_AP1 = off;
+	MCP.leds1.led_AP1 = off;
 }
 
 //====================================================================
@@ -18,7 +18,7 @@ void AP1Off(void){
 // Called by:	defineqproc(143,AP1On) 
 //====================================================================
 :AP1On{
-	MCP_Output.leds1.led_AP1 = on;
+	MCP.leds1.led_AP1 = on;
 }
 
 //====================================================================
@@ -27,7 +27,7 @@ void AP1Off(void){
 // Called by:	defineqproc(144,AP2Off) 
 //====================================================================
 :AP2Off {
-	MCP_Output.leds1.led_AP2 = off;
+	MCP.leds0.led_AP2 = off;
 }
 
 
@@ -37,7 +37,7 @@ void AP1Off(void){
 // Called by:	defineqproc(145,AP2On) 
 //====================================================================
 :AP2On{
-	MCP_Output.leds1.led_AP2 = on;
+	MCP.leds0.led_AP2 = on;
 }
 
 //====================================================================
@@ -46,7 +46,7 @@ void AP1Off(void){
 // Called by:	defineqproc(50,VSOff) 
 //====================================================================
 :VSOff {
-	MCP_Output.leds0.led_VS = off;
+	MCP.leds1.led_VS = off;
 }
 
 //====================================================================
@@ -55,7 +55,7 @@ void AP1Off(void){
 // Called by:	defineqproc(51,VSOn) 
 //====================================================================
 :VSOn{
-	MCP_Output.leds0.led_VS = on;
+	MCP.leds1.led_VS = on;
 }
 
 //====================================================================
@@ -64,7 +64,7 @@ void AP1Off(void){
 // Called by:	defineqproc(20,ALTOff) 
 //====================================================================
 :ALTOff {
-	MCP_Output.leds0.led_ALT = off;
+	MCP.leds0.led_ALT = off;
 }
 
 //====================================================================
@@ -73,7 +73,7 @@ void AP1Off(void){
 // Called by:	defineqproc(21,ALTOn) 
 //====================================================================
 :ALTOn{
-	MCP_Output.leds0.led_ALT = on;
+	MCP.leds0.led_ALT = on;
 }
 
 //====================================================================
@@ -84,7 +84,7 @@ void AP1Off(void){
 // Called by:	defineqproc(40,APPOff) 
 //====================================================================
 :APPOff {
-	MCP_Output.leds1.led_APPR = off;
+	MCP.leds0.led_APPR = off;
 }
 
 //====================================================================
@@ -94,7 +94,7 @@ void AP1Off(void){
 //====================================================================
 
 :APPOn{
-	MCP_Output.leds1.led_APPR = on;
+	MCP.leds0.led_APPR = on;
 }
 
 //====================================================================
@@ -103,7 +103,7 @@ void AP1Off(void){
 // Called by:	defineqproc(128,LOCOff) 
 //====================================================================
 :LOCOff {
-	MCP_Output.leds1.led_LOC = off;
+	MCP.leds0.led_LOC = off;
 }
 
 //====================================================================
@@ -112,7 +112,7 @@ void AP1Off(void){
 // Called by:	defineqproc(129,LOCOn) 
 //====================================================================
 :LOCOn{
-	MCP_Output.leds1.led_LOC = on;
+	MCP.leds0.led_LOC = on;
 }
 
 //====================================================================
@@ -121,7 +121,7 @@ void AP1Off(void){
 // Called by:	defineqproc(132,LNAVOff) 
 //====================================================================
 :LNAVOff {
-	MCP_Output.leds0.led_LNAV = off;
+	MCP.leds1.led_LNAV = off;
 }
 
 //====================================================================
@@ -130,7 +130,7 @@ void AP1Off(void){
 // Called by:	defineqproc(133,LNAVOn) 
 //====================================================================
 :LNAVOn{
-	MCP_Output.leds0.led_LNAV = on;
+	MCP.leds1.led_LNAV = on;
 }
 
 //====================================================================
@@ -139,7 +139,7 @@ void AP1Off(void){
 // Called by:	defineqproc(22,HDGOff) 
 //====================================================================
 :HDGOff{
-	MCP_Output.leds0.led_HDG = off;
+	MCP.leds1.led_HDG = off;
 }
 
 //====================================================================
@@ -148,7 +148,7 @@ void AP1Off(void){
 // Called by:	defineqproc(23,HDGOn) 
 //====================================================================
 :HDGOn{
-	MCP_Output.leds0.led_HDG = on;
+	MCP.leds1.led_HDG = on;
 }
 
 //====================================================================
@@ -157,7 +157,7 @@ void AP1Off(void){
 // Called by:	defineqproc(136,FLCHOff) 
 //====================================================================
 :FLCHOff {
-	MCP_Output.leds0.led_FLCH = off;
+	MCP.leds2.led_FLCH = off;
 }
 
 //====================================================================
@@ -166,7 +166,7 @@ void AP1Off(void){
 // Called by:	defineqproc(137,FLCHOn) 
 //====================================================================
 :FLCHOn{
-	MCP_Output.leds0.led_FLCH = on;
+	MCP.leds2.led_FLCH = on;
 }
 
 //====================================================================
@@ -175,7 +175,7 @@ void AP1Off(void){
 // Called by:	defineqproc(46,SPDOff) 
 //====================================================================
 :SPDOff {
-	MCP_Output.leds0.led_SPD = off;
+	MCP.leds2.led_SPD = off;
 }
 
 //====================================================================
@@ -184,7 +184,7 @@ void AP1Off(void){
 // Called by:	defineqproc(47,SPDOn) 
 //====================================================================
 :SPDOn{
-	MCP_Output.leds0.led_SPD = on;
+	MCP.leds2.led_SPD = on;
 }
 
 //====================================================================
@@ -193,7 +193,7 @@ void AP1Off(void){
 // Called by:	defineqproc(138,THROff) 
 //====================================================================
 :THROff {
-	MCP_Output.leds0.led_THR = off;
+	MCP.leds3.led_THR = off;
 }
 
 //====================================================================
@@ -202,7 +202,7 @@ void AP1Off(void){
 // Called by:	defineqproc(139,THROn) 
 //====================================================================
 :THROn{
-	MCP_Output.leds0.led_THR = on;
+	MCP.leds3.led_THR = on;
 }
 
 //====================================================================
@@ -247,7 +247,7 @@ void AP1Off(void){
 // Called by:	defineqproc(146,AP3Off) 
 //====================================================================
 :AP3Off{
-	MCP_Output.leds1.led_AP3 = off;
+	MCP.leds2.led_AP3 = off;
 }
 
 //====================================================================
@@ -256,7 +256,7 @@ void AP1Off(void){
 // Called by:	defineqproc(147,AP3On) 
 //====================================================================
 :AP3On{
-	MCP_Output.leds1.led_AP3 = on;
+	MCP.leds2.led_AP3 = on;
 }
 
 //====================================================================
@@ -265,7 +265,7 @@ void AP1Off(void){
 // Called by:	defineqproc(134,VNAVOff) 
 //====================================================================
 :VNAVOff {
-	MCP_Output.leds0.led_VNAV = off;
+	MCP.leds2.led_VNAV = off;
 }
 
 //====================================================================
@@ -274,7 +274,7 @@ void AP1Off(void){
 // Called by:	defineqproc(135,VNAVOn) 
 //====================================================================
 :VNAVOn{
-	MCP_Output.leds0.led_VNAV = on;
+	MCP.leds2.led_VNAV = on;
 }
 
 //====================================================================

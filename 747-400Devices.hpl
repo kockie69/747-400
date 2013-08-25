@@ -154,8 +154,45 @@ device(MCP)
 	// Rotary Module 7, Scan Row 5
 	button(1,2,r_cnt_ALT);		// Altitude setting count
 	button(1,3,r_dir_ALT);		// Altitude setting direction
+
+	output(Rotary1,7,0)
+	{
+		R2Type = 0b00110000;
+		R3Type = 0b11000000;
+	};
 	
+
+	output(Rotary2,7,1)
+	{
+		R4Type = 0b00000011;
+		R5Type = 0b00001100;
+	};
 	
+	output(leds0,0,0)
+	{
+		led_LOC = 0x01;
+		led_AP2 = 0x02;
+		led_APPR = 0x04;
+		led_ALT = 0x10;
+	};
+	output(leds1,0,1)
+	{
+		led_AP1 = 0x01;
+		led_VS = 0x04;
+		led_HDG = 0x10;
+		led_LNAV = 0x40;
+	};
+	output(leds2,0,2)
+	{
+		led_VNAV = 0x01;
+		led_AP3 = 0x04;
+		led_FLCH = 0x10;
+		led_SPD = 0x40;
+	};
+	output(leds3,0,3)
+		{
+		led_THR = 0x01;
+	};
 };
 //=========================================================
 // End of Device MCP
@@ -234,49 +271,6 @@ device(EDSP)
 //=========================================================
 // End of Device EDSP
 //=========================================================
-
-device(MCP_Output)
-{
-	output(Rotary1,7,0)
-	{
-		R2Type = 0b00110000;
-		R3Type = 0b11000000;
-	};
-	
-
-	output(Rotary2,7,1)
-	{
-		R4Type = 0b00000011;
-		R5Type = 0b00001100;
-	};
-	
-	output(leds0,0,0)
-	{
-		led_LOC = 0x01;
-		led_AP2 = 0x02;
-		led_APPR = 0x04;
-		led_ALT = 0x10;
-	};
-	output(leds1,0,1)
-	{
-		led_AP1 = 0x01;
-		led_VS = 0x04;
-		led_HDG = 0x10;
-		led_LNAV = 0x40;
-	};
-	output(leds2,0,2)
-	{
-		led_VNAV = 0x01;
-		led_AP3 = 0x04;
-		led_FLCH = 0x10;
-		led_SPD = 0x40;
-	};
-	output(leds3,0,3)
-		{
-		led_THR = 0x01;
-	};
-
-};
 
 device (CP_EFIS_Output)
 {
