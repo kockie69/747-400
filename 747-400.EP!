@@ -424,8 +424,8 @@
  definemodule ( 0 , 1 , 0 , 16 ) 
  definemodule ( 1 , 1 , 0 , 8 ) 
  definemodule ( 7 , 0 , 0 , 4 ) 
- definemodule ( 7 , 2 , 0 , 4 ) 
- definemodule ( 0 , 2 , 0 , 5 ) 
+ definemodule ( 0 , 2 , 0 , 4 ) 
+ 
  
  
  
@@ -488,10 +488,11 @@
  { 
  modrow ( 7 , 0 ) ; 
  modrow ( 7 , 1 ) ; 
- modrow ( 1 , 4 ) ; 
+ 
  modrow ( 1 , 0 ) ; 
  modrow ( 1 , 1 ) ; 
- modrow ( 1 , 2 ) ; 
+ modrow ( 1 , 4 ) ; 
+ modrow ( 1 , 5 ) ; 
  
  } ; 
  
@@ -544,28 +545,28 @@
  
  connector ( MCPconn ) ; 
  
- button ( 2 , 0 , b_LNAV ) ; 
- button ( 2 , 1 , b_VNAV ) ; 
- button ( 2 , 2 , b_FLCH ) ; 
- button ( 2 , 3 , b_SPD_MACH ) ; 
- button ( 2 , 4 , b_ATHR ) ; 
- button ( 2 , 5 , b_THR ) ; 
- button ( 2 , 6 , b_SPD ) ; 
- button ( 2 , 7 , b_FO_FD ) ; 
- button ( 3 , 0 , b_HDG ) ; 
- button ( 3 , 1 , b_VS ) ; 
+ button ( 2 , 0 , b_FO_FD ) ; 
+ button ( 2 , 2 , b_AP_Dis_rgt ) ; 
+ button ( 2 , 3 , b_AP2 ) ; 
+ button ( 2 , 5 , b_AP1 ) ; 
+ button ( 2 , 6 , b_LOC ) ; 
+ button ( 3 , 0 , b_APP ) ; 
  button ( 3 , 2 , b_ALT ) ; 
- button ( 3 , 3 , b_APP ) ; 
- button ( 3 , 4 , b_LOC ) ; 
- button ( 3 , 5 , b_AP1 ) ; 
- button ( 3 , 6 , b_AP2 ) ; 
- button ( 3 , 7 , b_AP_Dis_lft ) ; 
- button ( 4 , 0 , b_AP3 ) ; 
- button ( 4 , 1 , b_AP_Dis_rgt ) ; 
- button ( 4 , 2 , b_CP_FD ) ; 
- button ( 5 , 5 , b_SPD_ROT ) ; 
- button ( 5 , 6 , b_ALT_ROT ) ; 
- button ( 5 , 7 , b_HDG_ROT ) ; 
+ button ( 3 , 3 , b_AP_Dis_lft ) ; 
+ button ( 3 , 5 , b_ALT_ROT ) ; 
+ button ( 3 , 6 , b_AP3 ) ; 
+ button ( 3 , 7 , b_VS ) ; 
+ button ( 4 , 0 , b_LNAV ) ; 
+ button ( 4 , 2 , b_SPD_MACH ) ; 
+ button ( 4 , 3 , b_HDG_ROT ) ; 
+ button ( 4 , 6 , b_CP_FD ) ; 
+ button ( 4 , 7 , b_VNAV ) ; 
+ button ( 5 , 0 , b_ATHR ) ; 
+ button ( 5 , 2 , b_SPD_ROT ) ; 
+ button ( 5 , 3 , b_HDG ) ; 
+ button ( 5 , 5 , b_SPD ) ; 
+ button ( 5 , 6 , b_THR ) ; 
+ button ( 5 , 7 , b_FLCH ) ; 
  
  
  button ( 0 , 4 , r_cnt_SPD ) ; 
@@ -599,28 +600,22 @@
  
  output ( leds0 , 0 , 0 ) 
  { 
- led_LOC = 0x01 ; 
- led_AP2 = 0x02 ; 
- led_APP = 0x04 ; 
- led_ALT = 0x10 ; 
+ led_FLCH = 0x01 ; 
+ led_THR = 0x02 ; 
+ led_HDG = 0x04 ; 
+ led_SPD = 0x08 ; 
+ led_LNAV = 0x10 ; 
+ led_VNAV = 0x20 ; 
+ led_ALT = 0x40 ; 
+ led_APP = 0x80 ; 
  } ; 
  output ( leds1 , 0 , 1 ) 
  { 
- led_AP1 = 0x01 ; 
- led_VS = 0x04 ; 
- led_HDG = 0x10 ; 
- led_LNAV = 0x40 ; 
- } ; 
- output ( leds2 , 0 , 2 ) 
- { 
- led_VNAV = 0x01 ; 
- led_AP3 = 0x04 ; 
- led_FLCH = 0x10 ; 
- led_SPD = 0x40 ; 
- } ; 
- output ( leds3 , 0 , 3 ) 
- { 
- led_THR = 0x01 ; 
+ led_VS = 0x01 ; 
+ led_AP1 = 0x02 ; 
+ led_LOC = 0x04 ; 
+ led_AP3 = 0x08 ; 
+ led_AP2 = 0x10 ; 
  } ; 
  } ; 
  
@@ -710,78 +705,11 @@
  } ; 
  } ; 
  
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+ device ( Display ) 
+ { 
+ 
+ display ( AP_VS_VALUES , 2 , 0 , "00000" , true ) ; 
+ } ; 
  
  
  
@@ -909,7 +837,7 @@
  
  
  : AP2Off { 
- MCP.leds0.led_AP2 = off ; 
+ MCP.leds1.led_AP2 = off ; 
  } 
  
  
@@ -919,7 +847,7 @@
  
  
  : AP2On { 
- MCP.leds0.led_AP2 = on ; 
+ MCP.leds1.led_AP2 = on ; 
  } 
  
  
@@ -985,7 +913,7 @@
  
  
  : LOCOff { 
- MCP.leds0.led_LOC = off ; 
+ MCP.leds1.led_LOC = off ; 
  } 
  
  
@@ -994,7 +922,7 @@
  
  
  : LOCOn { 
- MCP.leds0.led_LOC = on ; 
+ MCP.leds1.led_LOC = on ; 
  } 
  
  
@@ -1003,7 +931,7 @@
  
  
  : LNAVOff { 
- MCP.leds1.led_LNAV = off ; 
+ MCP.leds0.led_LNAV = off ; 
  } 
  
  
@@ -1012,7 +940,7 @@
  
  
  : LNAVOn { 
- MCP.leds1.led_LNAV = on ; 
+ MCP.leds0.led_LNAV = on ; 
  } 
  
  
@@ -1021,7 +949,7 @@
  
  
  : HDGOff { 
- MCP.leds1.led_HDG = off ; 
+ MCP.leds0.led_HDG = off ; 
  } 
  
  
@@ -1030,7 +958,7 @@
  
  
  : HDGOn { 
- MCP.leds1.led_HDG = on ; 
+ MCP.leds0.led_HDG = on ; 
  } 
  
  
@@ -1039,7 +967,7 @@
  
  
  : FLCHOff { 
- MCP.leds2.led_FLCH = off ; 
+ MCP.leds0.led_FLCH = off ; 
  } 
  
  
@@ -1048,7 +976,7 @@
  
  
  : FLCHOn { 
- MCP.leds2.led_FLCH = on ; 
+ MCP.leds0.led_FLCH = on ; 
  } 
  
  
@@ -1057,7 +985,7 @@
  
  
  : SPDOff { 
- MCP.leds2.led_SPD = off ; 
+ MCP.leds0.led_SPD = off ; 
  } 
  
  
@@ -1066,7 +994,7 @@
  
  
  : SPDOn { 
- MCP.leds2.led_SPD = on ; 
+ MCP.leds0.led_SPD = on ; 
  } 
  
  
@@ -1075,7 +1003,7 @@
  
  
  : THROff { 
- MCP.leds3.led_THR = off ; 
+ MCP.leds0.led_THR = off ; 
  } 
  
  
@@ -1084,7 +1012,7 @@
  
  
  : THROn { 
- MCP.leds3.led_THR = on ; 
+ MCP.leds0.led_THR = on ; 
  } 
  
  
@@ -1129,7 +1057,7 @@
  
  
  : AP3Off { 
- MCP.leds2.led_AP3 = off ; 
+ MCP.leds1.led_AP3 = off ; 
  } 
  
  
@@ -1138,7 +1066,7 @@
  
  
  : AP3On { 
- MCP.leds2.led_AP3 = on ; 
+ MCP.leds1.led_AP3 = on ; 
  } 
  
  
@@ -1147,7 +1075,7 @@
  
  
  : VNAVOff { 
- MCP.leds2.led_VNAV = off ; 
+ MCP.leds0.led_VNAV = off ; 
  } 
  
  
@@ -1156,7 +1084,7 @@
  
  
  : VNAVOn { 
- MCP.leds2.led_VNAV = on ; 
+ MCP.leds0.led_VNAV = on ; 
  } 
  
  
@@ -1307,129 +1235,40 @@
  jump ( MainLoop ) ; 
  } 
  
- void MCPInit ( void ) 
- { 
- if ( MCP.b_LOC ) 
- { 
- MCP.leds0.led_LOC = on ; 
- } 
- else 
- { 
- MCP.leds0.led_LOC = off ; 
- } 
- 
- if ( MCP.b_AP2 ) 
- { 
- MCP.leds0.led_AP2 = on ; 
- } 
- else 
- { 
- MCP.leds0.led_AP2 = off ; 
- } 
- 
- if ( MCP.b_APP ) 
- { 
- MCP.leds0.led_APP = on ; 
- } 
- else 
- { 
- MCP.leds0.led_APP = off ; 
- } 
- 
- if ( MCP.b_ALT ) 
- { 
- MCP.leds0.led_ALT = on ; 
- } 
- else 
- { 
- MCP.leds0.led_ALT = off ; 
- } 
- 
- if ( MCP.b_AP1 ) 
- { 
- MCP.leds1.led_AP1 = on ; 
- } 
- else 
- { 
- MCP.leds1.led_AP1 = off ; 
- } 
- 
- if ( MCP.b_VS ) 
- { 
- MCP.leds1.led_VS = on ; 
- } 
- else 
- { 
- MCP.leds1.led_VS = off ; 
- } 
- 
- if ( MCP.b_HDG ) 
- { 
- MCP.leds1.led_HDG = on ; 
- } 
- else 
- { 
- MCP.leds1.led_HDG = off ; 
- } 
- 
- if ( MCP.b_LNAV ) 
- { 
- MCP.leds1.led_LNAV = on ; 
- } 
- else 
- { 
- MCP.leds1.led_LNAV = off ; 
- } 
- 
- if ( MCP.b_VNAV ) 
- { 
- MCP.leds2.led_VNAV = on ; 
- } 
- else 
- { 
- MCP.leds2.led_VNAV = off ; 
- } 
- 
- if ( MCP.b_AP3 ) 
- { 
- MCP.leds2.led_AP3 = on ; 
- } 
- else 
- { 
- MCP.leds2.led_AP3 = off ; 
- } 
- 
- if ( MCP.b_FLCH ) 
- { 
- MCP.leds2.led_FLCH = on ; 
- } 
- else 
- { 
- MCP.leds2.led_FLCH = off ; 
- } 
- 
- if ( MCP.b_SPD ) 
- { 
- MCP.leds2.led_SPD = on ; 
- } 
- else 
- { 
- MCP.leds2.led_SPD = off ; 
- } 
- 
- if ( MCP.b_THR ) 
- { 
- MCP.leds3.led_THR = on ; 
- } 
- else 
- { 
- MCP.leds3.led_THR = off ; 
- } 
- 
- } 
  
  : INIT 
  { 
+ 
+ 
+ clrp ( 0 , 0 , 0b11111111 ) ; 
+ clrp ( 0 , 1 , 0b11111111 ) ; 
+ clrp ( 0 , 2 , 0b11111111 ) ; 
+ clrp ( 0 , 3 , 0b11111111 ) ; 
+ clrp ( 0 , 4 , 0b11111111 ) ; 
+ clrp ( 0 , 5 , 0b11111111 ) ; 
+ clrp ( 0 , 6 , 0b11111111 ) ; 
+ clrp ( 0 , 7 , 0b11111111 ) ; 
+ 
+ setp ( 0 , 0 , 0b11111111 ) ; 
+ setp ( 0 , 1 , 0b11111111 ) ; 
+ setp ( 0 , 2 , 0b11111111 ) ; 
+ setp ( 0 , 3 , 0b11111111 ) ; 
+ setp ( 0 , 4 , 0b10111111 ) ; 
+ setp ( 0 , 5 , 0b11111111 ) ; 
+ setp ( 0 , 6 , 0b11111111 ) ; 
+ setp ( 0 , 7 , 0b11111111 ) ; 
+ 
+ delay ( 100 ) ; 
+ 
+ clrp ( 0 , 0 , 0b11111111 ) ; 
+ clrp ( 0 , 1 , 0b11111111 ) ; 
+ clrp ( 0 , 2 , 0b11111111 ) ; 
+ clrp ( 0 , 3 , 0b11111111 ) ; 
+ clrp ( 0 , 4 , 0b11111111 ) ; 
+ clrp ( 0 , 5 , 0b11111111 ) ; 
+ clrp ( 0 , 6 , 0b11111111 ) ; 
+ clrp ( 0 , 7 , 0b11111111 ) ; 
+ 
  MCP.Rotary1.R2Type = 0b10101010 ; 
  MCP.Rotary1.R3Type = 0b10101010 ; 
  MCP.Rotary2.R4Type = 0b10101010 ; 
@@ -1438,386 +1277,178 @@
  CP_EFIS_Output.Rotary.R1Type = 0b10101010 ; 
  
  
- MCP.leds0 = off ; 
- MCP.leds1 = off ; 
- MCP.leds2 = off ; 
- MCP.leds3 = off ; 
- MCP.leds1.led_LNAV = on ; 
  
  jump ( MainLoop ) ; 
  
+ 
+ } 
+ void MCP.b_CP_FD.On ( void ) { 
+ MCP.b_CP_FD = 0x002 ; 
  } 
  
  void MCP.b_CP_FD.Off ( void ) { 
- if ( x5412 & 0b00000010 ) 
- { 
- x5412 &= 0b11111101 ; 
+ MCP.b_CP_FD = 0x001 ; 
  } 
- else 
- { 
- x5412 |= 0b00000010 ; 
- } 
- nqw ( 0x101 , x5412 ) ; 
- } 
- 
- void MCP.b_CP_FD.On ( void ) { 
- if ( x5412 & 0b00000100 ) 
- { 
- x5412 &= 0b11111011 ; 
- } 
- else 
- { 
- x5412 |= 0b00000100 ; 
- } 
- nqw ( 0x101 , x5412 ) ; 
- } 
- 
  
  void MCP.b_ATHR.Off ( void ) { 
- if ( x5412 & 0b00001000 ) 
- { 
- x5412 &= 0b11110111 ; 
- } 
- else 
- { 
- x5412 |= 0b00001000 ; 
- } 
- nqw ( 0x101 , x5412 ) ; 
+ MCP.b_ATHR = 0x001 ; 
  } 
  
  void MCP.b_ATHR.On ( void ) { 
- if ( x5412 & 0b00010000 ) 
- { 
- x5412 &= 0b11101111 ; 
- } 
- else 
- { 
- x5412 |= 0b00010000 ; 
- } 
- nqw ( 0x101 , x5412 ) ; 
- } 
- 
- void l_handle_b_THR ( void ) { 
- if ( x5412 & 0b00100000 ) 
- { 
- x5412 &= 0b11011111 ; 
- } 
- else 
- { 
- x5412 |= 0b00100000 ; 
- } 
- nqw ( 0x101 , x5412 ) ; 
+ MCP.b_ATHR = 0x002 ; 
  } 
  
  void MCP.b_THR.Off ( void ) { 
- jump ( l_handle_b_THR ) ; 
+ MCP.b_THR = 0x002 ; 
  } 
  
  void MCP.b_THR.On ( void ) { 
- jump ( l_handle_b_THR ) ; 
- } 
- 
- void l_handle_b_SPD ( void ) { 
- if ( x5411 & 0b00000100 ) 
- { 
- x5411 &= 0b11111011 ; 
- } 
- else 
- { 
- x5411 |= 0b00000100 ; 
- } 
- nqw ( 0x100 , x5411 ) ; 
+ MCP.b_THR = 0x001 ; 
  } 
  
  void MCP.b_SPD.On ( void ) { 
- jump ( l_handle_b_SPD ) ; 
+ MCP.b_SPD = 0x001 ; 
  } 
  
  void MCP.b_SPD.Off ( void ) { 
- jump ( l_handle_b_SPD ) ; 
+ MCP.b_SPD = 0x002 ; 
  } 
  
- void MCP.b_SPD_MACH.On ( void ) 
- { 
- if ( x5412 & 0b10000000 ) 
- { 
- 
- x5412 &= 0b01111111 ; 
- 
+ void MCP.b_SPD_MACH.On ( void ) { 
+ MCP.b_SPD_MACH = 0x001 ; 
  } 
- else 
- { 
- x5412 |= 0b10000000 ; 
  
- } 
- nqw ( 0x101 , x5412 ) ; 
+ void MCP.b_SPD_MACH.Off ( void ) { 
+ MCP.b_SPD_MACH = 0x002 ; 
  } 
  
  void MCP.b_SPD_ROT.On ( void ) { 
- 
- 
+ MCP.b_SPD_ROT = 0x001 ; 
  } 
  
- void l_handle_b_LNAV ( void ) { 
- if ( x5413 & 0b00001000 ) 
- { 
- x5413 &= 0b11110111 ; 
+ void MCP.b_SPD_ROT.Off ( void ) { 
+ MCP.b_SPD_ROT = 0x002 ; 
  } 
- else 
- { 
- x5413 |= 0b00001000 ; 
- } 
- nqw ( 0x10a , x5413 ) ; 
- } 
- 
  
  void MCP.b_LNAV.On ( void ) { 
- jump ( l_handle_b_LNAV ) ; 
+ MCP.b_LNAV = 0x001 ; 
  } 
  
  void MCP.b_LNAV.Off ( void ) { 
- jump ( l_handle_b_LNAV ) ; 
- } 
- 
- void l_handle_b_VNAV ( void ) { 
- if ( x5413 & 0b00000100 ) 
- { 
- x5413 &= 0b11111011 ; 
- } 
- else 
- { 
- x5413 |= 0b00000100 ; 
- } 
- nqw ( 0x10a , x5413 ) ; 
+ MCP.b_LNAV = 0x002 ; 
  } 
  
  void MCP.b_VNAV.On ( void ) { 
- jump ( l_handle_b_VNAV ) ; 
+ MCP.b_VNAV = 0x001 ; 
  } 
  
  void MCP.b_VNAV.Off ( void ) { 
- jump ( l_handle_b_VNAV ) ; 
- } 
- 
- void l_handle_b_FLCH ( void ) { 
- if ( x5413 & 0b00000001 ) 
- { 
- x5413 &= 0b11111110 ; 
- } 
- else 
- { 
- x5413 |= 0b00000001 ; 
- } 
- nqw ( 0x10a , x5413 ) ; 
+ MCP.b_VNAV = 0x002 ; 
  } 
  
  void MCP.b_FLCH.On ( void ) { 
- jump ( l_handle_b_FLCH ) ; 
+ MCP.b_FLCH = 0x001 ; 
  } 
  
  void MCP.b_FLCH.Off ( void ) { 
- jump ( l_handle_b_FLCH ) ; 
+ MCP.b_FLCH = 0x002 ; 
  } 
  
  void MCP.b_HDG_ROT.On ( void ) { 
- 
+ MCP.b_HDG_ROT = 0x001 ; 
  } 
  
- void l_handle_b_HDG ( void ) { 
- if ( x5413 & 0b00000010 ) 
- { 
- x5413 &= 0b11111101 ; 
- } 
- else 
- { 
- x5413 |= 0b00000010 ; 
- } 
- nqw ( 0x10a , x5413 ) ; 
+ void MCP.b_HDG_ROT.Off ( void ) { 
+ MCP.b_HDG_ROT = 0x002 ; 
  } 
  
  void MCP.b_HDG.On ( void ) { 
- jump ( l_handle_b_HDG ) ; 
+ MCP.b_HDG = 0x001 ; 
  } 
  
  void MCP.b_HDG.Off ( void ) { 
- jump ( l_handle_b_HDG ) ; 
- } 
- 
- void l_handle_b_VS ( void ) { 
- if ( x5413 & 0b10000000 ) 
- { 
- x5413 &= 0b01111111 ; 
- } 
- else 
- { 
- x5413 |= 0b10000000 ; 
- } 
- nqw ( 0x10a , x5413 ) ; 
+ MCP.b_HDG = 0x002 ; 
  } 
  
  void MCP.b_VS.On ( void ) { 
- jump ( l_handle_b_VS ) ; 
+ MCP.b_VS = 0x001 ; 
  } 
  
  void MCP.b_VS.Off ( void ) { 
- jump ( l_handle_b_VS ) ; 
- } 
- 
- void l_handle_b_ALT ( void ) { 
- if ( x5413 & 0b01000000 ) 
- { 
- x5413 &= 0b10111111 ; 
- } 
- else 
- { 
- x5413 |= 0b01000000 ; 
- } 
- nqw ( 0x10a , x5413 ) ; 
+ MCP.b_VS = 0x002 ; 
  } 
  
  void MCP.b_ALT.On ( void ) { 
- jump ( l_handle_b_ALT ) ; 
+ MCP.b_ALT = 0x001 ; 
  } 
  
  void MCP.b_ALT.Off ( void ) { 
- jump ( l_handle_b_ALT ) ; 
+ MCP.b_ALT = 0x002 ; 
  } 
  
  void MCP.b_ALT_ROT.On ( void ) { 
- 
+ MCP.b_ALT_ROT = 0x001 ; 
  } 
  
- void l_handle_b_LOC ( void ) { 
- if ( x5413 & 0b00010000 ) 
- { 
- x5413 &= 0b11101111 ; 
- } 
- else 
- { 
- x5413 |= 0b00010000 ; 
- } 
- nqw ( 0x10a , x5413 ) ; 
+ void MCP.b_ALT_ROT.Off ( void ) { 
+ MCP.b_ALT_ROT = 0x002 ; 
  } 
  
  void MCP.b_LOC.On ( void ) { 
- jump ( l_handle_b_LOC ) ; 
+ MCP.b_LOC = 0x001 ; 
  } 
  
  void MCP.b_LOC.Off ( void ) { 
- jump ( l_handle_b_LOC ) ; 
- } 
- 
- void l_handle_b_APP ( void ) { 
- if ( x5413 & 0b00100000 ) 
- { 
- x5413 &= 0b11011111 ; 
- } 
- else 
- { 
- x5413 |= 0b00100000 ; 
- } 
- nqw ( 0x10a , x5413 ) ; 
+ MCP.b_LOC = 0x002 ; 
  } 
  
  void MCP.b_APP.On ( void ) { 
- jump ( l_handle_b_APP ) ; 
+ MCP.b_APP = 0x001 ; 
  } 
  
  void MCP.b_APP.Off ( void ) { 
- jump ( l_handle_b_APP ) ; 
+ MCP.b_APP = 0x002 ; 
  } 
- 
- void l_handle_b_AP1 ( void ) { 
- if ( x5414 & 0b00000001 ) 
- { 
- x5414 &= 0b11111110 ; 
- } 
- else 
- { 
- x5414 |= 0b00000001 ; 
- } 
- nqw ( 0x103 , x5414 ) ; 
- } 
- 
  
  void MCP.b_AP1.On ( void ) { 
- jump ( l_handle_b_AP1 ) ; 
+ MCP.b_AP1 = 0x001 ; 
  } 
  
  void MCP.b_AP1.Off ( void ) { 
- jump ( l_handle_b_AP1 ) ; 
- } 
- 
- void l_handle_b_AP2 ( void ) { 
- if ( x5414 & 0b00000010 ) 
- { 
- x5414 &= 0b11111101 ; 
- } 
- else 
- { 
- x5414 |= 0b00000010 ; 
- } 
- nqw ( 0x103 , x5414 ) ; 
+ MCP.b_AP1 = 0x002 ; 
  } 
  
  void MCP.b_AP2.On ( void ) { 
- jump ( l_handle_b_AP2 ) ; 
+ MCP.b_AP2 = 0x001 ; 
  } 
  
  void MCP.b_AP2.Off ( void ) { 
- jump ( l_handle_b_AP2 ) ; 
- } 
- 
- void l_handle_b_AP3 ( void ) { 
- if ( x5414 & 0b00000100 ) 
- { 
- x5414 &= 0b11111011 ; 
- } 
- else 
- { 
- x5414 |= 0b00000100 ; 
- } 
- nqw ( 0x103 , x5414 ) ; 
+ MCP.b_AP2 = 0x002 ; 
  } 
  
  void MCP.b_AP3.On ( void ) { 
- jump ( l_handle_b_AP3 ) ; 
+ MCP.b_AP3 = 0x001 ; 
  } 
  
  void MCP.b_AP3.Off ( void ) { 
- jump ( l_handle_b_AP3 ) ; 
- } 
- 
- void MCP.b_FO_FD.On ( void ) { 
- if ( x5414 & 0b01000000 ) 
- { 
- x5414 &= 0b10111111 ; 
- } 
- else 
- { 
- x5414 |= 0b01000000 ; 
- } 
- nqw ( 0x103 , x5414 ) ; 
- } 
- 
- void MCP.b_FO_FD.Off ( void ) { 
- if ( x5414 & 0b00100000 ) 
- { 
- x5414 &= 0b11011111 ; 
- } 
- else 
- { 
- x5414 |= 0b00100000 ; 
- } 
- nqw ( 0x103 , x5414 ) ; 
+ MCP.b_AP3 = 0x002 ; 
  } 
  
  void MCP.b_AP_Dis_lft.On ( void ) { 
- 
+ MCP.b_AP_Dis_lft = 0x001 ; 
  } 
  
- void MCP.b_AP_Dis_rgt.On ( void ) { 
+ void MCP.b_AP_Dis_lft.Off ( void ) { 
+ MCP.b_AP_Dis_lft = 0x002 ; 
+ } 
  
+ 
+ void MCP.b_AP_Dis_rgt.On ( void ) { 
+ MCP.b_AP_Dis_rgt = 0x001 ; 
+ } 
+ 
+ void MCP.b_AP_Dis_rgt.Off ( void ) { 
+ MCP.b_AP_Dis_rgt = 0x002 ; 
  } 
  
  void l_handle_ALT_rot ( void ) 
@@ -2179,19 +1810,19 @@
  } 
  
  void CP_EFIS.b_ADF_2.On ( void ) { 
- enque16 ( 0x006 , 43 ) ; 
+ 
  } 
  
  void CP_EFIS.b_ADF_2.Off ( void ) { 
- enque16 ( 0x006 , 57 ) ; 
+ 
  } 
  
  void CP_EFIS.b_VOR_2.On ( void ) { 
- enque16 ( 0x006 , 44 ) ; 
+ 
  } 
  
  void CP_EFIS.b_VOR_2.Off ( void ) { 
- enque16 ( 0x006 , 57 ) ; 
+ 
  } 
  
  void l_handle_DHMDA_CP_rot ( void ) 
@@ -2291,6 +1922,7 @@
  void EDSP.b_RCL.On ( void ) { 
  nqw ( 0x139 , 311 ) ; 
  } 
+ 
  
  
  
