@@ -421,11 +421,13 @@
  
  
  
+ 
  definemodule ( 0 , 1 , 0 , 16 ) 
  definemodule ( 1 , 1 , 0 , 8 ) 
+ definemodule ( 1 , 1 , 8 , 8 ) 
  definemodule ( 7 , 0 , 0 , 4 ) 
  definemodule ( 0 , 2 , 0 , 4 ) 
- 
+ definemodule ( 7 , 2 , 0 , 4 ) 
  
  
  
@@ -487,7 +489,6 @@
  connector ( MCPconn ) 
  { 
  modrow ( 7 , 0 ) ; 
- modrow ( 7 , 1 ) ; 
  
  modrow ( 1 , 0 ) ; 
  modrow ( 1 , 1 ) ; 
@@ -508,10 +509,12 @@
  
  connector ( CP_EFISconn ) 
  { 
- modrow ( 7 , 0 ) ; 
- modrow ( 1 , 7 ) ; 
+ modrow ( 7 , 1 ) ; 
+ modrow ( 1 , 0 ) ; 
+ modrow ( 1 , 1 ) ; 
+ modrow ( 1 , 3 ) ; 
  modrow ( 1 , 6 ) ; 
- modrow ( 1 , 5 ) ; 
+ modrow ( 1 , 7 ) ; 
  } ; 
  
  
@@ -525,14 +528,17 @@
  
  connector ( EDSPconn ) 
  { 
- modrow ( 1 , 1 ) ; 
  modrow ( 1 , 2 ) ; 
- 
+ modrow ( 1 , 3 ) ; 
  } ; 
  
  
  
  
+ connector ( PEDESTALconn ) 
+ { 
+ analog ( 0 ) ; 
+ } ; 
  
  
  
@@ -545,58 +551,44 @@
  
  connector ( MCPconn ) ; 
  
- button ( 2 , 0 , b_FO_FD ) ; 
- button ( 2 , 2 , b_AP_Dis_rgt ) ; 
- button ( 2 , 3 , b_AP2 ) ; 
- button ( 2 , 5 , b_AP1 ) ; 
- button ( 2 , 6 , b_LOC ) ; 
- button ( 3 , 0 , b_APP ) ; 
- button ( 3 , 2 , b_ALT ) ; 
- button ( 3 , 3 , b_AP_Dis_lft ) ; 
- button ( 3 , 5 , b_ALT_ROT ) ; 
- button ( 3 , 6 , b_AP3 ) ; 
- button ( 3 , 7 , b_VS ) ; 
- button ( 4 , 0 , b_LNAV ) ; 
- button ( 4 , 2 , b_SPD_MACH ) ; 
- button ( 4 , 3 , b_HDG_ROT ) ; 
- button ( 4 , 6 , b_CP_FD ) ; 
- button ( 4 , 7 , b_VNAV ) ; 
- button ( 5 , 0 , b_ATHR ) ; 
- button ( 5 , 2 , b_SPD_ROT ) ; 
- button ( 5 , 3 , b_HDG ) ; 
- button ( 5 , 5 , b_SPD ) ; 
- button ( 5 , 6 , b_THR ) ; 
- button ( 5 , 7 , b_FLCH ) ; 
+ button ( 1 , 0 , b_FO_FD ) ; 
+ button ( 1 , 2 , b_AP_Dis_rgt ) ; 
+ button ( 1 , 3 , b_AP2 ) ; 
+ button ( 1 , 5 , b_AP1 ) ; 
+ button ( 1 , 6 , b_LOC ) ; 
+ button ( 2 , 0 , b_APP ) ; 
+ button ( 2 , 2 , b_ALT ) ; 
+ button ( 2 , 3 , b_AP_Dis_lft ) ; 
+ button ( 2 , 4 , b_ALT_ROT ) ; 
+ button ( 2 , 6 , b_AP3 ) ; 
+ button ( 2 , 7 , b_VS ) ; 
+ button ( 3 , 0 , b_LNAV ) ; 
+ button ( 3 , 2 , b_SPD_MACH ) ; 
+ button ( 3 , 3 , b_HDG_ROT ) ; 
+ button ( 3 , 6 , b_CP_FD ) ; 
+ button ( 3 , 7 , b_VNAV ) ; 
+ button ( 4 , 0 , b_ATHR ) ; 
+ button ( 4 , 2 , b_SPD_ROT ) ; 
+ button ( 4 , 3 , b_HDG ) ; 
+ button ( 4 , 5 , b_SPD ) ; 
+ button ( 4 , 6 , b_THR ) ; 
+ button ( 4 , 7 , b_FLCH ) ; 
  
  
- button ( 0 , 4 , r_cnt_SPD ) ; 
- button ( 0 , 5 , r_dir_SPD ) ; 
+ button ( 0 , 0 , r_cnt_ALT ) ; 
+ button ( 0 , 1 , r_dir_ALT ) ; 
  
  
- button ( 0 , 6 , r_cnt_HDG ) ; 
- button ( 0 , 7 , r_dir_HDG ) ; 
+ button ( 0 , 2 , r_cnt_VS ) ; 
+ button ( 0 , 3 , r_dir_VS ) ; 
  
  
- 
- button ( 1 , 0 , r_cnt_VS ) ; 
- button ( 1 , 1 , r_dir_VS ) ; 
- 
- 
- button ( 1 , 2 , r_cnt_ALT ) ; 
- button ( 1 , 3 , r_dir_ALT ) ; 
- 
- output ( Rotary1 , 7 , 0 ) 
- { 
- R2Type = 0b00110000 ; 
- R3Type = 0b11000000 ; 
- } ; 
+ button ( 0 , 4 , r_cnt_HDG ) ; 
+ button ( 0 , 5 , r_dir_HDG ) ; 
  
  
- output ( Rotary2 , 7 , 1 ) 
- { 
- R4Type = 0b00000011 ; 
- R5Type = 0b00001100 ; 
- } ; 
+ button ( 0 , 6 , r_cnt_SPD ) ; 
+ button ( 0 , 7 , r_dir_SPD ) ; 
  
  output ( leds0 , 0 , 0 ) 
  { 
@@ -631,40 +623,42 @@
  
  device ( CP_EFIS ) 
  { 
- 
  connector ( CP_EFISconn ) ; 
  
- button ( 1 , 0 , b_POS ) ; 
- button ( 1 , 1 , b_DATA ) ; 
- button ( 1 , 2 , b_ARPT ) ; 
- button ( 1 , 3 , b_WPT ) ; 
- button ( 1 , 4 , b_STA ) ; 
- button ( 1 , 5 , b_WXR ) ; 
- button ( 1 , 6 , b_ADF_1 ) ; 
- button ( 1 , 7 , b_VOR_1 ) ; 
- button ( 2 , 0 , b_DRS_10 ) ; 
- button ( 2 , 1 , b_DMS_PLN ) ; 
- button ( 2 , 2 , b_DMS_MAP ) ; 
- button ( 2 , 3 , b_DMS_VOR ) ; 
- button ( 2 , 4 , b_DMS_APP ) ; 
- button ( 2 , 5 , b_metric_ALT ) ; 
- button ( 2 , 6 , b_ADF_2 ) ; 
- button ( 2 , 7 , b_VOR_2 ) ; 
- button ( 3 , 0 , b_BARO_ROT ) ; 
- button ( 3 , 1 , b_DHMDA_ROT ) ; 
- button ( 3 , 2 , b_DRS_640 ) ; 
- button ( 3 , 3 , b_DRS_320 ) ; 
- button ( 3 , 4 , b_DRS_160 ) ; 
- button ( 3 , 5 , b_DRS_80 ) ; 
- button ( 3 , 6 , b_DRS_40 ) ; 
- button ( 3 , 7 , b_DRS_20 ) ; 
+ button ( 3 , 3 , b_POS ) ; 
+ button ( 4 , 5 , b_DATA ) ; 
+ button ( 5 , 2 , b_ARPT ) ; 
+ button ( 4 , 6 , b_WPT ) ; 
+ button ( 5 , 1 , b_STA ) ; 
+ button ( 4 , 7 , b_WXR ) ; 
+ button ( 5 , 3 , b_ADF_L ) ; 
+ button ( 4 , 2 , b_VOR_L ) ; 
  
- button ( 0 , 0 , r_cnt_Dhmda ) ; 
- button ( 0 , 1 , r_dir_Dhmda ) ; 
+ button ( 3 , 5 , b_APP ) ; 
+ button ( 1 , 4 , b_VOR ) ; 
+ button ( 3 , 4 , b_MAP ) ; 
+ button ( 1 , 1 , b_PLN ) ; 
+ button ( 4 , 0 , b_metric_ALT ) ; 
+ button ( 5 , 5 , b_ADF_R ) ; 
+ button ( 4 , 1 , b_VOR_R ) ; 
+ button ( 3 , 3 , b_BARO ) ; 
+ button ( 2 , 1 , b_DRS_640 ) ; 
+ button ( 5 , 0 , b_DRS_320 ) ; 
+ button ( 2 , 5 , b_DRS_160 ) ; 
+ button ( 3 , 7 , b_DRS_80 ) ; 
+ button ( 5 , 4 , b_DRS_40 ) ; 
+ button ( 3 , 6 , b_DRS_20 ) ; 
+ button ( 3 , 2 , b_DRS_10 ) ; 
+ button ( 4 , 4 , b_DH_RESET ) ; 
  
  
- button ( 0 , 2 , r_cnt_Baro ) ; 
- button ( 0 , 3 , r_dir_Baro ) ; 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  
  } ; 
  
@@ -679,37 +673,39 @@
  
  device ( EDSP ) 
  { 
- 
  connector ( EDSPconn ) ; 
- button ( 0 , 3 , b_ENG ) ; 
- button ( 0 , 4 , b_ELEC ) ; 
- button ( 0 , 5 , b_FUEL ) ; 
- button ( 0 , 6 , b_STAT ) ; 
- button ( 0 , 7 , b_ECS ) ; 
- button ( 1 , 0 , b_HYD ) ; 
- button ( 1 , 1 , b_CANC ) ; 
- button ( 1 , 2 , b_DRS ) ; 
- button ( 1 , 3 , b_GEAR ) ; 
- button ( 1 , 4 , b_RCL ) ; 
+ button ( 0 , 0 , b_ENG ) ; 
+ button ( 0 , 7 , b_ELEC ) ; 
+ button ( 0 , 1 , b_FUEL ) ; 
+ button ( 0 , 2 , b_STAT ) ; 
+ button ( 0 , 6 , b_ECS ) ; 
+ button ( 0 , 4 , b_HYD ) ; 
+ button ( 0 , 3 , b_CANC ) ; 
+ button ( 1 , 1 , b_DRS ) ; 
+ button ( 1 , 0 , b_GEAR ) ; 
+ button ( 0 , 5 , b_RCL ) ; 
  } ; 
  
  
  
- 
- device ( CP_EFIS_Output ) 
- { 
- output ( Rotary , 7 , 0 ) 
- { 
- R0Type = 0b00000011 ; 
- R1Type = 0b00001100 ; 
- } ; 
- } ; 
  
  device ( Display ) 
  { 
  
- display ( AP_VS_VALUES , 2 , 0 , "00000" , true ) ; 
+ display ( AP_ALT_VALUES , 2 , 0 , "00000" , true ) ; 
+ display ( AP_SPD_VALUES , 2 , 5 , "000" , true ) ; 
+ display ( AP_VS_VALUES , 2 , 8 , "-0000" , true ) ; 
+ display ( AP_HDG_VALUES , 2 , 13 , "000" , true ) ; 
  } ; 
+ 
+ device ( PEDESTAL ) 
+ { 
+ connector ( PEDESTALconn ) ; 
+ analog ( 0 , Elevator , Rx ) ; 
+ } ; 
+ 
+ 
+ 
  
  
  
@@ -773,7 +769,13 @@
  flag f_BAROTiming_CP = false ; 
  flag f_DHMDATiming_CP = false ; 
  flag f_SPD_Active = true ; 
- 
+ flag f_WXR = true ; 
+ flag f_STA = true ; 
+ flag f_WPT = true ; 
+ flag f_ARPT = true ; 
+ flag f_DATA = true ; 
+ flag f_POS = true ; 
+ flag f_metric_ALT = true ; 
  
  
  
@@ -789,21 +791,23 @@
  
  
  
- byte x5411 ; 
- byte x5412 ; 
- byte x5413 ; 
- byte x5414 ; 
+ word x5410 ; 
+ word x5412 ; 
+ word x5414 ; 
  byte x541C ; 
  byte x541D ; 
  byte x541E ; 
- word wrd_SPD = 250 ; 
- word wrd_MACH = 70 ; 
- word wrd_HDG = 0 ; 
- word wrd_ALT = 60 ; 
- word wrd_VS = 0 ; 
+ 
+ urvar ( wrd_SPD , 0 , 340 , 250 , true ) ; 
+ urvar ( wrd_MACH , 0 , 86 , 70 , true ) ; 
+ urvar ( wrd_HDG , 1 , 360 , 1 , false ) ; 
+ urvar ( wrd_ALT , 0 , 50000 , 100 , true ) ; 
+ rvar ( wrd_VS , -9999 , 9999 , 0 , true ) ; 
+ 
  word wrd_BARO_CP = 1013 ; 
  word wrd_DHMDA_CP = 0 ; 
  word wrd_BARO_FS ; 
+ 
  
  
  
@@ -1121,8 +1125,8 @@
  defineqproc ( 21 , ALTOn ) 
  defineqproc ( 40 , APPOff ) 
  defineqproc ( 41 , APPOn ) 
- defineqproc ( 128 , LOCOff ) 
- defineqproc ( 129 , LOCOn ) 
+ defineqproc ( 24 , LOCOff ) 
+ defineqproc ( 25 , LOCOn ) 
  defineqproc ( 132 , LNAVOff ) 
  defineqproc ( 133 , LNAVOn ) 
  defineqproc ( 22 , HDGOff ) 
@@ -1133,13 +1137,8 @@
  defineqproc ( 47 , SPDOn ) 
  defineqproc ( 138 , THROff ) 
  defineqproc ( 139 , THROn ) 
- 
- 
- 
- 
  defineqproc ( 134 , VNAVOff ) 
  defineqproc ( 135 , VNAVOn ) 
- 
  
  
  
@@ -1182,6 +1181,7 @@
  if ( ! byt_AltTime ) 
  { 
  f_AltTiming = false ; 
+ 
  nqw ( 0x109 , wrd_ALT ) ; 
  } 
  } 
@@ -1253,7 +1253,7 @@
  setp ( 0 , 1 , 0b11111111 ) ; 
  setp ( 0 , 2 , 0b11111111 ) ; 
  setp ( 0 , 3 , 0b11111111 ) ; 
- setp ( 0 , 4 , 0b10111111 ) ; 
+ setp ( 0 , 4 , 0b11111111 ) ; 
  setp ( 0 , 5 , 0b11111111 ) ; 
  setp ( 0 , 6 , 0b11111111 ) ; 
  setp ( 0 , 7 , 0b11111111 ) ; 
@@ -1269,187 +1269,567 @@
  clrp ( 0 , 6 , 0b11111111 ) ; 
  clrp ( 0 , 7 , 0b11111111 ) ; 
  
- MCP.Rotary1.R2Type = 0b10101010 ; 
- MCP.Rotary1.R3Type = 0b10101010 ; 
- MCP.Rotary2.R4Type = 0b10101010 ; 
- MCP.Rotary2.R5Type = 0b10101010 ; 
- CP_EFIS_Output.Rotary.R0Type = 0b10101010 ; 
- CP_EFIS_Output.Rotary.R1Type = 0b10101010 ; 
+ senddata ( 7 , 0 , 0b10101010 ) ; 
+ senddata ( 7 , 1 , 0b10101010 ) ; 
  
  
+ 
+ 
+ Display.AP_ALT_VALUES = wrd_ALT * 100 ; 
+ Display.AP_SPD_VALUES = wrd_SPD ; 
+ Display.AP_HDG_VALUES = wrd_HDG ; 
+ Display.AP_VS_VALUES = wrd_VS ; 
  
  jump ( MainLoop ) ; 
  
- 
  } 
+ 
  void MCP.b_CP_FD.On ( void ) { 
- MCP.b_CP_FD = 0x002 ; 
+ 
+ if ( x5414 & 0b0000000000100000 ) 
+ { 
+ x5414 &= 0b1111111111011111 ; 
+ } 
+ else 
+ { 
+ x5414 |= 0b0000000000100000 ; 
+ } 
+ nqw ( 0x104 , x5414 ) ; 
  } 
  
  void MCP.b_CP_FD.Off ( void ) { 
- MCP.b_CP_FD = 0x001 ; 
+ 
+ if ( x5414 & 0b0000000001000000 ) 
+ { 
+ x5414 &= 0b1111111110111111 ; 
+ } 
+ else 
+ { 
+ x5414 |= 0b0000000001000000 ; 
+ } 
+ nqw ( 0x104 , x5414 ) ; 
  } 
  
+ void MCP.b_FO_FD.Off ( void ) { 
+ 
+ if ( x5412 & 0b0000000000000100 ) 
+ { 
+ x5412 &= 0b1111111111111011 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0000000000000100 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
+ } 
+ 
+ 
+ void MCP.b_FO_FD.On ( void ) { 
+ 
+ if ( x5412 & 0b0000000000000010 ) 
+ { 
+ x5412 &= 0b1111111111111101 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0000000000000010 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
+ } 
+ 
+ 
  void MCP.b_ATHR.Off ( void ) { 
- MCP.b_ATHR = 0x001 ; 
+ 
+ if ( x5412 & 0b0000000000010000 ) 
+ { 
+ x5412 &= 0b1111111111101111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0000000000010000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_ATHR.On ( void ) { 
- MCP.b_ATHR = 0x002 ; 
+ 
+ if ( x5412 & 0b0000000000001000 ) 
+ { 
+ x5412 &= 0b1111111111110111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0000000000001000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_THR.Off ( void ) { 
- MCP.b_THR = 0x002 ; 
+ 
+ if ( x5412 & 0b0000000000100000 ) 
+ { 
+ x5412 &= 0b1111111111011111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0000000000100000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_THR.On ( void ) { 
- MCP.b_THR = 0x001 ; 
+ 
+ if ( x5412 & 0b0000000000100000 ) 
+ { 
+ x5412 &= 0b1111111111011111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0000000000100000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_SPD.On ( void ) { 
- MCP.b_SPD = 0x001 ; 
+ 
+ if ( x5412 & 0b0000000001000000 ) 
+ { 
+ x5412 &= 0b1111111110111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0000000001000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_SPD.Off ( void ) { 
- MCP.b_SPD = 0x002 ; 
+ 
+ if ( x5412 & 0b0000000001000000 ) 
+ { 
+ x5412 &= 0b1111111110111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0000000001000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_SPD_MACH.On ( void ) { 
- MCP.b_SPD_MACH = 0x001 ; 
+ 
+ if ( x5412 & 0b0000000010000000 ) 
+ { 
+ x5412 &= 0b1111111101111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0000000010000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
- void MCP.b_SPD_MACH.Off ( void ) { 
- MCP.b_SPD_MACH = 0x002 ; 
- } 
+ 
+ 
+ 
  
  void MCP.b_SPD_ROT.On ( void ) { 
- MCP.b_SPD_ROT = 0x001 ; 
+ 
+ if ( x5410 & 0b0000010000000000 ) 
+ { 
+ x5410 &= 0b1111101111111111 ; 
+ } 
+ else 
+ { 
+ x5410 |= 0b0000010000000000 ; 
+ } 
+ nqw ( 0x132 , x5410 ) ; 
  } 
  
- void MCP.b_SPD_ROT.Off ( void ) { 
- MCP.b_SPD_ROT = 0x002 ; 
- } 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  
  void MCP.b_LNAV.On ( void ) { 
- MCP.b_LNAV = 0x001 ; 
+ 
+ if ( x5412 & 0b0000100000000000 ) 
+ { 
+ x5412 &= 0b1111011111111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0000100000000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_LNAV.Off ( void ) { 
- MCP.b_LNAV = 0x002 ; 
+ 
+ if ( x5412 & 0b0000100000000000 ) 
+ { 
+ x5412 &= 0b1111011111111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0000100000000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_VNAV.On ( void ) { 
- MCP.b_VNAV = 0x001 ; 
+ 
+ if ( x5412 & 0b0000010000000000 ) 
+ { 
+ x5412 &= 0b1111101111111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0000010000000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_VNAV.Off ( void ) { 
- MCP.b_VNAV = 0x002 ; 
+ 
+ if ( x5412 & 0b0000010000000000 ) 
+ { 
+ x5412 &= 0b1111101111111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0000010000000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_FLCH.On ( void ) { 
- MCP.b_FLCH = 0x001 ; 
+ 
+ if ( x5412 & 0b0000000100000000 ) 
+ { 
+ x5412 &= 0b1111111011111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0000000100000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_FLCH.Off ( void ) { 
- MCP.b_FLCH = 0x002 ; 
+ 
+ if ( x5412 & 0b0000000100000000 ) 
+ { 
+ x5412 &= 0b1111111011111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0000000100000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_HDG_ROT.On ( void ) { 
- MCP.b_HDG_ROT = 0x001 ; 
+ 
+ if ( x5410 & 0b0000100000000000 ) 
+ { 
+ x5410 &= 0b1111011111111111 ; 
+ } 
+ else 
+ { 
+ x5410 |= 0b0000100000000000 ; 
+ } 
+ nqw ( 0x132 , x5410 ) ; 
  } 
  
- void MCP.b_HDG_ROT.Off ( void ) { 
- MCP.b_HDG_ROT = 0x002 ; 
- } 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  
  void MCP.b_HDG.On ( void ) { 
- MCP.b_HDG = 0x001 ; 
+ 
+ if ( x5412 & 0b0000001000000000 ) 
+ { 
+ x5412 &= 0b1111110111111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0000001000000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_HDG.Off ( void ) { 
- MCP.b_HDG = 0x002 ; 
+ 
+ if ( x5412 & 0b0000001000000000 ) 
+ { 
+ x5412 &= 0b1111110111111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0000001000000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_VS.On ( void ) { 
- MCP.b_VS = 0x001 ; 
+ 
+ if ( x5412 & 0b1000000000000000 ) 
+ { 
+ x5412 &= 0b0111111111111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b1000000000000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_VS.Off ( void ) { 
- MCP.b_VS = 0x002 ; 
+ 
+ if ( x5412 & 0b1000000000000000 ) 
+ { 
+ x5412 &= 0b0111111111111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b1000000000000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_ALT.On ( void ) { 
- MCP.b_ALT = 0x001 ; 
+ 
+ if ( x5412 & 0b0100000000000000 ) 
+ { 
+ x5412 &= 0b1011111111111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0100000000000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_ALT.Off ( void ) { 
- MCP.b_ALT = 0x002 ; 
+ 
+ if ( x5412 & 0b0100000000000000 ) 
+ { 
+ x5412 &= 0b1011111111111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0100000000000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_ALT_ROT.On ( void ) { 
- MCP.b_ALT_ROT = 0x001 ; 
+ 
+ if ( x5410 & 0b0001000000000000 ) 
+ { 
+ x5410 &= 0b1110111111111111 ; 
+ } 
+ else 
+ { 
+ x5410 |= 0b0001000000000000 ; 
+ } 
+ nqw ( 0x132 , x5410 ) ; 
  } 
  
- void MCP.b_ALT_ROT.Off ( void ) { 
- MCP.b_ALT_ROT = 0x002 ; 
- } 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  
  void MCP.b_LOC.On ( void ) { 
- MCP.b_LOC = 0x001 ; 
+ 
+ if ( x5412 & 0b0001000000000000 ) 
+ { 
+ x5412 &= 0b1110111111111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0001000000000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_LOC.Off ( void ) { 
- MCP.b_LOC = 0x002 ; 
+ 
+ if ( x5412 & 0b0001000000000000 ) 
+ { 
+ x5412 &= 0b1110111111111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0001000000000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_APP.On ( void ) { 
- MCP.b_APP = 0x001 ; 
+ 
+ if ( x5412 & 0b0010000000000000 ) 
+ { 
+ x5412 &= 0b1101111111111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0010000000000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_APP.Off ( void ) { 
- MCP.b_APP = 0x002 ; 
+ 
+ if ( x5412 & 0b0010000000000000 ) 
+ { 
+ x5412 &= 0b1101111111111111 ; 
+ } 
+ else 
+ { 
+ x5412 |= 0b0010000000000000 ; 
+ } 
+ nqw ( 0x134 , x5412 ) ; 
  } 
  
  void MCP.b_AP1.On ( void ) { 
- MCP.b_AP1 = 0x001 ; 
+ 
+ if ( x5414 & 0b0000000000000001 ) 
+ { 
+ x5414 &= 0b1111111111111110 ; 
+ } 
+ else 
+ { 
+ x5414 |= 0b0000000000000001 ; 
+ } 
+ nqw ( 0x104 , x5414 ) ; 
+ 
  } 
  
  void MCP.b_AP1.Off ( void ) { 
- MCP.b_AP1 = 0x002 ; 
+ 
+ if ( x5414 & 0b0000000000000001 ) 
+ { 
+ x5414 &= 0b1111111111111110 ; 
+ } 
+ else 
+ { 
+ x5414 |= 0b0000000000000001 ; 
+ } 
+ nqw ( 0x104 , x5414 ) ; 
+ 
  } 
  
  void MCP.b_AP2.On ( void ) { 
- MCP.b_AP2 = 0x001 ; 
+ 
+ if ( x5414 & 0b0000000000000010 ) 
+ { 
+ x5414 &= 0b1111111111111101 ; 
+ } 
+ else 
+ { 
+ x5414 |= 0b0000000000000010 ; 
+ } 
+ nqw ( 0x104 , x5414 ) ; 
  } 
  
  void MCP.b_AP2.Off ( void ) { 
- MCP.b_AP2 = 0x002 ; 
+ if ( x5414 & 0b0000000000000010 ) 
+ { 
+ x5414 &= 0b1111111111111101 ; 
+ } 
+ else 
+ { 
+ x5414 |= 0b0000000000000010 ; 
+ } 
+ nqw ( 0x104 , x5414 ) ; 
  } 
  
  void MCP.b_AP3.On ( void ) { 
- MCP.b_AP3 = 0x001 ; 
+ if ( x5414 & 0b0000000000000100 ) 
+ { 
+ x5414 &= 0b1111111111111011 ; 
+ } 
+ else 
+ { 
+ x5414 |= 0b0000000000000100 ; 
+ } 
+ nqw ( 0x104 , x5414 ) ; 
  } 
  
  void MCP.b_AP3.Off ( void ) { 
- MCP.b_AP3 = 0x002 ; 
+ if ( x5414 & 0b0000000000000100 ) 
+ { 
+ x5414 &= 0b1111111111111011 ; 
+ } 
+ else 
+ { 
+ x5414 |= 0b0000000000000100 ; 
+ } 
+ nqw ( 0x104 , x5414 ) ; 
  } 
  
  void MCP.b_AP_Dis_lft.On ( void ) { 
- MCP.b_AP_Dis_lft = 0x001 ; 
+ 
+ if ( x5414 & 0b0000010000000000 ) 
+ { 
+ x5414 &= 0b1111101111111111 ; 
+ } 
+ else 
+ { 
+ x5414 |= 0b0000010000000000 ; 
+ } 
+ nqw ( 0x104 , x5414 ) ; 
  } 
  
- void MCP.b_AP_Dis_lft.Off ( void ) { 
- MCP.b_AP_Dis_lft = 0x002 ; 
- } 
+ 
+ 
+ 
  
  
  void MCP.b_AP_Dis_rgt.On ( void ) { 
- MCP.b_AP_Dis_rgt = 0x001 ; 
+ 
+ if ( x5414 & 0b0000010000000000 ) 
+ { 
+ x5414 &= 0b1111101111111111 ; 
+ } 
+ else 
+ { 
+ x5414 |= 0b0000010000000000 ; 
+ } 
+ nqw ( 0x104 , x5414 ) ; 
  } 
  
- void MCP.b_AP_Dis_rgt.Off ( void ) { 
- MCP.b_AP_Dis_rgt = 0x002 ; 
- } 
+ 
+ 
+ 
  
  void l_handle_ALT_rot ( void ) 
  { 
@@ -1477,7 +1857,6 @@
  } 
  byt_AltTime = 5 ; 
  f_AltTiming = true ; 
- 
  } 
  
  
@@ -1493,11 +1872,11 @@
  { 
  if ( MCP.r_dir_VS ) 
  { 
- wrd_VS -= 100 ; 
+ wrd_VS += 100 ; 
  } 
  else 
  { 
- wrd_VS += 100 ; 
+ wrd_VS -= 100 ; 
  } 
  byt_VSTime = 5 ; 
  f_VSTiming = true ; 
@@ -1602,286 +1981,182 @@
  jump ( l_handle_HDG_rot ) ; 
  } 
  
- void CP_EFIS.b_VOR_1.Off ( void ) { 
- if ( x541E & 0b00001000 ) 
- { 
- x541E &= 0b11110111 ; 
- } 
- else 
- { 
- x541E |= 0b00001000 ; 
- } 
- nqw ( 0x104 , x541E ) ; 
+ void CP_EFIS.b_VOR_L.Off ( void ) { 
+ nqw ( 0x139 , 73 ) ; 
  } 
  
- void CP_EFIS.b_VOR_1.On ( void ) { 
- if ( x541E & 0b00010000 ) 
- { 
- x541E &= 0b11101111 ; 
- } 
- else 
- { 
- x541E |= 0b00010000 ; 
- } 
- nqw ( 0x104 , x541E ) ; 
- 
+ void CP_EFIS.b_VOR_L.On ( void ) { 
+ nqw ( 0x139 , 75 ) ; 
  } 
  
  
- void CP_EFIS.b_ADF_1.Off ( void ) { 
- if ( x541E & 0b00000100 ) 
- { 
- x541E &= 0b11111011 ; 
- } 
- else 
- { 
- x541E |= 0b00000100 ; 
- } 
- nqw ( 0x104 , x541E ) ; 
+ void CP_EFIS.b_ADF_L.Off ( void ) { 
+ nqw ( 0x139 , 73 ) ; 
  } 
  
- void CP_EFIS.b_ADF_1.On ( void ) { 
- if ( x541E & 0b00010000 ) 
- { 
- x541E &= 0b11101111 ; 
- } 
- else 
- { 
- x541E |= 0b00010000 ; 
- } 
- nqw ( 0x104 , x541E ) ; 
+ void CP_EFIS.b_ADF_L.On ( void ) { 
+ nqw ( 0x139 , 74 ) ; 
  } 
  
  void CP_EFIS.b_WXR.On ( void ) { 
- nqw ( 0x139 , 72 ) ; 
+ if ( f_WXR ) 
+ { nqw ( 0x139 , 1072 ) ; f_WXR = false ; } 
+ else { nqw ( 0x139 , 72 ) ; f_WXR = true ; } 
  } 
  
  void CP_EFIS.b_STA.On ( void ) { 
- nqw ( 0x139 , 90 ) ; 
+ if ( f_STA ) 
+ { nqw ( 0x139 , 1090 ) ; f_STA = false ; } 
+ else { nqw ( 0x139 , 90 ) ; f_STA = true ; } 
  } 
  
  void CP_EFIS.b_WPT.On ( void ) { 
- nqw ( 0x139 , 93 ) ; 
+ if ( f_WPT ) 
+ { nqw ( 0x139 , 1093 ) ; f_WPT = false ; } 
+ else { nqw ( 0x139 , 93 ) ; f_WPT = true ; } 
  } 
  
  void CP_EFIS.b_ARPT.On ( void ) { 
- nqw ( 0x139 , 94 ) ; 
+ if ( f_ARPT ) 
+ { nqw ( 0x139 , 1094 ) ; f_ARPT = false ; } 
+ else { nqw ( 0x139 , 94 ) ; f_ARPT = true ; } 
  } 
  
  void CP_EFIS.b_DATA.On ( void ) { 
- nqw ( 0x139 , 95 ) ; 
+ if ( f_DATA ) 
+ { nqw ( 0x139 , 1095 ) ; f_DATA = false ; } 
+ else { nqw ( 0x139 , 95 ) ; f_DATA = true ; } 
  } 
  
  void CP_EFIS.b_POS.On ( void ) { 
- nqw ( 0x139 , 96 ) ; 
+ if ( f_POS ) 
+ { nqw ( 0x139 , 1096 ) ; f_POS = false ; } 
+ else { nqw ( 0x139 , 96 ) ; f_POS = true ; } 
  } 
  
- void CP_EFIS.b_DMS_APP.On ( void ) { 
- if ( x541C & 0b00000010 ) 
- { 
- x541C &= 0b11111101 ; 
- } 
- else 
- { 
- x541C |= 0b00000010 ; 
- } 
- nqw ( 0x102 , x541C ) ; 
+ void CP_EFIS.b_APP.On ( void ) { 
+ nqw ( 0x139 , 5 ) ; 
  } 
  
- void CP_EFIS.b_DMS_VOR.On ( void ) { 
- if ( x541C & 0b00000100 ) 
- { 
- x541C &= 0b11111011 ; 
- } 
- else 
- { 
- x541C |= 0b00000100 ; 
- } 
- nqw ( 0x102 , x541C ) ; 
+ void CP_EFIS.b_VOR.On ( void ) { 
+ nqw ( 0x139 , 3 ) ; 
  } 
  
- void CP_EFIS.b_DMS_MAP.On ( void ) { 
- if ( x541C & 0b00001000 ) 
- { 
- x541C &= 0b11110111 ; 
- } 
- else 
- { 
- x541C |= 0b00001000 ; 
- } 
- nqw ( 0x102 , x541C ) ; 
+ void CP_EFIS.b_MAP.On ( void ) { 
+ nqw ( 0x139 , 1 ) ; 
  } 
  
- void CP_EFIS.b_DMS_PLN.On ( void ) { 
- if ( x541C & 0b00010000 ) 
- { 
- x541C &= 0b11101111 ; 
- } 
- else 
- { 
- x541C |= 0b00010000 ; 
- } 
- nqw ( 0x102 , x541C ) ; 
+ void CP_EFIS.b_PLN.On ( void ) { 
+ nqw ( 0x139 , 4 ) ; 
  } 
  
  void CP_EFIS.b_DRS_10.On ( void ) { 
- if ( x541C & 0b00100000 ) 
- { 
- x541C &= 0b11011111 ; 
- } 
- else 
- { 
- x541C |= 0b00100000 ; 
- } 
- nqw ( 0x102 , x541C ) ; 
+ nqw ( 0x139 , 41 ) ; 
  } 
  
  void CP_EFIS.b_DRS_20.On ( void ) { 
- if ( x541C & 0b01000000 ) 
- { 
- x541C &= 0b10111111 ; 
- } 
- else 
- { 
- x541C |= 0b01000000 ; 
- } 
- nqw ( 0x102 , x541C ) ; 
+ nqw ( 0x139 , 42 ) ; 
  } 
  
  void CP_EFIS.b_DRS_40.On ( void ) { 
- if ( x541C & 0b10000000 ) 
- { 
- x541C &= 0b01111111 ; 
- } 
- else 
- { 
- x541C |= 0b10000000 ; 
- } 
- nqw ( 0x102 , x541C ) ; 
+ nqw ( 0x139 , 43 ) ; 
  } 
  
  void CP_EFIS.b_DRS_80.On ( void ) { 
- if ( x541D & 0b00000001 ) 
- { 
- x541D &= 0b11111110 ; 
- } 
- else 
- { 
- x541D |= 0b00000001 ; 
- } 
- nqw ( 0x105 , x541D ) ; 
+ nqw ( 0x139 , 44 ) ; 
  } 
  
  void CP_EFIS.b_DRS_160.On ( void ) { 
- if ( x541D & 0b00000010 ) 
- { 
- x541D &= 0b11111101 ; 
- } 
- else 
- { 
- x541D |= 0b00000010 ; 
- } 
- nqw ( 0x105 , x541D ) ; 
+ nqw ( 0x139 , 45 ) ; 
  } 
  
  void CP_EFIS.b_DRS_320.On ( void ) { 
- if ( x541D & 0b00000100 ) 
- { 
- x541D &= 0b11111011 ; 
- } 
- else 
- { 
- x541D |= 0b00000100 ; 
- } 
- nqw ( 0x105 , x541D ) ; 
+ nqw ( 0x139 , 46 ) ; 
  } 
  
  void CP_EFIS.b_DRS_640.On ( void ) { 
- if ( x541D & 0b00001000 ) 
- { 
- x541D &= 0b111110111 ; 
- } 
- else 
- { 
- x541D |= 0b00001000 ; 
- } 
- nqw ( 0x105 , x541D ) ; 
- 
+ nqw ( 0x139 , 47 ) ; 
  } 
  
- void CP_EFIS.b_ADF_2.On ( void ) { 
- 
+ void CP_EFIS.b_ADF_R.On ( void ) { 
+ nqw ( 0x139 , 77 ) ; 
  } 
  
- void CP_EFIS.b_ADF_2.Off ( void ) { 
- 
+ void CP_EFIS.b_ADF_R.Off ( void ) { 
+ nqw ( 0x139 , 76 ) ; 
  } 
  
- void CP_EFIS.b_VOR_2.On ( void ) { 
- 
+ void CP_EFIS.b_VOR_R.On ( void ) { 
+ nqw ( 0x139 , 78 ) ; 
  } 
  
- void CP_EFIS.b_VOR_2.Off ( void ) { 
- 
+ void CP_EFIS.b_VOR_R.Off ( void ) { 
+ nqw ( 0x139 , 76 ) ; 
  } 
  
  void l_handle_DHMDA_CP_rot ( void ) 
  { 
- if ( CP_EFIS.r_dir_Dhmda ) 
- { 
- wrd_DHMDA_CP -= 1 ; 
- } 
- else 
- { 
- wrd_DHMDA_CP += 1 ; 
- } 
- byt_DHMDATime_CP = 5 ; 
- f_DHMDATiming_CP = true ; 
- wrd_DHMDA_CP = wrd_DHMDA_CP ; 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  } 
  
- void CP_EFIS.b_DHMDA_ROT.On ( void ) { 
- jump ( l_handle_DHMDA_CP_rot ) ; 
- } 
  
- void CP_EFIS.b_DHMDA_ROT.Off ( void ) { 
- jump ( l_handle_DHMDA_CP_rot ) ; 
- } 
+ 
+ 
+ 
+ 
+ 
+ 
  
  void l_handle_Baro_P_rot ( void ) 
  { 
- if ( CP_EFIS.r_dir_Baro ) 
- { 
- wrd_BARO_CP -= 1 ; 
- } 
- else 
- { 
- wrd_BARO_CP += 1 ; 
- } 
- byt_BAROTime_CP = 5 ; 
- f_BAROTiming_CP = true ; 
- wrd_BARO_CP = wrd_BARO_CP ; 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  } 
  
- void CP_EFIS.b_BARO_ROT.On ( void ) { 
- jump ( l_handle_Baro_P_rot ) ; 
- } 
  
- void CP_EFIS.b_BARO_ROT.Off ( void ) { 
- jump ( l_handle_Baro_P_rot ) ; 
- } 
+ 
+ 
+ 
+ 
+ 
+ 
  
  void CP_EFIS.b_metric_ALT.On ( void ) { 
- 
+ if ( f_metric_ALT ) 
+ { nqw ( 0x139 , 1026 ) ; f_metric_ALT = false ; } 
+ else { nqw ( 0x139 , 26 ) ; f_metric_ALT = true ; } 
  } 
  
- void CP_EFIS.r_cnt_Dhmda.On ( void ) { 
  
- } 
  
- void CP_EFIS.r_cnt_Baro.On ( void ) { 
  
- } 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  
  void EDSP.b_ENG.On ( void ) { 
  nqw ( 0x139 , 301 ) ; 
@@ -1923,7 +2198,77 @@
  nqw ( 0x139 , 311 ) ; 
  } 
  
+ ph setHDG ( 15 ) 
+ { 
+ byte getal1 ; 
+ byte getal2 ; 
+ word getal3 ; 
  
+ wrd_HDG = setHDG.getal3 ; 
+ Display.AP_HDG_VALUES = setHDG.getal3 ; 
+ } ; 
+ 
+ ph setALT ( 16 ) 
+ { 
+ byte getal1 ; 
+ byte getal2 ; 
+ word getal3 ; 
+ 
+ if ( setALT.getal1 == 0xFF ) { Display.AP_ALT_VALUES = blank ; } 
+ else { 
+ wrd_ALT = setALT.getal3 / 100 ; 
+ Display.AP_ALT_VALUES = setALT.getal3 ; 
+ } 
+ } ; 
+ 
+ 
+ 
+ 
+ 
+ ph setSPD ( 17 ) 
+ { 
+ byte getal1 ; 
+ byte getal2 ; 
+ word getal3 ; 
+ 
+ if ( setSPD.getal1 == 0xFF ) { Display.AP_SPD_VALUES = blank ; } 
+ else { 
+ wrd_SPD = setSPD.getal3 ; 
+ Display.AP_SPD_VALUES = setSPD.getal3 ; 
+ } 
+ } ; 
+ 
+ 
+ ph setVS ( 19 ) 
+ { 
+ byte getal1 ; 
+ byte getal2 ; 
+ word getal3 ; 
+ 
+ if ( setVS.getal1 == 0xFF ) { Display.AP_VS_VALUES = blank ; } 
+ else { 
+ wrd_VS = setVS.getal3 ; 
+ if ( ( wrd_VS >> 8 ) > 128 ) { wrd_VS = ( setVS.getal3 - 32768 ) * -1 ; } 
+ else { wrd_VS = setVS.getal3 ; } 
+ Display.AP_VS_VALUES = wrd_VS ; 
+ } 
+ } ; 
+ 
+ ph setX5414 ( 154 ) 
+ { 
+ word getal1 ; 
+ 
+ x5414 = setX5414.getal1 ; 
+ } ; 
+ 
+ ph setX5410 ( 155 ) 
+ { 
+ word getal1 ; 
+ word getal2 ; 
+ 
+ x5410 = setX5410.getal1 ; 
+ x5412 = setX5410.getal2 ; 
+ } ; 
  
  
  

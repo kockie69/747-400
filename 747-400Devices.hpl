@@ -58,8 +58,7 @@ connector(FirstExpMod)
 connector(MCPconn)
 {
 	modrow(7,0);	// Rotary module (module 7) Scan Row 0
-	modrow(7,1);	// Rotary module (module 7) Scan Row 1
-
+	
 	modrow(1,0);	// 64 button module Scan Row 0
 	modrow(1,1);	// 64 button module Scan Row 1
 	modrow(1,4);	// 64 button module Scan Row 4 
@@ -79,10 +78,12 @@ connector(MCPconn)
 //=========================================================
 connector(CP_EFISconn)
 {
-	modrow(7,0);	// Rotary module (module 7) Scan Row 0
-	modrow(1,7);	// 64 button module Scan Row 7 
-	modrow(1,6);	// 64 button module Scan Row 6 
-	modrow(1,5);	// 64 button module Scan Row 5 
+	modrow(7,1);	// Rotary module (module 7) Scan Row 1
+	modrow(1,0);	// 64 button module Scan Row 0
+	modrow(1,1);	// 64 button module Scan Row 1
+	modrow(1,3);	// 64 button module Scan Row 3
+	modrow(1,6);	// 64 button module Scan Row 6	
+	modrow(1,7);	// 64 button module Scan Row 7
 };
 //=========================================================
 // End of Connector CP_EFISconn
@@ -96,14 +97,17 @@ connector(CP_EFISconn)
 //=========================================================
 connector(EDSPconn)
 {
-	modrow(1,1);	// 64 button module Scan Row 1
 	modrow(1,2);	// 64 button module Scan Row 2
-	
+	modrow(1,3);	// 64 button module Scan Row 3
 };
 //=========================================================
 // End of Connector EDSPconn
 //=========================================================
 
+connector(PEDESTALconn)
+{
+	analog(0);
+};
 
 //=========================================================
 // Start of Device MCP
@@ -116,59 +120,45 @@ device(MCP)
 
 	connector(MCPconn);
 
-	button(2,0,b_FO_FD);		//32
-	button(2,2,b_AP_Dis_rgt);	//33
-	button(2,3,b_AP2);		//34
-	button(2,5,b_AP1);		//35
-	button(2,6,b_LOC);		//36
-	button(3,0,b_APP);		//37
-	button(3,2,b_ALT);		//38
-	button(3,3,b_AP_Dis_lft);	//39
-	button(3,5,b_ALT_ROT);		//40
-	button(3,6,b_AP3);		//41
-	button(3,7,b_VS);			//42
-	button(4,0,b_LNAV);		//43
-	button(4,2,b_SPD_MACH);		//44
-	button(4,3,b_HDG_ROT);		//45
-	button(4,6,b_CP_FD);		//46
-	button(4,7,b_VNAV);		//47
-	button(5,0,b_ATHR);		//48
-	button(5,2,b_SPD_ROT);		//49		
-	button(5,3,b_HDG);		//50
-	button(5,5,b_SPD);		//51
-	button(5,6,b_THR);		//52
-	button(5,7,b_FLCH);		//53
+	button(1,0,b_FO_FD);		// Button 32
+	button(1,2,b_AP_Dis_rgt);	// Button 33
+	button(1,3,b_AP2);		// Button 34
+	button(1,5,b_AP1);		// Button 35
+	button(1,6,b_LOC);		// Button 36
+	button(2,0,b_APP);		// Button 37
+	button(2,2,b_ALT);		// Button 38
+	button(2,3,b_AP_Dis_lft);	// Button 39
+	button(2,4,b_ALT_ROT);		// Button 40
+	button(2,6,b_AP3);		// Button 41
+	button(2,7,b_VS);			// Button 42
+	button(3,0,b_LNAV);		// Button 43
+	button(3,2,b_SPD_MACH);		// Button 44
+	button(3,3,b_HDG_ROT);		// Button 45
+	button(3,6,b_CP_FD);		// Button 46
+	button(3,7,b_VNAV);		// Button 47
+	button(4,0,b_ATHR);		// Button 48
+	button(4,2,b_SPD_ROT);		// Button 49		
+	button(4,3,b_HDG);		// Button 50
+	button(4,5,b_SPD);		// Button 51
+	button(4,6,b_THR);		// Button 52
+	button(4,7,b_FLCH);		// Button 53
 
-	// Rotary Module 7, Scan Row 2
-	button(0,4,r_cnt_SPD);		// Speed count
-	button(0,5,r_dir_SPD);		// Speed direction
+	// Rotary Module 7, Rotary1 Scan Row 0
+	button(0,0,r_cnt_ALT);		// Altitude setting count,Button 60?
+	button(0,1,r_dir_ALT);		// Altitude setting direction,Button 61?
+	
+	// Rotary Module 7, Rotary2 Scan Row 0
+	button(0,2,r_cnt_VS);		// Vertical Speed setting count,Button 58? 
+	button(0,3,r_dir_VS);		// Vertical Speed setting direction,Button 59?
+	
+	// Rotary Module 7, Rotary5 Scan Row 0
+	button(0,4,r_cnt_HDG);		// Heading setting count,Button 56?
+	button(0,5,r_dir_HDG);		// Heading setting direction,Button 57?	
+	
+	// Rotary Module 7, Rotary6 Scan Row 0
+	button(0,6,r_cnt_SPD);		// Speed count,Button 54? 
+	button(0,7,r_dir_SPD);		// Speed direction,Button 55?
 
-	// Rotary Module 7, Scan Row 3
-	button(0,6,r_cnt_HDG);		// Heading setting count
-	button(0,7,r_dir_HDG);		// Heading setting direction	
-	
-	
-	// Rotary Module 7, Scan Row 4
-	button(1,0,r_cnt_VS);		// Vertical Speed setting count 
-	button(1,1,r_dir_VS);		// Vertical Speed setting direction
-	
-	// Rotary Module 7, Scan Row 5
-	button(1,2,r_cnt_ALT);		// Altitude setting count
-	button(1,3,r_dir_ALT);		// Altitude setting direction
-
-	output(Rotary1,7,0)
-	{
-		R2Type = 0b00110000;
-		R3Type = 0b11000000;
-	};
-	
-
-	output(Rotary2,7,1)
-	{
-		R4Type = 0b00000011;
-		R5Type = 0b00001100;
-	};
-	
 	output(leds0,0,0)
 	{
 		led_FLCH = 0x01;
@@ -202,40 +192,42 @@ device(MCP)
 //=========================================================
 device(CP_EFIS)
 {
-
 	connector(CP_EFISconn);
 	
-	button(1,0,b_POS);
-	button(1,1,b_DATA);
-	button(1,2,b_ARPT);
-	button(1,3,b_WPT);
-	button(1,4,b_STA);
-	button(1,5,b_WXR);
-	button(1,6,b_ADF_1);
-	button(1,7,b_VOR_1);
-	button(2,0,b_DRS_10);	
-	button(2,1,b_DMS_PLN);
-	button(2,2,b_DMS_MAP);
-	button(2,3,b_DMS_VOR);
-	button(2,4,b_DMS_APP);			
-	button(2,5,b_metric_ALT);
-	button(2,6,b_ADF_2);	
-	button(2,7,b_VOR_2);
-	button(3,0,b_BARO_ROT);
-	button(3,1,b_DHMDA_ROT);
-	button(3,2,b_DRS_640);
-	button(3,3,b_DRS_320);
-	button(3,4,b_DRS_160);							
-	button(3,5,b_DRS_80);
-	button(3,6,b_DRS_40);	
-	button(3,7,b_DRS_20);
+	button(3,3,b_POS); // Button 62?
+	button(4,5,b_DATA);// Button 63?
+	button(5,2,b_ARPT);// Button 64?
+	button(4,6,b_WPT);// Button 65?
+	button(5,1,b_STA);// Button 66?
+	button(4,7,b_WXR);// Button 67?
+	button(5,3,b_ADF_L);// Button 68?
+	button(4,2,b_VOR_L);// Button 69?
+
+	button(3,5,b_APP);// Button 71?
+	button(1,4,b_VOR);// Button 72?
+	button(3,4,b_MAP);// Button 73?
+	button(1,1,b_PLN);			// Button 74?
+	button(4,0,b_metric_ALT);// Button 75?
+	button(5,5,b_ADF_R);	// Button 76?
+	button(4,1,b_VOR_R);  	// Button 77?
+	button(3,3,b_BARO);  	// Button 78?
+	button(2,1,b_DRS_640);  // Button 80?
+	button(5,0,b_DRS_320);  // Button 81?
+	button(2,5,b_DRS_160);	// Button 82?				
+	button(3,7,b_DRS_80);	// Button 83?
+	button(5,4,b_DRS_40);	// Button 84?
+	button(3,6,b_DRS_20);	// Button 85?
+	button(3,2,b_DRS_10);	// Button 70?
+	button(4,4,b_DH_RESET);
+	
 	// Rotary Module 7, Scan Row 0
-	button(0,0,r_cnt_Dhmda);		// DHMDA pilot count
-	button(0,1,r_dir_Dhmda);		// DHMDA pilot turn direction	
+//	button(0,0,r_cnt_Dhmda);		// DHMDA pilot count, Button 86?
+//	button(0,1,r_dir_Dhmda);		// DHMDA pilot turn direction, Button 87?	
+
 	// Rotary Module 7, Scan Row 1
 	
-	button(0,2,r_cnt_Baro);		// Baro pilot count
-	button(0,3,r_dir_Baro);		// Baro pilot turn direction
+//	button(0,2,r_cnt_Baro);		// Baro pilot count, Button 88?
+//	button(0,3,r_dir_Baro);		// Baro pilot turn direction, Button 89?
 	
 };
 //=========================================================
@@ -250,34 +242,33 @@ device(CP_EFIS)
 //=========================================================
 device(EDSP)
 {
-
 	connector(EDSPconn);
-	button(0,3,b_ENG);
-	button(0,4,b_ELEC);
-	button(0,5,b_FUEL);
-	button(0,6,b_STAT);
-	button(0,7,b_ECS);
-	button(1,0,b_HYD);
-	button(1,1,b_CANC);
-	button(1,2,b_DRS);
-	button(1,3,b_GEAR);
-	button(1,4,b_RCL);
+	button(0,0,b_ENG);
+	button(0,7,b_ELEC);
+	button(0,1,b_FUEL);
+	button(0,2,b_STAT);
+	button(0,6,b_ECS);
+	button(0,4,b_HYD);
+	button(0,3,b_CANC);
+	button(1,1,b_DRS);
+	button(1,0,b_GEAR);
+	button(0,5,b_RCL);
 };
 //=========================================================
 // End of Device EDSP
 //=========================================================
 
-device (CP_EFIS_Output)
-{
-	output(Rotary,7,0)
-	{
-		R0Type = 0b00000011;
-		R1Type = 0b00001100;
-	};
-};
-
 device(Display)
 {
 //	display(name, module, start_digit, format)
-  	display(AP_VS_VALUES,   2,  0,"00000", true);
-}; 	
+  	display(AP_ALT_VALUES,   2,  0,"00000", true);
+  	display(AP_SPD_VALUES,   2,  5,"000", true);
+  	display(AP_VS_VALUES,   2,  8,"-0000", true);
+  	display(AP_HDG_VALUES,   2,  13,"000", true);
+}; 
+
+device(PEDESTAL)
+{
+	connector(PEDESTALconn);
+	analog(0, Elevator,Rx);
+};	
