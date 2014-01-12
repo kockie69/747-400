@@ -1182,6 +1182,22 @@ void EDSP.b_RCL.On(void){
 	nqw(SetV4,311);	// 4F4 RCL
 }
 
+void Glareshied.b_GearUp.On(void){
+	nqw(SetU3,0);
+}
+
+void Glareshied.b_GearUp.Off(void){
+	// Need to do Nothing
+}
+
+void Glareshied.b_GearDown.On(void){
+	nqw(SetU3,16383);
+}
+
+void Glareshied.b_GearDown.Off(void){
+	// Need to do Nothing
+}
+
 ph setHDG(15)
 {
 	byte getal1;
@@ -1204,10 +1220,6 @@ ph setALT(16)
 	Display.AP_ALT_VALUES = setALT.getal3;
 	}
 };
-
-
-
-
 
 ph setSPD(17)
 {
