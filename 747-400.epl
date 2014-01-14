@@ -1181,7 +1181,6 @@ void EDSP.b_RCL.On(void){
 
 void Glareshield.b_GearUp.On(void){
 	nqw(SetU3,0);
-	setp (0, 0, 0b11111111);
 }
 
 void Glareshield.b_GearUp.Off(void){
@@ -1190,7 +1189,6 @@ void Glareshield.b_GearUp.Off(void){
 
 void Glareshield.b_GearDown.On(void){
 	nqw(SetU3,16383);
-	setp (0, 0, 0b11111111);
 }
 
 void Glareshield.b_GearDown.Off(void){

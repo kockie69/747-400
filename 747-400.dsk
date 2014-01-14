@@ -14,7 +14,7 @@ Width=657
 State=0
 Visible=1
 Active=0
-Zorder=2
+Zorder=1
 [Debug]
 Left=1
 Height=743
@@ -35,7 +35,7 @@ Visible=1
 Active=1
 Zorder=0
 File0=C:\Users\Gebruiker\747-400\747-400.epl
-SelStart0=15666
+SelStart0=19040
 SelLength0=0
 ActiveTab=0
 [EDIT1]
@@ -47,7 +47,7 @@ Width=820
 State=0
 Visible=1
 Active=0
-Zorder=1
+Zorder=2
 File0=C:\Users\Gebruiker\747-400\747-400Devices.hpl
 SelStart0=1453
 SelLength0=0

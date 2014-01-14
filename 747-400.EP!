@@ -2236,7 +2236,6 @@
  
  void Glareshield.b_GearUp.On ( void ) { 
  nqw ( 0x136 , 0 ) ; 
- setp ( 0 , 0 , 0b11111111 ) ; 
  } 
  
  void Glareshield.b_GearUp.Off ( void ) { 
@@ -2245,7 +2244,6 @@
  
  void Glareshield.b_GearDown.On ( void ) { 
  nqw ( 0x136 , 16383 ) ; 
- setp ( 0 , 0 , 0b11111111 ) ; 
  } 
  
  void Glareshield.b_GearDown.Off ( void ) { 
