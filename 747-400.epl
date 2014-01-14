@@ -9,15 +9,12 @@
 // Module definition.
 // definemodule|defmod(<module number>,<mtype>,<start row>,<numrows>)
 //====================================================================
-definemodule(0,SLOWSCAN,0,16)	// scan module 0 (first expansion module, A, B, RUDDER, and FLCS connectors
-definemodule(1,SLOWSCAN,0,8) // 64 button module: J1 connected to J4 on module ABA => Epic inputs M1/R0/B0 to M1/R7/B7
-definemodule(1,SLOWSCAN,8,8) // 64 button module: J1 connected to ?? on module ABA => Epic inputs M1/R0/B0 to M1/R7/B7
+definemodule(0,SLOWSCAN,0,8)	// scan module 0 (first expansion module, A, B, RUDDER, and FLCS connectors
+definemodule(1,SLOWSCAN,0,16) // 64 button module: J1 connected to J4 on module ABA => Epic inputs M1/R0/B0 to M1/R7/B7
 definemodule(7,FASTSCAN,0,4)
-definemodule (0,OUTPUT,0,4) 		//define output module 0 rows 0-3
 definemodule(7,OUTPUT,0,4)
 
 #include "747-400Devices.hpl"	// the "" says to look in the current directory
-//#include "VDXCodes.inc" 
 
 //==================================================================
 // define raw values
@@ -263,7 +260,7 @@ Display.AP_ALT_VALUES = wrd_ALT*100;
 Display.AP_SPD_VALUES = wrd_SPD;
 Display.AP_HDG_VALUES = wrd_HDG;
 Display.AP_VS_VALUES = wrd_VS;
-	
+
 jump(MainLoop);				
 // once finished, jump to the main timing loop
 }
@@ -1182,20 +1179,22 @@ void EDSP.b_RCL.On(void){
 	nqw(SetV4,311);	// 4F4 RCL
 }
 
-void Glareshied.b_GearUp.On(void){
+void Glareshield.b_GearUp.On(void){
 	nqw(SetU3,0);
+	setp (0, 0, 0b11111111);
 }
 
-void Glareshied.b_GearUp.Off(void){
-	// Need to do Nothing
-}
-
-void Glareshied.b_GearDown.On(void){
+void Glareshield.b_GearUp.Off(void){
 	nqw(SetU3,16383);
 }
 
-void Glareshied.b_GearDown.Off(void){
-	// Need to do Nothing
+void Glareshield.b_GearDown.On(void){
+	nqw(SetU3,16383);
+	setp (0, 0, 0b11111111);
+}
+
+void Glareshield.b_GearDown.Off(void){
+	nqw(SetU3,0);
 }
 
 ph setHDG(15)

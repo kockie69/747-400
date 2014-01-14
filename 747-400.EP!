@@ -422,11 +422,9 @@
  
  
  
- definemodule ( 0 , 1 , 0 , 16 ) 
- definemodule ( 1 , 1 , 0 , 8 ) 
- definemodule ( 1 , 1 , 8 , 8 ) 
+ definemodule ( 0 , 1 , 0 , 8 ) 
+ definemodule ( 1 , 1 , 0 , 16 ) 
  definemodule ( 7 , 0 , 0 , 4 ) 
- definemodule ( 0 , 2 , 0 , 4 ) 
  definemodule ( 7 , 2 , 0 , 4 ) 
  
  
@@ -485,7 +483,6 @@
  
  
  
- 
  connector ( MCPconn ) 
  { 
  modrow ( 7 , 0 ) ; 
@@ -530,6 +527,21 @@
  { 
  modrow ( 1 , 2 ) ; 
  modrow ( 1 , 3 ) ; 
+ } ; 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ connector ( Glareshieldconn ) 
+ { 
+ modrow ( 1 , 8 ) ; 
+ modrow ( 1 , 9 ) ; 
  } ; 
  
  
@@ -689,6 +701,31 @@
  
  
  
+ 
+ 
+ 
+ 
+ 
+ 
+ device ( Glareshield ) 
+ { 
+ connector ( Glareshieldconn ) ; 
+ button ( 0 , 0 , b_GearUp ) ; 
+ button ( 0 , 1 , b_GearDown ) ; 
+ button ( 0 , 2 , b_AutobrakeRTO ) ; 
+ button ( 0 , 3 , b_AutobrakeOff ) ; 
+ button ( 0 , 4 , b_AutobrakeDisarm ) ; 
+ button ( 0 , 5 , b_Autobrake1 ) ; 
+ button ( 0 , 6 , b_Autobrake2 ) ; 
+ button ( 0 , 7 , b_Autobrake3 ) ; 
+ button ( 1 , 0 , b_Autobrake4 ) ; 
+ button ( 1 , 1 , b_AutobrakeAuto ) ; 
+ 
+ } ; 
+ 
+ 
+ 
+ 
  device ( Display ) 
  { 
  
@@ -703,7 +740,6 @@
  connector ( PEDESTALconn ) ; 
  analog ( 0 , Elevator , Rx ) ; 
  } ; 
- 
  
  
  
@@ -2198,6 +2234,24 @@
  nqw ( 0x139 , 311 ) ; 
  } 
  
+ void Glareshield.b_GearUp.On ( void ) { 
+ nqw ( 0x136 , 0 ) ; 
+ setp ( 0 , 0 , 0b11111111 ) ; 
+ } 
+ 
+ void Glareshield.b_GearUp.Off ( void ) { 
+ nqw ( 0x136 , 16383 ) ; 
+ } 
+ 
+ void Glareshield.b_GearDown.On ( void ) { 
+ nqw ( 0x136 , 16383 ) ; 
+ setp ( 0 , 0 , 0b11111111 ) ; 
+ } 
+ 
+ void Glareshield.b_GearDown.Off ( void ) { 
+ nqw ( 0x136 , 0 ) ; 
+ } 
+ 
  ph setHDG ( 15 ) 
  { 
  byte getal1 ; 
@@ -2220,10 +2274,6 @@
  Display.AP_ALT_VALUES = setALT.getal3 ; 
  } 
  } ; 
- 
- 
- 
- 
  
  ph setSPD ( 17 ) 
  { 
