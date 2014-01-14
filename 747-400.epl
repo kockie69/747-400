@@ -9,10 +9,10 @@
 // Module definition.
 // definemodule|defmod(<module number>,<mtype>,<start row>,<numrows>)
 //====================================================================
-definemodule(0,SLOWSCAN,0,8)	// scan module 0 (first expansion module, A, B, RUDDER, and FLCS connectors
+definemodule(0,SLOWSCAN,0,16)	// scan module 0 (first expansion module, A, B, RUDDER, and FLCS connectors
 definemodule(1,SLOWSCAN,0,16) // 64 button module: J1 connected to J4 on module ABA => Epic inputs M1/R0/B0 to M1/R7/B7
 definemodule(7,FASTSCAN,0,4)
-definemodule(7,OUTPUT,0,4)
+definemodule(0,OUTPUT,0,4)
 
 #include "747-400Devices.hpl"	// the "" says to look in the current directory
 
