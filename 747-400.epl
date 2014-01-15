@@ -9,7 +9,7 @@
 // Module definition.
 // definemodule|defmod(<module number>,<mtype>,<start row>,<numrows>)
 //====================================================================
-definemodule(0,SLOWSCAN,0,16)	// scan module 0 (first expansion module, A, B, RUDDER, and FLCS connectors
+definemodule(0,SLOWSCAN,0,7)	// scan module 0 (first expansion module, A, B, RUDDER, and FLCS connectors
 definemodule(1,SLOWSCAN,0,16) // 64 button module: J1 connected to J4 on module ABA => Epic inputs M1/R0/B0 to M1/R7/B7
 definemodule(7,FASTSCAN,0,4)
 definemodule(0,OUTPUT,0,4)
@@ -1194,6 +1194,63 @@ void Glareshield.b_GearDown.On(void){
 void Glareshield.b_GearDown.Off(void){
 	nqw(SetU3,0);
 }
+
+void Glareshield.b_AutobrakeRTO.On(void){
+	nqw(SetU4,0);
+}
+
+void Glareshield.b_AutobrakeRTO.Off(void){
+}
+
+void Glareshield.b_AutobrakeOff.On(void){
+	nqw(SetU4,1);
+}
+
+void Glareshield.b_AutobrakeOff.Off(void){
+}
+
+void Glareshield.b_AutobrakeDisarm.On(void){
+	nqw(SetU4,1);
+}
+
+void Glareshield.b_AutobrakeDisarm.Off(void){
+}
+
+void Glareshield.b_Autobrake1.On(void){
+	nqw(SetU4,2);
+}
+
+void Glareshield.b_Autobrake1.Off(void){
+}
+
+void Glareshield.b_Autobrake2.On(void){
+	nqw(SetU4,3);
+}
+
+void Glareshield.b_Autobrake2.Off(void){
+}
+
+void Glareshield.b_Autobrake3.On(void){
+	nqw(SetU4,4);
+}
+
+void Glareshield.b_Autobrake3.Off(void){
+}
+
+void Glareshield.b_Autobrake4.On(void){
+	nqw(SetU4,4);
+}
+
+void Glareshield.b_Autobrake4.Off(void){
+}
+
+void Glareshield.b_AutobrakeAuto.On(void){
+	nqw(SetU4,5);
+}
+
+void Glareshield.b_AutobrakeAuto.Off(void){
+}
+
 
 ph setHDG(15)
 {
