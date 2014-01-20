@@ -422,7 +422,7 @@
  
  
  
- definemodule ( 0 , 1 , 0 , 16 ) 
+ definemodule ( 0 , 1 , 0 , 7 ) 
  definemodule ( 1 , 1 , 0 , 16 ) 
  definemodule ( 7 , 0 , 0 , 4 ) 
  definemodule ( 0 , 2 , 0 , 4 ) 
@@ -538,10 +538,11 @@
  
  
  
- connector ( Glareshieldconn ) 
+ connector ( Centerconn ) 
  { 
  modrow ( 1 , 8 ) ; 
  modrow ( 1 , 9 ) ; 
+ modrow ( 1 , 10 ) ; 
  } ; 
  
  
@@ -707,20 +708,33 @@
  
  
  
- device ( Glareshield ) 
+ device ( Center ) 
  { 
- connector ( Glareshieldconn ) ; 
+ connector ( Centerconn ) ; 
+ 
  button ( 0 , 0 , b_GearUp ) ; 
  button ( 0 , 1 , b_GearDown ) ; 
- button ( 0 , 2 , b_AutobrakeRTO ) ; 
- button ( 0 , 3 , b_AutobrakeOff ) ; 
- button ( 0 , 4 , b_AutobrakeDisarm ) ; 
- button ( 0 , 5 , b_Autobrake1 ) ; 
- button ( 0 , 6 , b_Autobrake2 ) ; 
- button ( 0 , 7 , b_Autobrake3 ) ; 
- button ( 1 , 0 , b_Autobrake4 ) ; 
- button ( 1 , 1 , b_AutobrakeAuto ) ; 
  
+ 
+ button ( 0 , 4 , b_AutobrakeRTO ) ; 
+ button ( 0 , 5 , b_AutobrakeOff ) ; 
+ button ( 0 , 6 , b_AutobrakeDisarm ) ; 
+ button ( 0 , 7 , b_Autobrake1 ) ; 
+ button ( 1 , 0 , b_Autobrake2 ) ; 
+ 
+ button ( 1 , 1 , b_Autobrake4 ) ; 
+ button ( 1 , 2 , b_AutobrakeAuto ) ; 
+ 
+ button ( 2 , 0 , b_Eicas ) ; 
+ button ( 2 , 1 , b_Inbd_Norm ) ; 
+ 
+ 
+ button ( 1 , 3 , b_Eicas_Pri ) ; 
+ button ( 1 , 5 , b_Low_Norm ) ; 
+ button ( 1 , 6 , b_Nd ) ; 
+ 
+ button ( 2 , 3 , b_Capt ) ; 
+ button ( 2 , 4 , b_FO ) ; 
  } ; 
  
  
@@ -2234,21 +2248,78 @@
  nqw ( 0x139 , 311 ) ; 
  } 
  
- void Glareshield.b_GearUp.On ( void ) { 
+ void Center.b_GearUp.On ( void ) { 
  nqw ( 0x136 , 0 ) ; 
  } 
  
- void Glareshield.b_GearUp.Off ( void ) { 
+ void Center.b_GearUp.Off ( void ) { 
  nqw ( 0x136 , 16383 ) ; 
  } 
  
- void Glareshield.b_GearDown.On ( void ) { 
+ void Center.b_GearDown.On ( void ) { 
  nqw ( 0x136 , 16383 ) ; 
  } 
  
- void Glareshield.b_GearDown.Off ( void ) { 
+ void Center.b_GearDown.Off ( void ) { 
  nqw ( 0x136 , 0 ) ; 
  } 
+ 
+ void Center.b_AutobrakeRTO.On ( void ) { 
+ nqw ( 0x138 , 0 ) ; 
+ } 
+ 
+ void Center.b_AutobrakeRTO.Off ( void ) { 
+ } 
+ 
+ void Center.b_AutobrakeOff.On ( void ) { 
+ nqw ( 0x138 , 1 ) ; 
+ } 
+ 
+ void Center.b_AutobrakeOff.Off ( void ) { 
+ } 
+ 
+ void Center.b_AutobrakeDisarm.On ( void ) { 
+ nqw ( 0x138 , 1 ) ; 
+ } 
+ 
+ void Center.b_AutobrakeDisarm.Off ( void ) { 
+ } 
+ 
+ void Center.b_Autobrake1.On ( void ) { 
+ nqw ( 0x138 , 2 ) ; 
+ } 
+ 
+ void Center.b_Autobrake1.Off ( void ) { 
+ } 
+ 
+ void Center.b_Autobrake2.On ( void ) { 
+ nqw ( 0x138 , 3 ) ; 
+ } 
+ 
+ void Center.b_Autobrake2.Off ( void ) { 
+ } 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ void Center.b_Autobrake4.On ( void ) { 
+ nqw ( 0x138 , 4 ) ; 
+ } 
+ 
+ void Center.b_Autobrake4.Off ( void ) { 
+ } 
+ 
+ void Center.b_AutobrakeAuto.On ( void ) { 
+ nqw ( 0x138 , 5 ) ; 
+ } 
+ 
+ void Center.b_AutobrakeAuto.Off ( void ) { 
+ } 
+ 
  
  ph setHDG ( 15 ) 
  { 

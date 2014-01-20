@@ -1179,76 +1179,76 @@ void EDSP.b_RCL.On(void){
 	nqw(SetV4,311);	// 4F4 RCL
 }
 
-void Glareshield.b_GearUp.On(void){
+void Center.b_GearUp.On(void){
 	nqw(SetU3,0);
 }
 
-void Glareshield.b_GearUp.Off(void){
+void Center.b_GearUp.Off(void){
 	nqw(SetU3,16383);
 }
 
-void Glareshield.b_GearDown.On(void){
+void Center.b_GearDown.On(void){
 	nqw(SetU3,16383);
 }
 
-void Glareshield.b_GearDown.Off(void){
+void Center.b_GearDown.Off(void){
 	nqw(SetU3,0);
 }
 
-void Glareshield.b_AutobrakeRTO.On(void){
+void Center.b_AutobrakeRTO.On(void){
 	nqw(SetU4,0);
 }
 
-void Glareshield.b_AutobrakeRTO.Off(void){
+void Center.b_AutobrakeRTO.Off(void){
 }
 
-void Glareshield.b_AutobrakeOff.On(void){
+void Center.b_AutobrakeOff.On(void){
 	nqw(SetU4,1);
 }
 
-void Glareshield.b_AutobrakeOff.Off(void){
+void Center.b_AutobrakeOff.Off(void){
 }
 
-void Glareshield.b_AutobrakeDisarm.On(void){
+void Center.b_AutobrakeDisarm.On(void){
 	nqw(SetU4,1);
 }
 
-void Glareshield.b_AutobrakeDisarm.Off(void){
+void Center.b_AutobrakeDisarm.Off(void){
 }
 
-void Glareshield.b_Autobrake1.On(void){
+void Center.b_Autobrake1.On(void){
 	nqw(SetU4,2);
 }
 
-void Glareshield.b_Autobrake1.Off(void){
+void Center.b_Autobrake1.Off(void){
 }
 
-void Glareshield.b_Autobrake2.On(void){
+void Center.b_Autobrake2.On(void){
 	nqw(SetU4,3);
 }
 
-void Glareshield.b_Autobrake2.Off(void){
+void Center.b_Autobrake2.Off(void){
 }
 
-void Glareshield.b_Autobrake3.On(void){
+// void Center.b_Autobrake3.On(void){
+//	nqw(SetU4,4);
+//}
+
+//void Center.b_Autobrake3.Off(void){
+//}
+
+void Center.b_Autobrake4.On(void){
 	nqw(SetU4,4);
 }
 
-void Glareshield.b_Autobrake3.Off(void){
+void Center.b_Autobrake4.Off(void){
 }
 
-void Glareshield.b_Autobrake4.On(void){
-	nqw(SetU4,4);
-}
-
-void Glareshield.b_Autobrake4.Off(void){
-}
-
-void Glareshield.b_AutobrakeAuto.On(void){
+void Center.b_AutobrakeAuto.On(void){
 	nqw(SetU4,5);
 }
 
-void Glareshield.b_AutobrakeAuto.Off(void){
+void Center.b_AutobrakeAuto.Off(void){
 }
 
 
