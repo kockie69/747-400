@@ -111,8 +111,9 @@ connector(EDSPconn)
 //=========================================================
 connector(Glareshieldconn)
 {
-	modrow(1,8);	//64 button module Scan Row 1 module 2
+	modrow(1,8);	// 64 button module Scan Row 1 module 2
 	modrow(1,9);	// 64 button module Scan Row 2 module 2
+	modrow(1,10);	// 64 button module Scan Row 3 module 2
 };
 //=========================================================
 // End of Connector Glareshieldconn
@@ -281,17 +282,30 @@ device(EDSP)
 device(Glareshield)
 {
 	connector(Glareshieldconn);
+	// GEAR Definitions
 	button(0,0,b_GearUp);
 	button(0,1,b_GearDown);
-	button(0,2,b_AutobrakeRTO);
-	button(0,3,b_AutobrakeOff);
-	button(0,4,b_AutobrakeDisarm);
-	button(0,5,b_Autobrake1);
-	button(0,6,b_Autobrake2);
-	button(0,7,b_Autobrake3);
-	button(1,0,b_Autobrake4);
-	button(1,1,b_AutobrakeAuto);
-	
+	// Autobrake definitions
+//	button(0,3,b_AutobrakeRTO); Deze werkt op dit moment niet (fout in hardware aansluiting)
+	button(0,4,b_AutobrakeRTO); // Deze is eigenlijk leeg maar nu gekoppeld aan RTO totdat vorige regel opgelost
+	button(0,5,b_AutobrakeOff);
+	button(0,6,b_AutobrakeDisarm);
+	button(0,7,b_Autobrake1);
+	button(1,0,b_Autobrake2);
+//	button(?,?,b_Autobrake3); Deze werkt op dit moment niet (fout in hardware aansluiting)
+	button(1,1,b_Autobrake4);
+	button(1,2,b_AutobrakeAuto);
+	// inbd crt definitions
+	button(2,0,b_Eicas);
+	button(2,1,b_Inbd_Norm);
+//	button(2,2,b_Pfd); Deze werkt op dit moment niet (fout in hardware aansluiting)
+	// low crt definitions
+	button(1,3,b_Eicas_Pri);
+	button(1,5,b_Low_Norm);
+	button(1,6,b_Nd);
+	// standby efis definitions
+	button(2,3,b_Capt);
+	button(2,4,b_FO);
 };
 //=========================================================
 // End of Device Glareshield
