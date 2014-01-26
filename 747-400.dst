@@ -288,12 +288,16 @@ C:\Users\Gebruiker\747-400\747-400.epl (1240)
 C:\Users\Gebruiker\747-400\747-400.epl (1244)
 C:\Users\Gebruiker\747-400\747-400.epl (1247)
 C:\Users\Gebruiker\747-400\747-400.epl (1251)
-C:\Users\Gebruiker\747-400\747-400.epl (1255)
+C:\Users\Gebruiker\747-400\747-400.epl (1254)
+C:\Users\Gebruiker\747-400\747-400.epl (1258)
+C:\Users\Gebruiker\747-400\747-400.epl (1261)
 C:\Users\Gebruiker\747-400\747-400.epl (1265)
-C:\Users\Gebruiker\747-400\747-400.epl (1278)
-C:\Users\Gebruiker\747-400\747-400.epl (1292)
+C:\Users\Gebruiker\747-400\747-400.epl (1270)
+C:\Users\Gebruiker\747-400\747-400.epl (1280)
+C:\Users\Gebruiker\747-400\747-400.epl (1293)
 C:\Users\Gebruiker\747-400\747-400.epl (1307)
-C:\Users\Gebruiker\747-400\747-400.epl (1314)
+C:\Users\Gebruiker\747-400\747-400.epl (1322)
+C:\Users\Gebruiker\747-400\747-400.epl (1329)
 connector
 connector
 connector
@@ -443,6 +447,10 @@ rvar
 mem16
 mem16
 mem16
+proc
+proc
+proc
+proc
 proc
 proc
 proc
@@ -880,6 +888,10 @@ Center.b_Autobrake4.On
 Center.b_Autobrake4.Off
 Center.b_AutobrakeAuto.On
 Center.b_AutobrakeAuto.Off
+Center.b_Eicas.On
+Center.b_Eicas.Off
+Center.b_Inbd_Norm.On
+Center.b_Inbd_Norm.Off
 setHDG
 setALT
 setSPD

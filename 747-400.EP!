@@ -2320,6 +2320,21 @@
  void Center.b_AutobrakeAuto.Off ( void ) { 
  } 
  
+ void Center.b_Eicas.On ( void ) { 
+ nqw ( 0x139 , 11 ) ; 
+ } 
+ 
+ void Center.b_Eicas.Off ( void ) { 
+ } 
+ 
+ void Center.b_Inbd_Norm.On ( void ) { 
+ nqw ( 0x139 , 10 ) ; 
+ } 
+ 
+ void Center.b_Inbd_Norm.Off ( void ) { 
+ } 
+ 
+ 
  
  ph setHDG ( 15 ) 
  { 
