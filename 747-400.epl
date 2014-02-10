@@ -838,6 +838,7 @@ void l_handle_ALT_rot(void)
 	}
 	byt_AltTime = ALT_TIMER;	// Reset ALT timer
 	f_AltTiming = true;
+	Display.AP_ALT_VALUES = wrd_ALT;
 }
 
 
@@ -861,6 +862,7 @@ void l_handle_VS_rot (void)
 	}
 	byt_VSTime = VS_TIMER;
 	f_VSTiming = true;
+     Display.AP_VS_VALUES = wrd_VS;
 }
 
 
@@ -901,6 +903,8 @@ void l_handle_SPD_rot (void)
 		}
 		byt_SpdTime = SPD_TIMER;
 		f_SpdTiming = true;
+		Display.AP_SPD_VALUES = wrd_SPD;
+
 	}
 	else								// MACH is to be handled by the SPD rotary
 	{
@@ -914,6 +918,7 @@ void l_handle_SPD_rot (void)
 		}
 		byt_MACHTime = MACH_TIMER;
 		f_MACHTiming = true;
+		Display.AP_SPD_VALUES = wrd_MACH;
 	}
 }
 
@@ -951,6 +956,7 @@ void l_handle_HDG_rot (void)
 	}
 	byt_HdgTime = HDG_TIMER;
 	f_HdgTiming = true;
+     Display.AP_HDG_VALUES = wrd_HDG;
 }
 
 
