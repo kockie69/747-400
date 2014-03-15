@@ -863,7 +863,8 @@ void l_handle_VS_rot (void)
 	}
 	byt_VSTime = VS_TIMER;
 	f_VSTiming = true;
-     Display.AP_VS_VALUES = wrd_VS;
+	nqw(SetZ6, wrd_VS);
+     // Display.AP_VS_VALUES = wrd_VS;
 }
 
 
@@ -904,7 +905,8 @@ void l_handle_SPD_rot (void)
 		}
 		byt_SpdTime = SPD_TIMER;
 		f_SpdTiming = true;
-		Display.AP_SPD_VALUES = wrd_SPD;
+		nqw(SetU5, wrd_SPD);		// FSUIPC_WRITE_9=U5,2,5406
+		// Display.AP_SPD_VALUES = wrd_SPD;
 
 	}
 	else								// MACH is to be handled by the SPD rotary
@@ -919,7 +921,8 @@ void l_handle_SPD_rot (void)
 		}
 		byt_MACHTime = MACH_TIMER;
 		f_MACHTiming = true;
-		Display.AP_SPD_VALUES = wrd_MACH;
+		nqw(SetR5, wrd_MACH);		// FSUIPC_WRITE_9=U5,2,5406
+		// Display.AP_SPD_VALUES = wrd_MACH;
 	}
 }
 
@@ -957,7 +960,8 @@ void l_handle_HDG_rot (void)
 	}
 	byt_HdgTime = HDG_TIMER;
 	f_HdgTiming = true;
-     Display.AP_HDG_VALUES = wrd_HDG;
+	nqw(SetX6, wrd_HDG);		// FSUIPC_WRITE_11=X6,2,5408
+     // Display.AP_HDG_VALUES = wrd_HDG;
 }
 
 
