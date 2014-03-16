@@ -126,13 +126,13 @@ word wrd_BARO_FS;
 
 void CheckSpeedTimers (void)
 {
-	if (f_SpdTiming)							// is speed/MACH knob turning
+	if (f_SpdTiming)				// is knob turning
 	{	
-		byt_SpdTime--;						// decrement byt_SpdTime by 1
-		if (!byt_SpdTime)						// if byt_SpdTime = 0 
+		byt_SpdTime--;			
+		if (!byt_SpdTime)		// if byt_SpdTime = 0 
 		{
 			f_SpdTiming = false;	
-			nqw(SetU5, wrd_SPD);		// FSUIPC_WRITE_9=U5,2,5406
+			nqw(SetU5, wrd_SPD);	// FSUIPC_WRITE_9=U5,2,5406
 		}
 	}
 	
@@ -1284,7 +1284,7 @@ ph setHDG(15)
 	byte getal2;
 	word getal3;
 	
-	if (byt_HdgTime = 0) {
+	if (!byt_HdgTime) {
 		wrd_HDG = setHDG.getal3;
 		Display.AP_HDG_VALUES = setHDG.getal3;
 	}
@@ -1296,8 +1296,10 @@ ph setALT(16)
 	byte getal2;
 	word getal3;
 
-	if (byt_AltTime = 0) {
-		if (setALT.getal1 == 0xFF){ Display.AP_ALT_VALUES = blank;}	
+	if (!byt_AltTime) {
+		if (setALT.getal1 == 0xFF){ 
+			Display.AP_ALT_VALUES = blank;
+		}	
 		else {
 			wrd_ALT = setALT.getal3/100;
 			Display.AP_ALT_VALUES = setALT.getal3;
@@ -1311,7 +1313,7 @@ ph setSPD(17)
 	byte getal2;
 	word getal3;
 
-	if (byt_SpdTime = 0) {
+	if (!byt_SpdTime) {
 		if (setSPD.getal1 == 0xFF){ 
 			Display.AP_SPD_VALUES = blank;
 		}
@@ -1329,7 +1331,7 @@ ph setVS(19)
 	byte getal2;
 	word getal3;
 
-	if (byt_VSTime = 0) {
+	if (!byt_VSTime) {
 		if (setVS.getal1 == 0xFF){ Display.AP_VS_VALUES = blank;}
 		else {
 			wrd_VS = setVS.getal3;
