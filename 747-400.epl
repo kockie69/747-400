@@ -1284,7 +1284,7 @@ ph setHDG(15)
 	byte getal2;
 	word getal3;
 	
-	if (byt_HDGTime = 0) {
+	if (byt_HdgTime = 0) {
 		wrd_HDG = setHDG.getal3;
 		Display.AP_HDG_VALUES = setHDG.getal3;
 	}
@@ -1311,7 +1311,7 @@ ph setSPD(17)
 	byte getal2;
 	word getal3;
 
-	if (byt_SPDTime = 0) {
+	if (byt_SpdTime = 0) {
 		if (setSPD.getal1 == 0xFF){ 
 			Display.AP_SPD_VALUES = blank;
 		}
