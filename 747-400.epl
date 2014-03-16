@@ -1284,8 +1284,10 @@ ph setHDG(15)
 	byte getal2;
 	word getal3;
 	
-	wrd_HDG = setHDG.getal3;
-	Display.AP_HDG_VALUES = setHDG.getal3;
+	if (byt_HDGTime = 0) {
+		wrd_HDG = setHDG.getal3;
+		Display.AP_HDG_VALUES = setHDG.getal3;
+	}
 };
 
 ph setALT(16)
@@ -1294,10 +1296,12 @@ ph setALT(16)
 	byte getal2;
 	word getal3;
 
-	if (setALT.getal1 == 0xFF){ Display.AP_ALT_VALUES = blank;}	
-	else {
-	wrd_ALT = setALT.getal3/100;
-	Display.AP_ALT_VALUES = setALT.getal3;
+	if (byt_AltTime = 0) {
+		if (setALT.getal1 == 0xFF){ Display.AP_ALT_VALUES = blank;}	
+		else {
+			wrd_ALT = setALT.getal3/100;
+			Display.AP_ALT_VALUES = setALT.getal3;
+		}
 	}
 };
 
@@ -1306,11 +1310,15 @@ ph setSPD(17)
 	byte getal1;
 	byte getal2;
 	word getal3;
-	
-	if (setSPD.getal1 == 0xFF){ Display.AP_SPD_VALUES = blank;}
-	else {
-		wrd_SPD = setSPD.getal3;
-		Display.AP_SPD_VALUES = setSPD.getal3;
+
+	if (byt_SPDTime = 0) {
+		if (setSPD.getal1 == 0xFF){ 
+			Display.AP_SPD_VALUES = blank;
+		}
+		else {
+			wrd_SPD = setSPD.getal3;
+			Display.AP_SPD_VALUES = setSPD.getal3;
+		}
 	}
 };
 
@@ -1320,13 +1328,19 @@ ph setVS(19)
 	byte getal1;
 	byte getal2;
 	word getal3;
-	
-	if (setVS.getal1 == 0xFF){ Display.AP_VS_VALUES = blank;}
-	else {
-		wrd_VS = setVS.getal3;
-		if ((wrd_VS >> 8) > 128) { wrd_VS = (setVS.getal3 - 32768) * -1;}
-		else { wrd_VS = setVS.getal3;}
-		Display.AP_VS_VALUES = wrd_VS;
+
+	if (byt_VSTime = 0) {
+		if (setVS.getal1 == 0xFF){ Display.AP_VS_VALUES = blank;}
+		else {
+			wrd_VS = setVS.getal3;
+			if ((wrd_VS >> 8) > 128) { 
+				wrd_VS = (setVS.getal3 - 32768) * -1;
+			}
+			else { 
+				wrd_VS = setVS.getal3;
+				}
+			Display.AP_VS_VALUES = wrd_VS;
+		}
 	}
 };
 
