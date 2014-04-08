@@ -727,7 +727,7 @@
  
  button ( 2 , 0 , b_Eicas ) ; 
  button ( 2 , 1 , b_Inbd_Norm ) ; 
- 
+ button ( 2 , 2 , b_Pfd ) ; 
  
  button ( 1 , 3 , b_Eicas_Pri ) ; 
  button ( 1 , 5 , b_Low_Norm ) ; 
@@ -1907,6 +1907,8 @@
  } 
  byt_AltTime = 5 ; 
  f_AltTiming = true ; 
+ nqw ( 0x109 , wrd_ALT ) ; 
+ 
  } 
  
  
@@ -1930,6 +1932,8 @@
  } 
  byt_VSTime = 5 ; 
  f_VSTiming = true ; 
+ nqw ( 0x10b , wrd_VS ) ; 
+ 
  } 
  
  
@@ -1970,6 +1974,9 @@
  } 
  byt_SpdTime = 5 ; 
  f_SpdTiming = true ; 
+ nqw ( 0x13a , wrd_SPD ) ; 
+ 
+ 
  } 
  else 
  { 
@@ -1983,6 +1990,8 @@
  } 
  byt_MACHTime = 5 ; 
  f_MACHTiming = true ; 
+ nqw ( 0x106 , wrd_MACH ) ; 
+ 
  } 
  } 
  
@@ -2020,6 +2029,8 @@
  } 
  byt_HdgTime = 5 ; 
  f_HdgTiming = true ; 
+ nqw ( 0x108 , wrd_HDG ) ; 
+ 
  } 
  
  
@@ -2321,19 +2332,25 @@
  } 
  
  void Center.b_Eicas.On ( void ) { 
- nqw ( 0x139 , 11 ) ; 
+ nqw ( 0x139 , 602 ) ; 
  } 
  
  void Center.b_Eicas.Off ( void ) { 
  } 
  
  void Center.b_Inbd_Norm.On ( void ) { 
- nqw ( 0x139 , 10 ) ; 
+ nqw ( 0x139 , 601 ) ; 
  } 
  
  void Center.b_Inbd_Norm.Off ( void ) { 
  } 
  
+ void Center.b_Pfd.On ( void ) { 
+ nqw ( 0x139 , 601 ) ; 
+ } 
+ 
+ void Center.b_Pfd.Off ( void ) { 
+ } 
  
  
  ph setHDG ( 15 ) 
@@ -2342,8 +2359,10 @@
  byte getal2 ; 
  word getal3 ; 
  
+ if ( ! byt_HdgTime ) { 
  wrd_HDG = setHDG.getal3 ; 
  Display.AP_HDG_VALUES = setHDG.getal3 ; 
+ } 
  } ; 
  
  ph setALT ( 16 ) 
@@ -2352,10 +2371,14 @@
  byte getal2 ; 
  word getal3 ; 
  
- if ( setALT.getal1 == 0xFF ) { Display.AP_ALT_VALUES = blank ; } 
+ if ( ! byt_AltTime ) { 
+ if ( setALT.getal1 == 0xFF ) { 
+ Display.AP_ALT_VALUES = blank ; 
+ } 
  else { 
  wrd_ALT = setALT.getal3 / 100 ; 
  Display.AP_ALT_VALUES = setALT.getal3 ; 
+ } 
  } 
  } ; 
  
@@ -2365,10 +2388,14 @@
  byte getal2 ; 
  word getal3 ; 
  
- if ( setSPD.getal1 == 0xFF ) { Display.AP_SPD_VALUES = blank ; } 
+ if ( ! byt_SpdTime ) { 
+ if ( setSPD.getal1 == 0xFF ) { 
+ Display.AP_SPD_VALUES = blank ; 
+ } 
  else { 
  wrd_SPD = setSPD.getal3 ; 
  Display.AP_SPD_VALUES = setSPD.getal3 ; 
+ } 
  } 
  } ; 
  
@@ -2379,12 +2406,18 @@
  byte getal2 ; 
  word getal3 ; 
  
+ if ( ! byt_VSTime ) { 
  if ( setVS.getal1 == 0xFF ) { Display.AP_VS_VALUES = blank ; } 
  else { 
  wrd_VS = setVS.getal3 ; 
- if ( ( wrd_VS >> 8 ) > 128 ) { wrd_VS = ( setVS.getal3 - 32768 ) * -1 ; } 
- else { wrd_VS = setVS.getal3 ; } 
+ if ( ( wrd_VS >> 8 ) > 128 ) { 
+ wrd_VS = ( setVS.getal3 - 32768 ) * -1 ; 
+ } 
+ else { 
+ wrd_VS = setVS.getal3 ; 
+ } 
  Display.AP_VS_VALUES = wrd_VS ; 
+ } 
  } 
  } ; 
  
