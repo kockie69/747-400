@@ -1263,19 +1263,25 @@ void Center.b_AutobrakeAuto.Off(void){
 }
 
 void Center.b_Eicas.On(void){
-	nqw(SetV4,11); //PFD-EICAS
+	nqw(SetV4,602); //PFD-EICAS
 }
 
 void Center.b_Eicas.Off(void){
 }
 
 void Center.b_Inbd_Norm.On(void){
-	nqw(SetV4,10); // PFD/ND -> PFD -> ND (like pressing F4,F1,F2 in GC)
+	nqw(SetV4,601); // PFD/ND -> PFD -> ND (like pressing F4,F1,F2 in GC)
 }
 
 void Center.b_Inbd_Norm.Off(void){
 }
 
+void Center.b_Pfd.On(void){
+	nqw(SetV4,601); // PFD/ND -> PFD -> ND (like pressing F4,F1,F2 in GC)
+}
+
+void Center.b_Pfd.Off(void){
+}
 
 
 ph setHDG(15)
