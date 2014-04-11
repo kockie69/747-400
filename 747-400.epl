@@ -824,6 +824,10 @@ void l_handle_ALT_rot(void)
 		{
 			wrd_ALT -= ALT_SLOW_DELTA;
 		}
+		if (wrd_ALT <0)
+		{
+			wrd_ALT =0;
+		}
 	}
 	else
 	{
