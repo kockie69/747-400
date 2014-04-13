@@ -256,6 +256,7 @@ senddata(7,1,TYPE2);
 //CP_EFIS_Output.Rotary.R0Type = TYPE2;
 //CP_EFIS_Output.Rotary.R1Type = TYPE2;
 
+// Add check if battery=On
 Display.AP_ALT_VALUES = wrd_ALT*100;
 Display.AP_SPD_VALUES = wrd_SPD;
 Display.AP_HDG_VALUES = wrd_HDG;
@@ -824,9 +825,9 @@ void l_handle_ALT_rot(void)
 		{
 			wrd_ALT -= ALT_SLOW_DELTA;
 		}
-		if (wrd_ALT <0)
+		if (wrd_ALT = 0)
 		{
-			wrd_ALT =0;
+			Display.AP_ALT_VALUES = wrd_ALT*100;
 		}
 	}
 	else
