@@ -825,10 +825,6 @@ void l_handle_ALT_rot(void)
 		{
 			wrd_ALT -= ALT_SLOW_DELTA;
 		}
-		if (wrd_ALT = 0)
-		{
-			Display.AP_ALT_VALUES = wrd_ALT*100;
-		}
 	}
 	else
 	{
