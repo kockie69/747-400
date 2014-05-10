@@ -111,7 +111,7 @@ byte x541E;
 urvar(wrd_SPD,MCP_IAS_MIN,MCP_IAS_MAX,250,true);
 urvar(wrd_MACH,MCP_MACH_MIN,MCP_MACH_MAX,70,true);
 urvar(wrd_HDG,1,360,1,false);
-urvar(wrd_ALT,MCP_ALT_MIN,MCP_ALT_MAX,100,true);
+urvar(wrd_ALT,MCP_ALT_MIN,MCP_ALT_MAX,0,true);
 rvar(wrd_VS,MCP_VS_MIN,MCP_VS_MAX,0,true);
 
 word wrd_BARO_CP=1013;
