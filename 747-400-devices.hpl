@@ -136,16 +136,13 @@ device(RTPLeft)
 	button(2,5,HFL);
 	button(2,6,HFR);	
 	
-	// Rotary Module 7, Rotary1 Scan Row 0
-	button(0,0,r_cnt_FreqSelector);		// Altitude setting count,Button 60?
-	button(0,1,r_dir_FreqSelector);		// Altitude setting direction,Button 61
+	// Rotary Module 7, Rotary1 
+	button(0,0,r_cnt_FreqSelector);		
+	button(0,1,r_dir_FreqSelector);		
 	
-	// Rotary Module 7, Rotary2 Scan Row 0
-	button(0,2,r_cnt_HFSens);		// Vertical Speed setting count,Button 58? 
-	button(0,3,r_dir_HFSens);		// Vertical Speed setting direction,Button 59?
-
-	
-	
+	// Rotary Module 7, Rotary2 
+	button(0,2,r_cnt_HFSens);		
+	button(0,3,r_dir_HFSens);		
 };
 
 device(RTPCenter)
@@ -160,6 +157,14 @@ device(RTPCenter)
 	button(7,7,AM);
 	button(7,7,HFL);
 	button(7,7,HFR);	
+	
+		// Rotary Module 7, Rotary1 
+	button(0,0,r_cnt_FreqSelector);		
+	button(0,1,r_dir_FreqSelector);		
+	
+	// Rotary Module 7, Rotary2 
+	button(0,2,r_cnt_HFSens);		
+	button(0,3,r_dir_HFSens);
 };
 
 device(RTPRight)
@@ -174,11 +179,15 @@ device(RTPRight)
 	button(7,7,AM);
 	button(7,7,HFL);
 	button(7,7,HFR);	
+	
+		// Rotary Module 7, Rotary1 
+	button(0,0,r_cnt_FreqSelector);		
+	button(0,1,r_dir_FreqSelector);		
+	
+	// Rotary Module 7, Rotary2 
+	button(0,2,r_cnt_HFSens);		
+	button(0,3,r_dir_HFSens);
 };
-
-
-
-
 
 device(DisplayLeftVHF)
 {
@@ -205,6 +214,66 @@ device(DisplayLeftSen)
 };
 
 device(DisplayLeftOff)
+{
+	display(standby,2,0,"99999",true);
+	display(active,2,8,"99999",true);
+};
+
+device(DisplayCenterVHF)
+{
+	display(standby,2,0,"999.00",true);
+	display(standbyFrac,2,0,"00",true);
+	display(active,2,8,"999.00",true);
+	display(activeFrac,2,8,"00",true);
+};
+
+device(DisplayCenterHF)
+{
+	display(standby,2,0,"99.000",true);
+	display(standbyFrac,2,0,"000",true);
+	display(active,2,8,"99.000",true);
+	display(activeFrac,2,8,"000",true);
+};
+
+device(DisplayCenterSen)
+{
+	display(standbySenNr,2,4,"9",true);
+	display(standbySen,2,0,"9999",true);
+	display(active,2,8,"99.000",true);
+	display(activeFrac,2,8,"000",true);
+};
+
+device(DisplayCenterOff)
+{
+	display(standby,2,0,"99999",true);
+	display(active,2,8,"99999",true);
+};
+
+device(DisplayRightVHF)
+{
+	display(standby,2,0,"999.00",true);
+	display(standbyFrac,2,0,"00",true);
+	display(active,2,8,"999.00",true);
+	display(activeFrac,2,8,"00",true);
+};
+
+device(DisplayRightHF)
+{
+	display(standby,2,0,"99.000",true);
+	display(standbyFrac,2,0,"000",true);
+	display(active,2,8,"99.000",true);
+	display(activeFrac,2,8,"000",true);
+};
+
+device(DisplayRightSen)
+{
+	display(standbySenNr,2,4,"9",true);
+	display(standbySen,2,0,"9999",true);
+	display(active,2,8,"99.000",true);
+	display(activeFrac,2,8,"000",true);
+};
+
+device(DisplayRightOff)
 {
 	display(standby,2,0,"99999",true);
 	display(active,2,8,"99999",true);

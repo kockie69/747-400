@@ -80,6 +80,35 @@ void RadioPanelLeftOff()
 	DisplayLeftOff.active = blank;
 }
 
+//====================================================================
+// Function Definition 
+// Name:		RadioPanelCenterOff
+// Called by:	defineqproc(1,RadioPanelCenterOff) 
+//====================================================================
+defineqproc(2,RadioPanelCenterOff)
+
+void RadioPanelCenterOff()
+{
+// Check if next lines are ok. Purpose is to simulate displays off
+	DisplayLeftOff.standby = blank;	
+	DisplayLeftOff.active = blank;
+}
+
+//====================================================================
+// Function Definition 
+// Name:		RadioPanelRightOff
+// Called by:	defineqproc(1,RadioPanelRightOff) 
+//====================================================================
+defineqproc(3,RadioPanelRightOff)
+
+void RadioPanelRightOff()
+{
+// Check if next lines are ok. Purpose is to simulate displays off
+	DisplayLeftOff.standby = blank;	
+	DisplayLeftOff.active = blank;
+}
+
+
 
 
 void CheckSpeedTimers (void)
