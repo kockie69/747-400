@@ -1,38 +1,14 @@
-//---------------------------------------------------------------------------
-// Author		: Robert Kock
-// Description	: This is the core epl code for my boeing 747-400. 
-//---------------------------------------------------------------------------
+// *** do not remove *** updtepl ver 0.1.1.45
 
+//--------------------------------
+// First start including some basic stuff
+//--------------------------------
 #include <epicdefs.hpl>
 
-//====================================================================
-// Module definition.
-// definemodule|defmod(<module number>,<mtype>,<start row>,<numrows>)
-//====================================================================
-definemodule(0,SLOWSCAN,0,7)	// scan module 0 (first expansion module, A, B, RUDDER, and FLCS connectors
-definemodule(1,SLOWSCAN,0,16) // 64 button module: J1 connected to J4 on module ABA => Epic inputs M1/R0/B0 to M1/R7/B7
-definemodule(7,FASTSCAN,0,4)
-definemodule(0,OUTPUT,0,4)
-
-#include "747-400Devices.hpl"	// the "" says to look in the current directory
-
-//==================================================================
-// define raw values
-// for displays: 
-// bit 7 (leftmost) 	-> 1 disables, 0 enables  decimal point
-// bit 4-6		-> which digit to send data
-// bit 0-3		-> data to send
-// example: 	0100	-> decimal 4, hex 4	digit number to set
-//		1010	-> decimal 10, hex A	value to set
-// SendData(OUTPUT,1,0b01001010) sends value 0xA to digit 4 on row 1
-// SendDAta(OUTPUT,1,0b11001010) sends the same value to digit 4, but
-//				this time with decimal point disabled
-//====================================================================
-#define raw_BLANK 0xCF			
-#define raw_DASH 0xCA			
-#define raw_R 0xFA			
-#define raw_L 0xFF			
-
+//--------------------------------
+// Next include device definitions
+//--------------------------------
+#include "747-400-devices.hpl"	
 
 //====================================================================
 // Definition of Rotary Types
@@ -40,165 +16,217 @@ definemodule(0,OUTPUT,0,4)
 #define TYPE0 0b00000000	// ALPS
 #define TYPE1 0b01010101	// rotary two phase type1
 #define TYPE2 0b10101010	// rotary two phase type2
-#define TYPE3 0b11111111	// Grayhill
-#define HDG_TIMER			5
-#define ALT_FAST_DELTA		10
-#define ALT_SLOW_DELTA		1
-#define ALT_TIMER			5
-#define SPD_FAST_DELTA		10
-#define SPD_SLOW_DELTA		1
-#define SPD_TIMER			5
-#define MACH_TIMER		5	// Value may be wrong, needs checking
-#define HDG_FAST_DELTA		10
-#define HDG_SLOW_DELTA		1
+#define TYPE3 0b11111111	// Grayhil
 
-#define VS_DELTA			100
-#define VS_TIMER			5
-#define DHMDA_DELTA_CP		1
-#define DHMDA_TIMER_CP		5
-#define BARO_DELTA_CP		1
-#define BARO_TIMER_CP		5
+#define HFSens_FAST_DELTA 8
+#define HFSens_SLOW_DELTA 1
+#define FreqSelector_FAST_DELTA 8
+#define FreqSelector_SLOW_DELTA 1
 
-#define MCP_IAS_MIN 0		// lowest setting on the MCP
-#define MCP_IAS_MAX 340       // highest setting on the MCP
-#define MCP_MACH_MIN 0	      // lowest setting on the MCP
-#define MCP_MACH_MAX 86       // highest setting on the MCP
-#define MCP_ALT_MIN 0		// lowest setting on the MCP
-#define MCP_ALT_MAX 50000	// highest setting on the MCP
-#define MCP_VS_MIN -9999
-#define MCP_VS_MAX 9999
+#define HFSens_TIMER 5
+#define FreqSelector_TIMER 5
 
-//====================================================================
-// Flag definition
-//====================================================================
-flag f_SpdTiming		= false;
-flag f_MACHTiming		= false;
-flag f_HdgTiming		= false;
-flag f_AltTiming		= false;
-flag f_VSTiming		= false;
-flag f_BAROTiming_CP	= false;
-flag f_DHMDATiming_CP	= false;
-flag f_SPD_Active		= true;
-flag f_WXR			= true;
-flag f_STA			= true;
-flag f_WPT			= true;
-flag f_ARPT			= true;
-flag f_DATA			= true;
-flag f_POS			= true;
-flag f_metric_ALT		= true;
+//--------------------------------
+// Define variables and flags
+//--------------------------------
+flag QPflag=false;			// declare a flag preset to "false"	
+flag inLoopFlag=false;
+flag RightMostFreqSelectorLeft=false;
+flag RightMostFreqSelectorCenter=false;
+flag RightMostFreqSelectorRight=false;
+flag f_FreqSelectorTiming = false; // 
+flag f_HFSensTiming = false;
 
-//====================================================================
-// Variable Definition
-//====================================================================
-byte byt_Tick;
-byte byt_SpdTime			= 0;
-byte byt_MACHTime			= 0;
-byte byt_HdgTime			= 0;
-byte byt_AltTime			= 0;
-byte byt_VSTime			= 0;
-byte byt_BAROTime_CP		= 0;
-byte byt_DHMDATime_CP		= 0;
+byte testData; 				//declare a byte(8 bit) variable
+byte loopCount;
+byte byt_Tick=0;
+byte byt_FreqSelectorTime=0;
+byte byt_HFSensTime=0;
 
-//=====================================================================
-// Variables to hold PM offset information.
-word x5410;
-word x5412;
-word x5414;
-byte x541C;
-byte x541D;
-byte x541E;
+word testWord; 				//declare a word(16 bit) variable
+word testCount=0;				//declare a word preset to 0
+word frac;
+word preFrac;
+word AltnFlapsArmWord;
+word AltnGearNoseBodyWord;
+word AltnGearWingsWord;
+word testrvarWord;
+word eventCount;
+word temp;
+word wrd_HFSens;
+word wrd_FreqSelector;
 
-urvar(wrd_SPD,MCP_IAS_MIN,MCP_IAS_MAX,250,true);
-urvar(wrd_MACH,MCP_MACH_MIN,MCP_MACH_MAX,70,true);
-urvar(wrd_HDG,1,360,1,false);
-urvar(wrd_ALT,MCP_ALT_MIN,MCP_ALT_MAX,0,true);
-rvar(wrd_VS,MCP_VS_MIN,MCP_VS_MAX,0,true);
-
-word wrd_BARO_CP=1013;
-word wrd_DHMDA_CP=0;
-word wrd_BARO_FS;
+rvar (testrvar,0,0xFF,0,true);	//declare a rotary variable "testrvar" with a range of 0 to 0xFF(255 decimal)
+						//  true indicates the "No wrap" flag is set. This will cause the variable 
+						//  to stay in the range 0 to 0xFF. Less than min (0 here) will cause variable to = 0
+						//  greater than 0xFF will cause varible to be set to 0xFF. Default for "No wrap flag" is false(rotate)
 
 //--------------------------------
 // Including Qproc Config and functions called by Qprocs
 //--------------------------------
+#include "747-400-qproc.inc"
 
-#include "747-400-qproc.inc"  
+//====================================================================
+// Function Definition 
+// Name:		RadioPanelLeftOff
+// Called by:	defineqproc(1,RadioPanelLeftOff) 
+//====================================================================
+defineqproc(1,RadioPanelLeftOff)
+
+void RadioPanelLeftOff()
+{
+// Check if next lines are ok. Purpose is to simulate displays off
+	DisplayLeftOff.standby = blank;	
+	DisplayLeftOff.active = blank;
+}
+
+
 
 void CheckSpeedTimers (void)
 {
-	if (f_SpdTiming)				// is knob turning
+	if (f_FreqSelectorTiming)							// is FreqSelector knob turning
 	{	
-		byt_SpdTime--;			
-		if (!byt_SpdTime)		// if byt_SpdTime = 0 
+		byt_FreqSelectorTime--;						// decrement byt_FreqSelectorTime by 1
+		if (!byt_FreqSelectorTime)						// if byt_FreqSelectorTime = 0 
 		{
-			f_SpdTiming = false;	
-			nqw(SetU5, wrd_SPD);	// FSUIPC_WRITE_9=U5,2,5406
+			f_FreqSelectorTiming = false;	
+			// Send FreqSelectorWord to PSX
 		}
 	}
 	
-	if (f_MACHTiming)							// is speed/MACH knob turning
+	if (f_HFSensTiming)							// is HFSens knob turning
 	{	
-		byt_MACHTime--;						// decrement byt_MACHTime by 1
-		if (!byt_MACHTime)					// if byt_MACHTime = 0 
+		byt_HFSensTime--;						// decrement byt_HFSensTime by 1
+		if (!byt_HFSensTime)						// if byt_HFSensTime = 0 
 		{
-			f_MACHTiming = false;	
-			nqw(SetR5, wrd_MACH);		// FSUIPC_WRITE_10=R5,2,540E
+			f_HFSensTiming = false;	
+			// Send HFSensWord to PSX
 		}
-	}
-
-	if (f_HdgTiming)
-	{
-		byt_HdgTime--;
-		if (!byt_HdgTime)
-		{
-			f_HdgTiming = false;
-			nqw(SetX6, wrd_HDG);		// FSUIPC_WRITE_11=X6,2,5408
-		}
-	}
-	
-	if (f_AltTiming)
-	{
-		byt_AltTime--;
-		if (!byt_AltTime)
-		{
-			f_AltTiming = false;
-			
-			nqw(SetY6, wrd_ALT);	// FSUIPC_WRITE_16=Y6,2,540A
-		}
-	}
-	
-	if (f_VSTiming)
-	{
-		byt_VSTime--;
-		if (!byt_VSTime)
-		{
-			f_VSTiming = false;
-			nqw(SetZ6, wrd_VS);			// FSUIPC_WRITE_12=Z6,2,540C
-		}
-	}
-	
-	if (f_BAROTiming_CP)
-	{
-		byt_BAROTime_CP--;
-		if (!byt_BAROTime_CP)
-		{
-			f_BAROTiming_CP = false;
-			wrd_BARO_FS = wrd_BARO_CP * 16;		// FS requires the value * 16. Why? No idea.
-			nqw(SetV6, wrd_BARO_FS);			// FSUIPC_WRITE_14=V6,2,0EC6
-		}
-	}
-	
-	if (f_DHMDATiming_CP)
-	{
-		byt_DHMDATime_CP--;
-		if (!byt_DHMDATime_CP)
-		{
-			f_DHMDATiming_CP = false;
-			nqw(SetZ5, wrd_DHMDA_CP);			// FSUIPC_WRITE_15=Z5,2,3428
-		}
-	}
+	}	
 }
 
+
+void handle_HFSens_rot(void)
+{
+	if (RTPLeft.r_dir_HFSens)
+	{
+		if (f_HFSensTiming)
+		{
+			wrd_HFSens -= HFSens_FAST_DELTA;
+		}
+		else
+		{
+			wrd_HFSens -= HFSens_SLOW_DELTA;
+		}
+	}
+	else
+	{
+		if (f_HFSensTiming)
+		{
+			wrd_HFSens += HFSens_FAST_DELTA;
+		}
+		else
+		{
+			wrd_HFSens += HFSens_SLOW_DELTA;
+		}
+	}
+	byt_HFSensTime = HFSens_TIMER;
+	f_HFSensTiming = true;
+}
+
+void RTPLeft.r_cnt_HFSens.On(void){
+jump(handle_HFSens_rot);	
+}
+
+void RTPLeft.r_cnt_HFSens.Off(void){
+jump(handle_HFSens_rot);	
+}
+
+void handle_FreqSelector_rot(void)
+// 0,0,1 =1 Turn small frequency knob clockwise slow 
+// 0,0,8 =8 Turn small frequency knob clockwise fast
+// 0,0,-1 =-1Turn small frequency knob anti-clockwise slow
+// 0,0,-8 =-8 Turn small frequency knob anti-clockwise fast
+// 0,1,0 =2 Turn high frequency knob clockwise slow
+// 0,8,0 =16 Turn high frequency knob clockwise fast
+// 0,-1,0 =-2 Turn high frequency knob anti-clockwise slow
+// 0,-8,0 =-16 Turn high frequency knob anti-clockwise fast
+{
+	if (RightMostFreqSelectorLeft)
+	// The small frequency knob
+	{
+		if (RTPLeft.r_dir_FreqSelector)
+		// Turn small frequency knob anti-clockwise
+		{
+			if (f_FreqSelectorTiming)
+			{
+				// Turn small frequency knob anti-clockwise fast
+				nqw(0x000d,0x10f0,20);
+			}
+			else
+			{
+				// Turn small frequency knob anti-clockwise slow
+				nqw(0x000d,0x00f0,20);
+			}
+		}
+		else
+		{
+		// Turn small frequency knob clockwise
+			if (f_FreqSelectorTiming)
+			{
+				// Turn low frequency knob clockwise fast
+				nqw(0x000d,0x1010,20);
+			}
+			else
+			{
+				// Turn small frequency knob clockwise slow
+				nqw(0x000d,0x0010,20);
+			}
+		}
+	}
+	else
+	// The high frequency knob
+	{
+		if (RTPLeft.r_dir_FreqSelector)
+		// Turn high frequency knob anti-clockwise
+		{
+			if (f_FreqSelectorTiming)
+			{
+				// Turn high frequency knob anti-clockwise fast
+				nqw(0x000d,0x100f,20);
+			}
+			else
+			{
+				// Turn high frequency knob anti-clockwise slow
+				nqw(0x000d,0x000f,20);
+			}
+		}
+		else
+		// Turn high frequency knob clockwise
+		{
+			if (f_FreqSelectorTiming)
+			{
+				// Turn high frequency knob clockwise fast
+				nqw(0x000d,0x1001,20);
+			}
+			else
+			{
+				// Turn high frequency knob clockwise slow
+				nqw(0x000d,0x0001,20);
+			}
+		}
+	}	
+	byt_FreqSelectorTime = FreqSelector_TIMER;
+	f_FreqSelectorTiming = true;
+}
+
+void RTPLeft.r_cnt_FreqSelector.On(void){
+jump(handle_FreqSelector_rot);	
+}
+
+void RTPLeft.r_cnt_FreqSelector.Off(void){
+jump(handle_FreqSelector_rot);	
+}
 
 
 //-------------------------------------------------------------------------
@@ -206,7 +234,7 @@ void CheckSpeedTimers (void)
 //-------------------------------------------------------------------------
 void MainLoop (void)
 {
-  call(CheckSpeedTimers);			// check to see if switch timers have expired and if so , handle them
+  call(CheckSpeedTimers);		// check to see if switch timers have expired and if so , handle them
   byt_Tick++;
   if (byt_Tick > 49)
   {
@@ -216,1157 +244,215 @@ void MainLoop (void)
   jump(MainLoop);				// restart the main Loop
 }
 
+//INIT must be spelled in caps. This will be executed when Project|Load completes.
 
-:INIT
+void INIT (void)
 {
-//Test & Clear all Lights
+  // First init rotaries
+  senddata(7,0,TYPE2);
+  senddata(7,1,TYPE2);
 
-clrp (0, 0, 0b11111111);	// this routine is for clear all lights from 0 to 7 into the simulator
-clrp (0, 1, 0b11111111);
-clrp (0, 2, 0b11111111);
-clrp (0, 3, 0b11111111);
-clrp (0, 4, 0b11111111);
-clrp (0, 5, 0b11111111);
-clrp (0, 6, 0b11111111);
-clrp (0, 7, 0b11111111);
-
-setp (0, 0, 0b11111111);	// this routine is for test all lights from 0 to 7 into the simulator
-setp (0, 1, 0b11111111);
-setp (0, 2, 0b11111111);
-setp (0, 3, 0b11111111);
-setp (0, 4, 0b11111111);	// the 0 in 6th position is for don't emetting Evaq sound in the EPIC test
-setp (0, 5, 0b11111111);
-setp (0, 6, 0b11111111);
-setp (0, 7, 0b11111111);
-
-delay( 100);	// this is time delay for test 2 second all lights
-
-clrp (0, 0, 0b11111111);	// this routine is for clear all lights from 0 to 7 into the simulator
-clrp (0, 1, 0b11111111);
-clrp (0, 2, 0b11111111);
-clrp (0, 3, 0b11111111);
-clrp (0, 4, 0b11111111);
-clrp (0, 5, 0b11111111);
-clrp (0, 6, 0b11111111);
-clrp (0, 7, 0b11111111);
-
-senddata(7,0,TYPE2);
-senddata(7,1,TYPE2);
-
-//CP_EFIS_Output.Rotary.R0Type = TYPE2;
-//CP_EFIS_Output.Rotary.R1Type = TYPE2;
-
-// Add check if battery=On
-Display.AP_ALT_VALUES = wrd_ALT*100;
-Display.AP_SPD_VALUES = wrd_SPD;
-Display.AP_HDG_VALUES = wrd_HDG;
-Display.AP_VS_VALUES = wrd_VS;
-
-jump(MainLoop);				
-// once finished, jump to the main timing loop
-}
-
-void MCP.b_CP_FD.On(void){
-//	MCP.b_CP_FD = BtnOff;
-if (x5414 & 0b0000000000100000)
-	{ 
-	x5414 &= 0b1111111111011111;	// Bit 5 of PM 5414 off
-	}
-	else
-	{
-	x5414 |= 0b0000000000100000;	// Bit 5 of PM 5414 on
-	}
-	nqw(SetX5,x5414);	// CP_FD is on
-}
-
-void MCP.b_CP_FD.Off(void){
-//	MCP.b_CP_FD = BtnOn;
-if (x5414 & 0b0000000001000000)
-	{ 
-	x5414 &= 0b1111111110111111;	// Bit 6 of PM 5414 off
-	}
-	else
-	{
-	x5414 |= 0b0000000001000000;	// Bit 6 of PM 5414 on
-	}
-	nqw(SetX5,x5414);	// CP_FD is Off
-}
-
-void MCP.b_FO_FD.Off(void){
-//	MCP.b_FO_FD = BtnOff;
-if (x5412 & 0b0000000000000100)
-	{
-	x5412 &= 0b1111111111111011; // Bit 18 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0000000000000100;	// Bit 18 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	// F_FD is Off
+  eventCount = 0;
+  setqlogon(0x11);	// bit 0 allows tracing of EPL code, bit 4 allows user control of TP2 using exec(138); to turn on and exec(139); to turn off
+  exec(139);		// turn off TP2
+  jump(MainLoop);				
+  // once finished, jump to the main timing loop
+  				
 }
 
 
-void MCP.b_FO_FD.On(void){
-//	MCP.b_FO_FD = BtnOn;
-if (x5412 & 0b0000000000000010)
-	{
-	x5412 &= 0b1111111111111101; // Bit 17 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0000000000000010;	// Bit 17 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	// FO_FD is On
-}
-
-
-void MCP.b_ATHR.Off(void){
-//	MCP.b_ATHR = BtnOn;
-if (x5412 & 0b0000000000010000)
-	{
-	x5412 &= 0b1111111111101111; // Bit 20 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0000000000010000;	// Bit 20 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	// ATHR is off
-}
-
-void MCP.b_ATHR.On(void){
-//	MCP.b_ATHR = BtnOff;
-if (x5412 & 0b0000000000001000)
-	{
-	x5412 &= 0b1111111111110111; // Bit 19 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0000000000001000;	// Bit 19 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	// ATHR is On
-}
-
-void MCP.b_THR.Off(void){
-//	MCP.b_THR = BtnOff;
-if (x5412 & 0b0000000000100000)
-	{
-	x5412 &= 0b1111111111011111; // Bit 21 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0000000000100000;	// Bit 21 of PM 5410 on
-	}
-      nqw(SetU2,x5412);
-}
-
-void MCP.b_THR.On(void){
-//	MCP.b_THR = BtnOn;
-if (x5412 & 0b0000000000100000)
-	{
-	x5412 &= 0b1111111111011111; // Bit 21 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0000000000100000;	// Bit 21 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_SPD.On(void){
-//	MCP.b_SPD = BtnOn;
-if (x5412 & 0b0000000001000000)
-	{
-	x5412 &= 0b1111111110111111; // Bit 22 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0000000001000000;	// Bit 22 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_SPD.Off(void){
-//	MCP.b_SPD = BtnOff;
-if (x5412 & 0b0000000001000000)
-	{
-	x5412 &= 0b1111111110111111; // Bit 22 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0000000001000000;	// Bit 22 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_SPD_MACH.On(void){
-//	MCP.b_SPD_MACH = BtnOn;		
-if (x5412 & 0b0000000010000000)
-	{
-	x5412 &= 0b1111111101111111; // Bit 23 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0000000010000000;	// Bit 23 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-//void MCP.b_SPD_MACH.Off(void){
-//	MCP.b_SPD_MACH = BtnOff;		
-//}
-
-void MCP.b_SPD_ROT.On(void){
-//	MCP.b_SPD_ROT = BtnOn;	
-if (x5410 & 0b0000010000000000)
-	{
-	x5410 &= 0b1111101111111111; // Bit 20 of PM 5410 off
-	}
-	else
-	{
-	x5410 |= 0b0000010000000000;	// Bit 20 of PM 5410 on
-	}
-      nqw(SetU1,x5410);	// ALT_ROT is off
-}
-
-//void MCP.b_SPD_ROT.Off(void){
-//	MCP.b_SPD_ROT = BtnOff;	
-//if (x5410 & 0b0000010000000000)
-//	{
-//	x5410 &= 0b1111101111111111; // Bit 20 of PM 5410 off
-//	}
-//	else
-//	{
-//	x5410 |= 0b0000010000000000;	// Bit 20 of PM 5410 on
-//	}
-//      nqw(SetU1,x5410);	// ALT_ROT is off
-//}
-
-void MCP.b_LNAV.On(void){
-//	MCP.b_LNAV = BtnOn;
-if (x5412 & 0b0000100000000000)
-	{
-	x5412 &= 0b1111011111111111; // Bit 27 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0000100000000000;	// Bit 27 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_LNAV.Off(void){
-//	MCP.b_LNAV = BtnOff;
-if (x5412 & 0b0000100000000000)
-	{
-	x5412 &= 0b1111011111111111; // Bit 27 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0000100000000000;	// Bit 27 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_VNAV.On(void){
-//	MCP.b_VNAV = BtnOn;
-if (x5412 & 0b0000010000000000)
-	{
-	x5412 &= 0b1111101111111111; // Bit 26 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0000010000000000;	// Bit 26 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_VNAV.Off(void){
-//	MCP.b_VNAV = BtnOff;
-if (x5412 & 0b0000010000000000)
-	{
-	x5412 &= 0b1111101111111111; // Bit 26 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0000010000000000;	// Bit 26 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_FLCH.On(void){
-//	MCP.b_FLCH = BtnOn;
-if (x5412 & 0b0000000100000000)
-	{
-	x5412 &= 0b1111111011111111; // Bit 24 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0000000100000000;	// Bit 24 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_FLCH.Off(void){
-//	MCP.b_FLCH = BtnOff;
-if (x5412 & 0b0000000100000000)
-	{
-	x5412 &= 0b1111111011111111; // Bit 24 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0000000100000000;	// Bit 24 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_HDG_ROT.On(void){
-//	MCP.b_HDG_ROT = BtnOn;
-if (x5410 & 0b0000100000000000)
-	{
-	x5410 &= 0b1111011111111111; // Bit 11 of PM 5410 off
-	}
-	else
-	{
-	x5410 |= 0b0000100000000000;	// Bit 11 of PM 5410 on
-	}
-      nqw(SetU1,x5410);	// ALT_ROT is off
-}
-
-//void MCP.b_HDG_ROT.Off(void){
-//	MCP.b_HDG_ROT = BtnOff;
-//if (x5410 & 0b0000100000000000)
-//	{
-//	x5410 &= 0b1111011111111111; // Bit 11 of PM 5410 off
-//	}
-//	else
-//	{
-//	x5410 |= 0b0000100000000000;	// Bit 11 of PM 5410 on
-//	}
-//    nqw(SetU1,x5410);	// ALT_ROT is off
-//}
-
-void MCP.b_HDG.On(void){
-//	MCP.b_HDG = BtnOn;
-if (x5412 & 0b0000001000000000)
-	{
-	x5412 &= 0b1111110111111111; // Bit 25 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0000001000000000;	// Bit 25 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_HDG.Off(void){
-//	MCP.b_HDG = BtnOff;
-if (x5412 & 0b0000001000000000)
-	{
-	x5412 &= 0b1111110111111111; // Bit 25 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0000001000000000;	// Bit 25 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_VS.On(void){
-//	MCP.b_VS = BtnOn;
-if (x5412 & 0b1000000000000000)
-	{
-	x5412 &= 0b0111111111111111; // Bit 31 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b1000000000000000;	// Bit 31 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_VS.Off(void){
-//	MCP.b_VS = BtnOff;
-if (x5412 & 0b1000000000000000)
-	{
-	x5412 &= 0b0111111111111111; // Bit 31 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b1000000000000000;	// Bit 31 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_ALT.On(void){
-//	MCP.b_ALT = BtnOn;
-if (x5412 & 0b0100000000000000)
-	{
-	x5412 &= 0b1011111111111111; // Bit 30 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0100000000000000;	// Bit 30 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_ALT.Off(void){
-//	MCP.b_ALT = BtnOff;
-if (x5412 & 0b0100000000000000)
-	{
-	x5412 &= 0b1011111111111111; // Bit 30 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0100000000000000;	// Bit 30 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_ALT_ROT.On(void){
-//	MCP.b_ALT_ROT = BtnOn;
-if (x5410 & 0b0001000000000000)
-	{
-	x5410 &= 0b1110111111111111; // Bit 12 of PM 5410 off
-	}
-	else
-	{
-	x5410 |= 0b0001000000000000;	// Bit 12 of PM 5410 on
-	}
-      nqw(SetU1,x5410);	// ALT_ROT is off
-}
-
-//void MCP.b_ALT_ROT.Off(void){
-//	MCP.b_ALT_ROT = BtnOff;
-//if (x5410 & 0b0001000000000000)
-//	{
-//	x5410 &= 0b1110111111111111; // Bit 12 of PM 5410 off
-//	}
-//	else
-//	{
-//	x5410 |= 0b0000100000000000;	// Bit 12 of PM 5410 on
-//	}
-//    nqw(SetU1,x5410);	// ALT_ROT is off
-//}
-
-void MCP.b_LOC.On(void){
-//	MCP.b_LOC = BtnOn;
-if (x5412 & 0b0001000000000000)
-	{
-	x5412 &= 0b1110111111111111; // Bit 28 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0001000000000000;	// Bit 28 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_LOC.Off(void){
-//	MCP.b_LOC = BtnOff;
-if (x5412 & 0b0001000000000000)
-	{
-	x5412 &= 0b1110111111111111; // Bit 28 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0001000000000000;	// Bit 28 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_APP.On(void){
-//	MCP.b_APP = BtnOn;
-if (x5412 & 0b0010000000000000)
-	{
-	x5412 &= 0b1101111111111111; // Bit 29 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0010000000000000;	// Bit 29 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_APP.Off(void){
-//	MCP.b_APP = BtnOff;
-if (x5412 & 0b0010000000000000)
-	{
-	x5412 &= 0b1101111111111111; // Bit 29 of PM 5410 off
-	}
-	else
-	{
-	x5412 |= 0b0010000000000000;	// Bit 29 of PM 5410 on
-	}
-      nqw(SetU2,x5412);	
-}
-
-void MCP.b_AP1.On(void){
-//	MCP.b_AP1 = BtnOn;
-if (x5414 & 0b0000000000000001)
-	{ 
-	x5414 &= 0b1111111111111110;	// Bit 0 of PM 5414 off
-	}
-	else
-	{
-	x5414 |= 0b0000000000000001;	// Bit 0 of PM 5414 on
-	}
-	nqw(SetX5,x5414);	// AP1 is on
-
-}
-
-void MCP.b_AP1.Off(void){
-//	MCP.b_AP1 = BtnOff;
-if (x5414 & 0b0000000000000001)
-	{ 
-	x5414 &= 0b1111111111111110;	// Bit 0 of PM 5414 off
-	}
-	else
-	{
-	x5414 |= 0b0000000000000001;	// Bit 0 of PM 5414 on
-	}
-	nqw(SetX5,x5414);	// AP1 is off
-
-}
-
-void MCP.b_AP2.On(void){
-//	MCP.b_AP2 = BtnOn;
-if (x5414 & 0b0000000000000010)
-	{ 
-	x5414 &= 0b1111111111111101;	// Bit 1 of PM 5414 off
-	}
-	else
-	{
-	x5414 |= 0b0000000000000010;	// Bit 1 of PM 5414 on
-	}
-	nqw(SetX5,x5414);	// AP2 is on
-}
-
-void MCP.b_AP2.Off(void){
-if (x5414 & 0b0000000000000010)
-	{ 
-	x5414 &= 0b1111111111111101;	// Bit 1 of PM 5414 off
-	}
-	else
-	{
-	x5414 |= 0b0000000000000010;	// Bit 1 of PM 5414 on
-	}
-	nqw(SetX5,x5414);	// AP2 is off
-}
-
-void MCP.b_AP3.On(void){
-if (x5414 & 0b0000000000000100)
-	{ 
-	x5414 &= 0b1111111111111011;	// Bit 2 of PM 5414 off
-	}
-	else
-	{
-	x5414 |= 0b0000000000000100;	// Bit 2 of PM 5414 on
-	}
-	nqw(SetX5,x5414);	// AP3 is on
-}
-
-void MCP.b_AP3.Off(void){
-if (x5414 & 0b0000000000000100)
-	{ 
-	x5414 &= 0b1111111111111011;	// Bit 2 of PM 5414 off
-	}
-	else
-	{
-	x5414 |= 0b0000000000000100;	// Bit 2 of PM 5414 on
-	}
-	nqw(SetX5,x5414);	// AP3 is off
-}
-
-void MCP.b_AP_Dis_lft.On(void){
-//	MCP.b_AP_Dis_lft = BtnOn;
-if (x5414 & 0b0000010000000000)
-	{ 
-	x5414 &= 0b1111101111111111;	// Bit 10 of PM 5414 off
-	}
-	else
-	{
-	x5414 |= 0b0000010000000000;	// Bit 10 of PM 5414 on
-	}
-	nqw(SetX5,x5414);	// CP_FD is on
-}
-
-//void MCP.b_AP_Dis_lft.Off(void){
-//	MCP.b_AP_Dis_lft = BtnOff;
-//}
-
-
-void MCP.b_AP_Dis_rgt.On(void){
-//	MCP.b_AP_Dis_rgt = BtnOn;
-if (x5414 & 0b0000010000000000)
-	{ 
-	x5414 &= 0b1111101111111111;	// Bit 10 of PM 5414 off
-	}
-	else
-	{
-	x5414 |= 0b0000010000000000;	// Bit 10 of PM 5414 on
-	}
-	nqw(SetX5,x5414);	// CP_FD is on
-}
-
-//void MCP.b_AP_Dis_rgt.Off(void){
-//	MCP.b_AP_Dis_rgt = BtnOff;
-//}
-
-void l_handle_ALT_rot(void)
+//************************************
+ph AltnFlapsArm(1)
 {
-	if (MCP.r_dir_ALT)	// If ALT rotary turned left
-	{
-		if (f_AltTiming)	// If rotated FAST
-		{
-			wrd_ALT -= ALT_FAST_DELTA;
-		}
-		else
-		{
-			wrd_ALT -= ALT_SLOW_DELTA;
-		}
-	}
-	else
-	{
-		if (f_AltTiming)
-		{
-			wrd_ALT += ALT_FAST_DELTA;
-		}
-		else
-		{
-			wrd_ALT += ALT_SLOW_DELTA;
-		}
-	}
-	byt_AltTime = ALT_TIMER;	// Reset ALT timer
-	f_AltTiming = true;
-	nqw(SetY6, wrd_ALT);	// FSUIPC_WRITE_16=Y6,2,540A
-	// Display.AP_ALT_VALUES = wrd_ALT*100;
-}
-
-
-void MCP.r_cnt_ALT.On(void){
-jump(l_handle_ALT_rot);
-}
-
-void MCP.r_cnt_ALT.Off(void){
-jump(l_handle_ALT_rot);  
-}
-
-void l_handle_VS_rot (void)
-{
-	if (MCP.r_dir_VS)
-	{
-		wrd_VS += VS_DELTA;
-	}
-	else
-	{
-		wrd_VS -= VS_DELTA;
-	}
-	byt_VSTime = VS_TIMER;
-	f_VSTiming = true;
-	nqw(SetZ6, wrd_VS);
-     // Display.AP_VS_VALUES = wrd_VS;
-}
-
-
-void MCP.r_cnt_VS.On(void){
-	jump (l_handle_VS_rot);
-}
-
-
-void MCP.r_cnt_VS.Off(void){
-	jump (l_handle_VS_rot);
-}
-
-void l_handle_SPD_rot (void)
-{
-	if (f_SPD_Active)						// speed is to be handled by the SPD rotary
-	{
-		if (MCP.r_dir_SPD)
-		{
-			if (f_SpdTiming)
-			{
-				wrd_SPD -= SPD_FAST_DELTA;
-			}
-			else
-			{
-				wrd_SPD -= SPD_SLOW_DELTA;
-			}
-		}
-		else
-		{
-			if (f_SpdTiming)
-			{
-				wrd_SPD += SPD_FAST_DELTA;
-			}
-			else
-			{
-				wrd_SPD += SPD_SLOW_DELTA;
-			}
-		}
-		byt_SpdTime = SPD_TIMER;
-		f_SpdTiming = true;
-		nqw(SetU5, wrd_SPD);		// FSUIPC_WRITE_9=U5,2,5406
-		// Display.AP_SPD_VALUES = wrd_SPD;
-
-	}
-	else								// MACH is to be handled by the SPD rotary
-	{
-		if (MCP.r_dir_SPD)				// rotary is the same for setting the speed
-		{
-			wrd_MACH -= 1;
-		}
-		else
-		{
-			wrd_MACH += 1;
-		}
-		byt_MACHTime = MACH_TIMER;
-		f_MACHTiming = true;
-		nqw(SetR5, wrd_MACH);		// FSUIPC_WRITE_9=U5,2,5406
-		// Display.AP_SPD_VALUES = wrd_MACH;
-	}
-}
-
-void MCP.r_cnt_SPD.On(void){
-jump(l_handle_SPD_rot);	
-}
-
-void MCP.r_cnt_SPD.Off(void){
-jump(l_handle_SPD_rot);	
-}
-
-void l_handle_HDG_rot (void)
-{
-	if (MCP.r_dir_HDG)
-	{
-		if (f_HdgTiming)
-		{
-			wrd_HDG -= HDG_FAST_DELTA;
-		}
-		else
-		{
-			wrd_HDG -= HDG_SLOW_DELTA;
-		}
-	}
-	else
-	{
-		if (f_HdgTiming)
-		{
-			wrd_HDG += HDG_FAST_DELTA;
-		}
-		else
-		{
-			wrd_HDG += HDG_SLOW_DELTA;
-		}
-	}
-	byt_HdgTime = HDG_TIMER;
-	f_HdgTiming = true;
-	nqw(SetX6, wrd_HDG);		// FSUIPC_WRITE_11=X6,2,5408
-     // Display.AP_HDG_VALUES = wrd_HDG;
-}
-
-
-void MCP.r_cnt_HDG.On(void){
-jump(l_handle_HDG_rot);
-}
-
-void MCP.r_cnt_HDG.Off(void){
-jump(l_handle_HDG_rot);
-}
-
-void CP_EFIS.b_VOR_L.Off(void){
-	nqw(SetV4,73);	//VORADF_L off
-}
-
-void CP_EFIS.b_VOR_L.On(void){
-	nqw(SetV4,75);	//VOR_L on	
-}
-
-
-void CP_EFIS.b_ADF_L.Off(void){
-	nqw(SetV4,73);	//VORADF_L off
-}
-
-void CP_EFIS.b_ADF_L.On(void){
-	nqw(SetV4,74);	//ADF_L on			
-}
-
-void CP_EFIS.b_WXR.On(void){
-	if (f_WXR) 
-	{nqw(SetV4,1072);f_WXR=false;}
-	else { nqw(SetV4,72);f_WXR=true;}	//WXR on or off
-}
-
-void CP_EFIS.b_STA.On(void){
-	if (f_STA) 
-	{nqw(SetV4,1090);f_STA=false;}
-	else { nqw(SetV4,90);f_STA=true;}
-}
-
-void CP_EFIS.b_WPT.On(void){
-	if (f_WPT) 
-	{nqw(SetV4,1093);f_WPT=false;}
-	else { nqw(SetV4,93);f_WPT=true;}
-}
-
-void CP_EFIS.b_ARPT.On(void){
-	if (f_ARPT) 
-	{nqw(SetV4,1094);f_ARPT=false;}
-	else { nqw(SetV4,94);f_ARPT=true;}
-}
-
-void CP_EFIS.b_DATA.On(void){
-	if (f_DATA) 
-	{nqw(SetV4,1095);f_DATA=false;}
-	else { nqw(SetV4,95);f_DATA=true;}
-}
-
-void CP_EFIS.b_POS.On(void){
-	if (f_POS) 
-	{nqw(SetV4,1096);f_POS=false;}
-	else { nqw(SetV4,96);f_POS=true;}
-}
-
-void CP_EFIS.b_APP.On(void){
-	nqw(SetV4,5);	// 4F4 APP;
-}
-
-void CP_EFIS.b_VOR.On(void){
-	nqw(SetV4,3);	// 4F4 VOR;
-}
-
-void CP_EFIS.b_MAP.On(void){
-	nqw(SetV4,1);	// 4F4 MAP;
-}
-
-void CP_EFIS.b_PLN.On(void){
-	nqw(SetV4,4);	// 4F4 PLN;
-}
-
-void CP_EFIS.b_DRS_10.On(void){
-	nqw(SetV4,41);	// 4F4 Range 10NM;
-}
-
-void CP_EFIS.b_DRS_20.On(void){
-	nqw(SetV4,42);	// 4F4 Range 20NM;
-}
-
-void CP_EFIS.b_DRS_40.On(void){
-	nqw(SetV4,43);	// 4F4 Range 40NM;
-}
-
-void CP_EFIS.b_DRS_80.On(void){
-	nqw(SetV4,44);	// 4F4 Range 80NM;
-}
-
-void CP_EFIS.b_DRS_160.On(void){
-	nqw(SetV4,45);	// 4F4 Range 160NM;
-}
-
-void CP_EFIS.b_DRS_320.On(void){
-	nqw(SetV4,46);	// 4F4 Range 320NM;
-}
-
-void CP_EFIS.b_DRS_640.On(void){
-	nqw(SetV4,47);	// 4F4 Range 640NM;
-}
-
-void CP_EFIS.b_ADF_R.On(void){
-	nqw(SetV4,77);	//ADF_R on            
-}
-
-void CP_EFIS.b_ADF_R.Off(void){
-	nqw(SetV4,76);	//VORADF_R off
-}
-
-void CP_EFIS.b_VOR_R.On(void){
-	nqw(SetV4,78);	//VOR_R on            
-}
-
-void CP_EFIS.b_VOR_R.Off(void){
-	nqw(SetV4,76);	//VORADF_R off
-}
-
-void l_handle_DHMDA_CP_rot (void)
-{
-//	if (CP_EFIS.r_dir_Dhmda)
-//	{
-//		wrd_DHMDA_CP -= DHMDA_DELTA_CP;
-//	}
-//	else
-//	{
-//		wrd_DHMDA_CP += DHMDA_DELTA_CP;
-//	}
-//	byt_DHMDATime_CP 	= DHMDA_TIMER_CP;
-//	f_DHMDATiming_CP 	= true;
-//	wrd_DHMDA_CP 		= wrd_DHMDA_CP;		
-}
-
-//void CP_EFIS.b_DHMDA_ROT.On(void){
-//	jump(l_handle_DHMDA_CP_rot);
-//}
-
-//void CP_EFIS.b_DHMDA_ROT.Off(void){
-//	jump(l_handle_DHMDA_CP_rot);
-//}
-
-void l_handle_Baro_P_rot (void)
-{
-//	if (CP_EFIS.r_dir_Baro)
-//	{
-//		wrd_BARO_CP -= BARO_DELTA_CP;
-//	}
-//	else
-//	{
-//		wrd_BARO_CP += BARO_DELTA_CP;
-//	}
-//	byt_BAROTime_CP 	= BARO_TIMER_CP;
-//	f_BAROTiming_CP 	= true;
-//	wrd_BARO_CP 		= wrd_BARO_CP;		
-}
-
-//void CP_EFIS.b_BARO_ROT.On(void){
-//	jump(l_handle_Baro_P_rot);
-//}
-
-//void CP_EFIS.b_BARO_ROT.Off(void){
-//	jump(l_handle_Baro_P_rot);
-//}
-
-void CP_EFIS.b_metric_ALT.On(void){
-	if (f_metric_ALT) 
-	{nqw(SetV4,1026);f_metric_ALT=false;}
-	else { nqw(SetV4,26);f_metric_ALT=true;}
-}
-
-//void CP_EFIS.r_cnt_Dhmda.On(void){
-	// TODO: Uitzoeken wat er nog meer moet gebeuren
-//}
-
-//void CP_EFIS.r_cnt_Baro.On(void){
-	// TODO: Uitzoeken wat er nog meer moet gebeuren
-//}
-
-//void CP_EFIS.b_DH_RESET.On(void){
-	// TODO: Uitzoeken wat er nog meer moet gebeuren
-//}
-
-void EDSP.b_ENG.On(void){
-	nqw(SetV4,301);	// 4F4 ENG
-}
-
-void EDSP.b_STAT.On(void){
-	nqw(SetV4,302);	// 4F4 STAT
-}
-
-void EDSP.b_ELEC.On(void){
-	nqw(SetV4,303);	// 4F4 ELEC
-}
-
-void EDSP.b_FUEL.On(void){
-	nqw(SetV4,304);	// 4F4 FUEL
-}
-
-void EDSP.b_ECS.On(void){
-	nqw(SetV4,305);	// 4F4 ECS
-}
-
-void EDSP.b_HYD.On(void){
-	nqw(SetV4,306);	// 4F4 HYD
-}
-
-void EDSP.b_DRS.On(void){
-	nqw(SetV4,307);	// 4F4 DRS
-}
-
-void EDSP.b_GEAR.On(void){
-	nqw(SetV4,308);	// 4F4 GEAR
-}
-
-void EDSP.b_CANC.On(void){
-	nqw(SetV4,310);	// 4F4 CANC
-}
-
-void EDSP.b_RCL.On(void){
-	nqw(SetV4,311);	// 4F4 RCL
-}
-
-void Center.b_GearUp.On(void){
-	nqw(SetU3,0);
-}
-
-void Center.b_GearUp.Off(void){
-	nqw(SetU3,16383);
-}
-
-void Center.b_GearDown.On(void){
-	nqw(SetU3,16383);
-}
-
-void Center.b_GearDown.Off(void){
-	nqw(SetU3,0);
-}
-
-void Center.b_AutobrakeRTO.On(void){
-	nqw(SetU4,0);
-}
-
-void Center.b_AutobrakeRTO.Off(void){
-}
-
-void Center.b_AutobrakeOff.On(void){
-	nqw(SetU4,1);
-}
-
-void Center.b_AutobrakeOff.Off(void){
-}
-
-void Center.b_AutobrakeDisarm.On(void){
-	nqw(SetU4,1);
-}
-
-void Center.b_AutobrakeDisarm.Off(void){
-}
-
-void Center.b_Autobrake1.On(void){
-	nqw(SetU4,2);
-}
-
-void Center.b_Autobrake1.Off(void){
-}
-
-void Center.b_Autobrake2.On(void){
-	nqw(SetU4,3);
-}
-
-void Center.b_Autobrake2.Off(void){
-}
-
-// void Center.b_Autobrake3.On(void){
-//	nqw(SetU4,4);
-//}
-
-//void Center.b_Autobrake3.Off(void){
-//}
-
-void Center.b_Autobrake4.On(void){
-	nqw(SetU4,4);
-}
-
-void Center.b_Autobrake4.Off(void){
-}
-
-void Center.b_AutobrakeAuto.On(void){
-	nqw(SetU4,5);
-}
-
-void Center.b_AutobrakeAuto.Off(void){
-}
-
-void Center.b_Eicas.On(void){
-	nqw(SetV4,602); //PFD-EICAS
-}
-
-void Center.b_Eicas.Off(void){
-}
-
-void Center.b_Inbd_Norm.On(void){
-	nqw(SetV4,601); // PFD/ND -> PFD -> ND (like pressing F4,F1,F2 in GC)
-}
-
-void Center.b_Inbd_Norm.Off(void){
-}
-
-void Center.b_Pfd.On(void){
-	nqw(SetV4,601); // PFD/ND -> PFD -> ND (like pressing F4,F1,F2 in GC)
-}
-
-void Center.b_Pfd.Off(void){
-}
-
-
-ph setHDG(15)
-{
-	byte getal1;
-	byte getal2;
-	word getal3;
-	
-	if (!byt_HdgTime) {
-		wrd_HDG = setHDG.getal3;
-		Display.AP_HDG_VALUES = setHDG.getal3;
-	}
+  word W1;
+  word W0;
+  AltnFlapsArmWord = AltnFlapsArm.W0;
+  
+  if (AltnFlapsArmWord && 0x0001) {
+  	Gear.leds0.led_ARM = on;
+  }
+  else {
+  	Gear.leds0.led_ARM = off;
+  }    
 };
 
-ph setALT(16)
+//************************************
+ph AltnGearNoseBody(2)
 {
-	byte getal1;
-	byte getal2;
-	word getal3;
-
-	if (!byt_AltTime) {
-		if (setALT.getal1 == 0xFF){ 
-			Display.AP_ALT_VALUES = blank;
-		}	
-		else {
-			wrd_ALT = setALT.getal3/100;
-			Display.AP_ALT_VALUES = setALT.getal3;
-		}
-	}
+  word W1;
+  word W0;
+  AltnGearNoseBodyWord = AltnGearNoseBody.W0;
+  
+  if (AltnGearNoseBodyWord && 0x0001) {
+  	Gear.leds0.led_NOSE = on;
+  }
+  else {
+  	Gear.leds0.led_NOSE = off;
+  }
 };
 
-ph setSPD(17)
+//************************************
+ph AltnGearWings(3)
 {
-	byte getal1;
-	byte getal2;
-	word getal3;
+  word W1;
+  word W0;
+  AltnGearWingsWord = AltnGearWings.W0;
+  
+  if (AltnGearWingsWord && 0x0001) {
+    	Gear.leds0.led_WING = on;
+  }
+  else {
+  	Gear.leds0.led_WING = off;
+  }	
+};
 
-	if (!byt_SpdTime) {
-		if (setSPD.getal1 == 0xFF){ 
-			Display.AP_SPD_VALUES = blank;
-		}
-		else {
-			wrd_SPD = setSPD.getal3;
-			Display.AP_SPD_VALUES = setSPD.getal3;
-		}
-	}
+//************************************
+ph RadioPanelLeftHF(4)
+{
+  word W1;
+  word W0;
+  preFrac = RadioPanelLeftHF.W0/1000;
+  frac = RadioPanelLeftHF.W0 % 1000;
+  DisplayLeftHF.active = preFrac;	//display number to PH10
+  DisplayLeftHF.activeFrac = frac;
+  preFrac = RadioPanelLeftHF.W1/1000;
+  frac = RadioPanelLeftHF.W1 % 1000;
+  DisplayLeftHF.standby = preFrac;	//display number to PH10
+  DisplayLeftHF.standbyFrac = frac;
+ 
+};
+
+//************************************
+ph RadioPanelLeftVHF(5)
+{
+  word W1;
+  word W0;
+  preFrac = RadioPanelLeftVHF.W0/100;
+  frac = RadioPanelLeftVHF.W0 % 100;
+  DisplayLeftVHF.active = preFrac;	//display number to PH10
+  DisplayLeftVHF.activeFrac = frac;
+  preFrac = RadioPanelLeftVHF.W1/100;
+  frac = RadioPanelLeftVHF.W1 % 100;
+  DisplayLeftVHF.standby = preFrac;	//display number to PH10
+  DisplayLeftVHF.standbyFrac = frac;
+ 
+};
+
+//************************************
+ph RadioPanelLeftSen(6)
+{
+  word W1;
+  word W0;
+  preFrac = RadioPanelLeftSen.W0/1000;
+  frac = RadioPanelLeftSen.W0 % 1000;
+  DisplayLeftSen.active = preFrac;	//display number to PH10
+  DisplayLeftSen.activeFrac = frac;
+
+  frac = 5;
+  preFrac = RadioPanelLeftSen.W1;
+  DisplayLeftSen.standbySen = preFrac;	//display number to PH10
+  DisplayLeftSen.standbySenNr = frac;
 };
 
 
-ph setVS(19)
-{
-	byte getal1;
-	byte getal2;
-	word getal3;
 
-	if (!byt_VSTime) {
-		if (setVS.getal1 == 0xFF){ Display.AP_VS_VALUES = blank;}
-		else {
-			wrd_VS = setVS.getal3;
-			if ((wrd_VS >> 8) > 128) { 
-				wrd_VS = (setVS.getal3 - 32768) * -1;
-			}
-			else { 
-				wrd_VS = setVS.getal3;
-				}
-			Display.AP_VS_VALUES = wrd_VS;
-		}
+//************************************
+// Autobrakes buttons
+
+void AutoBrakes.RTO.On (void) { nqw(0x0000,0x0000,20);}	// AutoBrakes RTO
+void AutoBrakes.OFF.On (void) { nqw(0x0000,0x0001,20);}	// AutoBrakes OFF
+void AutoBrakes.DISARM.On (void) { nqw(0x0000,0x0002,20);}	// AutoBrakes DISARM	
+void AutoBrakes._1.On (void) { nqw(0x0000,0x0003,20);}	// AutoBrakes 1	
+void AutoBrakes._2.On (void) { nqw(0x0000,0x0004,20);}	// AutoBrakes 2
+void AutoBrakes._3.On (void) { nqw(0x0000,0x0005,20);}	// AutoBrakes 3
+void AutoBrakes._4.On (void) { nqw(0x0000,0x0006,20);}	// AutoBrakes 4
+void AutoBrakes.MAXAUTO.On (void) { nqw(0x0000,0x0007,20);}	// AutoBrakes MAXAUTO
+
+//************************************
+// ThrottleQuadrant buttons
+
+void ThrottleQuadrant.ParkingBrakePull.On (void) { nqw(0x0004,0x0001,20);}	// Parking Brake Pull On
+void ThrottleQuadrant.ParkingBrakePull.Off (void) { nqw(0x0004,0x0000,20);}	// Parking Brake Pull Off
+
+//************************************
+// Gear buttons
+
+void Gear.AltnFlapsRet.On (void) { nqw(0x0005,0x0000,20);}
+void Gear.AltnFlapsOff.On (void) { nqw(0x0005,0x0001,20);}
+void Gear.AltnFlapsExt.On (void) { nqw(0x0005,0x0002,20);}
+void Gear.AltnFlapsArm.On (void) { AltnFlapsArmWord = AltnFlapsArmWord ^ 0x0001;nqw(0x000A,AltnFlapsArmWord ,20);}
+void Gear.AltnFlapsArm.Off (void) { AltnFlapsArmWord = AltnFlapsArmWord ^ 0x0001;nqw(0x000A,AltnFlapsArmWord ,20);}
+void Gear.GearDown.On (void) { nqw(0x0006,0x0001,20);}
+void Gear.GearDown.Off (void) { nqw(0x0006,0x0002,20);}
+// void Gear.GearOff.On (void) { nqw(0x0006,0x0002,20);}
+void Gear.GearUp.On (void) { nqw(0x0006,0x0003,20);}
+void Gear.GearUp.Off (void) { nqw(0x0006,0x0002,20);}
+void Gear.GearLockOvrd.On (void) { nqw(0x0007,0x0001,20);}
+void Gear.GearLockOvrd.Off (void) { nqw(0x0007,0x0000,20);}
+void Gear.AltnGearNoseBody.On (void) { AltnGearNoseBodyWord = AltnGearNoseBodyWord ^ 0x0001;nqw(0x0008,0x0000,20);}
+void Gear.AltnGearNoseBody.Off (void) { AltnGearNoseBodyWord = AltnGearNoseBodyWord ^ 0x0001;nqw(0x0008,0x0000,20);}
+void Gear.AltnGearWings.On (void) { AltnGearWingsWord = AltnGearWingsWord ^ 0x0001;nqw(0x0009,0x0000,20);}
+void Gear.AltnGearWings.Off (void) { AltnGearWingsWord = AltnGearWingsWord ^ 0x0001;nqw(0x0009,0x0000,20);}
+
+//************************************
+// RTPLeft buttons
+void RTPLeft.FreqSelector.On (void) { 
+	if (RightMostFreqSelectorLeft) { 
+		RightMostFreqSelectorLeft=false;
 	}
-};
+	else {
+		RightMostFreqSelectorLeft=true;
+	}
+}
 
-ph setX5414(154)
-{
-	word getal1;
-	
-	x5414=setX5414.getal1;
-};
+void RTPLeft.PanelOffSwitch.On (void) {nqw(0x000b,0x0000,20);}
+void RTPLeft.PanelOffSwitch.Off (void) {nqw(0x000b,0xffff,20);}
+void RTPLeft.FreqTransferSwitch.On (void) {nqw(0x000b,0x0007,20);}
+void RTPLeft.VHFL.On (void) {nqw(0x000b,0x0001,20);}
+void RTPLeft.VHFC.On (void) {nqw(0x000b,0x0002,20);}
+void RTPLeft.VHFR.On (void) {nqw(0x000b,0x0003,20);}
+void RTPLeft.AM.On (void) {nqw(0x000b,0x0005,20);}
+void RTPLeft.HFL.On (void) {nqw(0x000b,0x0004,20);}
+void RTPLeft.HFR.On (void) {nqw(0x000b,0x0006,20);}
 
-ph setX5410(155)
-{
-	word getal1;
-	word getal2;
-	
-	x5410=setX5410.getal1;
-	x5412=setX5410.getal2;
-};
+//************************************
+// RTPCenter buttons
+void RTPCenter.FreqSelector.On (void) { 
+	if (RightMostFreqSelectorCenter) { 
+		RightMostFreqSelectorCenter=false;
+	}
+	else {
+		RightMostFreqSelectorCenter=true;
+	}
+}
 
+void RTPCenter.PanelOffSwitch.On (void) {nqw(0x000c,0x0000,20);}
+void RTPCenter.PanelOffSwitch.Off (void) {nqw(0x000c,0xffff,20);}
+void RTPCenter.FreqTransferSwitch.On (void) {nqw(0x000c,0x0007,20);}
+void RTPCenter.VHFL.On (void) {nqw(0x000c,0x0001,20);}
+void RTPCenter.VHFC.On (void) {nqw(0x000c,0x0002,20);}
+void RTPCenter.VHFR.On (void) {nqw(0x000c,0x0003,20);}
+void RTPCenter.AM.On (void) {nqw(0x000c,0x0005,20);}
+void RTPCenter.HFL.On (void) {nqw(0x000c,0x0004,20);}
+void RTPCenter.HFR.On (void) {nqw(0x000c,0x0006,20);}
 
+//************************************
+// RTPRight buttons
+void RTPRight.FreqSelector.On (void) { 
+	if (RightMostFreqSelectorRight) { 
+		RightMostFreqSelectorRight=false;
+	}
+	else {
+		RightMostFreqSelectorRight=true;
+	}
+}
+
+void RTPRight.PanelOffSwitch.On (void) {nqw(0x000d,0x0000,20);}
+void RTPRight.PanelOffSwitch.Off (void) {nqw(0x000d,0xffff,20);}
+void RTPRight.FreqTransferSwitch.On (void) {nqw(0x000d,0x0007,20);}
+void RTPRight.VHFL.On (void) {nqw(0x000d,0x0001,20);}
+void RTPRight.VHFC.On (void) {nqw(0x000d,0x0002,20);}
+void RTPRight.VHFR.On (void) {nqw(0x000d,0x0003,20);}
+void RTPRight.AM.On (void) {nqw(0x000d,0x0005,20);}
+void RTPRight.HFL.On (void) {nqw(0x000d,0x0004,20);}
+void RTPRight.HFR.On (void) {nqw(0x000d,0x0006,20);}

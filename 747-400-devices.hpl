@@ -1,0 +1,211 @@
+//**************** device descriptor file   **********
+// define connectors first
+
+#pragma hid_rpt_snd 3			//limit devices to Direct Input to 3
+
+defmod(0,FASTSCAN,0,7) 		//scan
+defmod(1,SLOWSCAN,0,8)
+defmod(7,FASTSCAN,0,4)
+
+
+connector(Mod0)
+{
+	analog(0);
+	analog(1);
+	analog(2);
+	analog(3);
+	analog(4);
+	analog(5);
+	analog(6);
+	analog(7);
+	analog(8);
+	analog(9);
+	analog(10);
+	analog(11);
+	analog(12);
+	analog(13);
+	analog(14);
+	analog(15);
+
+	modrow(0,0);	// A db15 connector
+	modrow(0,1);	// B db15 connector
+	modrow(0,2);	// RUDDER db15 connector
+	modrow(0,3);	// not used
+	modrow(0,4);	// FLCS
+	modrow(0,5);	// FLCS
+	modrow(0,6);	// FLC
+};
+
+connector(Mod1)		
+{
+	analog(0);
+	analog(1);
+	analog(2);
+	analog(3);
+	analog(4);
+	analog(5);	
+	analog(6);
+	analog(7);
+	analog(8);
+	analog(9);
+	analog(10);
+	analog(11);
+	analog(12);
+	analog(13);
+	analog(14);
+	analog(15);
+	modrow(1,0);
+	modrow(1,1);
+	modrow(1,2);
+	modrow(1,3);
+	modrow(1,4);
+	modrow(1,5);
+	modrow(1,6);
+	modrow(1,7);	
+};
+
+connector(Pedestal)
+{
+	modrow(1,0);
+	modrow(1,1);
+	modrow(1,2);
+	modrow(1,3);
+	modrow(1,4);
+	modrow(1,5);
+	modrow(1,6);
+	modrow(1,7);
+	
+	modrow(7,0);	// Rotary module (module 7) Scan Row 0
+	modrow(7,1);	// Rotary module (module 7) Scan Row 1
+};
+
+//************************************* Physical devices **********************************
+device(AutoBrakes)			
+{
+	connector(Pedestal);
+	button(0,0,RTO);		// AutoBrakes RTO
+	button(0,1,OFF);		// AutoBrakes OFF
+	button(0,2,DISARM);	// AutoBrakes DISARM
+	button(0,3,_1);		// AutoBrakes 1
+	button(0,4,_2);		// AutoBrakes 2
+	button(0,5,_3);		// AutoBrakes 3
+	button(0,6,_4);		// AutoBrakes 4	
+	button(0,7,MAXAUTO);	// AutoBrakes MAXAUTO
+};
+
+
+device(ThrottleQuadrant)
+{
+	connector(Pedestal);
+	button(1,0,ParkingBrakePull);	// Parking Brake Pull
+};
+
+
+device(Gear)
+{
+	connector(Mod1);
+	button(1,1,AltnFlapsRet);
+	button(1,2,AltnFlapsOff);
+	button(1,3,AltnFlapsExt);
+	button(1,4,AltnFlapsArm);
+	button(1,5,GearDown);
+	button(1,6,GearOff);
+	button(1,7,GearUp);
+	button(2,0,GearLockOvrd);
+	button(2,1,AltnGearNoseBody);
+	button(7,7,AltnGearWings);
+	
+	output(leds0,0,0)
+	{
+		led_ARM = 0x01;
+		led_NOSE = 0x02;
+		led_WING = 0x04;
+	};
+};
+
+device(RTPLeft)
+{
+	connector(Pedestal);
+	button(3,1,FreqSelector);
+	button(3,0,PanelOffSwitch);
+	button(2,2,FreqTransferSwitch);
+	button(3,2,VHFL);
+	button(2,7,VHFC);
+	button(2,4,VHFR);
+	button(2,3,AM);
+	button(2,5,HFL);
+	button(2,6,HFR);	
+	
+	// Rotary Module 7, Rotary1 Scan Row 0
+	button(0,0,r_cnt_FreqSelector);		// Altitude setting count,Button 60?
+	button(0,1,r_dir_FreqSelector);		// Altitude setting direction,Button 61
+	
+	// Rotary Module 7, Rotary2 Scan Row 0
+	button(0,2,r_cnt_HFSens);		// Vertical Speed setting count,Button 58? 
+	button(0,3,r_dir_HFSens);		// Vertical Speed setting direction,Button 59?
+
+	
+	
+};
+
+device(RTPCenter)
+{
+	connector(Pedestal);
+	button(7,7,FreqSelector);
+	button(7,7,PanelOffSwitch);
+	button(7,7,FreqTransferSwitch);
+	button(7,7,VHFL);
+	button(7,7,VHFC);
+	button(7,7,VHFR);
+	button(7,7,AM);
+	button(7,7,HFL);
+	button(7,7,HFR);	
+};
+
+device(RTPRight)
+{
+	connector(Pedestal);
+	button(7,7,FreqSelector);
+	button(7,7,PanelOffSwitch);
+	button(7,7,FreqTransferSwitch);
+	button(7,7,VHFL);
+	button(7,7,VHFC);
+	button(7,7,VHFR);
+	button(7,7,AM);
+	button(7,7,HFL);
+	button(7,7,HFR);	
+};
+
+
+
+
+
+device(DisplayLeftVHF)
+{
+	display(standby,2,0,"999.00",true);
+	display(standbyFrac,2,0,"00",true);
+	display(active,2,8,"999.00",true);
+	display(activeFrac,2,8,"00",true);
+};
+
+device(DisplayLeftHF)
+{
+	display(standby,2,0,"99.000",true);
+	display(standbyFrac,2,0,"000",true);
+	display(active,2,8,"99.000",true);
+	display(activeFrac,2,8,"000",true);
+};
+
+device(DisplayLeftSen)
+{
+	display(standbySenNr,2,4,"9",true);
+	display(standbySen,2,0,"9999",true);
+	display(active,2,8,"99.000",true);
+	display(activeFrac,2,8,"000",true);
+};
+
+device(DisplayLeftOff)
+{
+	display(standby,2,0,"99999",true);
+	display(active,2,8,"99999",true);
+};
