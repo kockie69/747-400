@@ -1,7 +1,0 @@
-[EPL]
-Name=747-400.epl
-[JOY]
-Name=747-400.joy
-[DIRS]
-EPJ=$PROJECTS\747-400\
-INC=$EPJ\
