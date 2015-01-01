@@ -1,7 +1,10 @@
 .gitignore~
 *.swp
-747-400.DEF
+*.DEF
 *.epl~
 *.joy
-747-400.map
+*.map
 *.SYM
+*.dsk
+*.dst
+*.epj
