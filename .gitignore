@@ -1,0 +1,8 @@
+.gitignore~
+*.swp
+*.DEF
+*.def
+*.epl~
+*.joy
+*.map
+*.SYM
