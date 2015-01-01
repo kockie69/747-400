@@ -1,8 +1,7 @@
 .gitignore~
 *.swp
-*.DEF
-*.def
+747-400.DEF
 *.epl~
 *.joy
-*.map
+747-400.map
 *.SYM
