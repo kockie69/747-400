@@ -50,6 +50,9 @@ word preFrac;
 word AltnFlapsArmWord;
 word AltnGearNoseBodyWord;
 word AltnGearWingsWord;
+word GPWSGSWord;
+word GPWSFlapWord;
+word GPWSGearWord;
 word testrvarWord;
 word eventCount;
 word temp;
@@ -383,7 +386,50 @@ ph RadioPanelLeftSen(6)
   DisplayLeftSen.standbySenNr = frac;
 };
 
+//************************************
+ph GPWSGS(7)
+{
+  word W1;
+  word W0;
+  GPWSGSWord = GPWSGS.W0;
+  
+  if (GPWSGSWord && 0x0001) {
+  	GPWS.leds0.led_GS = on;
+  }
+  else {
+  	GPWS.leds0.led_GS = off;
+  }
+};
 
+//************************************
+ph GPWSFlap(8)
+{
+  word W1;
+  word W0;
+  GPWSFlapWord = GPWSFlap.W0;
+  
+  if (GPWSFlapWord && 0x0001) {
+  	GPWS.leds0.led_Flap = on;
+  }
+  else {
+  	GPWS.leds0.led_Flap = off;
+  }
+};
+
+//************************************
+ph GPWSGear(9)
+{
+  word W1;
+  word W0;
+  GPWSGearWord = GPWSGear.W0;
+  
+  if (GPWSGearWord && 0x0001) {
+  	GPWS.leds0.led_Gear = on;
+  }
+  else {
+  	GPWS.leds0.led_Gear = off;
+  }
+};
 
 //************************************
 // Autobrakes buttons
@@ -418,10 +464,22 @@ void Gear.GearUp.On (void) { nqw(0x0006,0x0003,20);}
 void Gear.GearUp.Off (void) { nqw(0x0006,0x0002,20);}
 void Gear.GearLockOvrd.On (void) { nqw(0x0007,0x0001,20);}
 void Gear.GearLockOvrd.Off (void) { nqw(0x0007,0x0000,20);}
-void Gear.AltnGearNoseBody.On (void) { AltnGearNoseBodyWord = AltnGearNoseBodyWord ^ 0x0001;nqw(0x0008,0x0000,20);}
-void Gear.AltnGearNoseBody.Off (void) { AltnGearNoseBodyWord = AltnGearNoseBodyWord ^ 0x0001;nqw(0x0008,0x0000,20);}
-void Gear.AltnGearWings.On (void) { AltnGearWingsWord = AltnGearWingsWord ^ 0x0001;nqw(0x0009,0x0000,20);}
-void Gear.AltnGearWings.Off (void) { AltnGearWingsWord = AltnGearWingsWord ^ 0x0001;nqw(0x0009,0x0000,20);}
+void Gear.AltnGearNoseBody.On (void) { AltnGearNoseBodyWord = AltnGearNoseBodyWord ^ 0x0001;nqw(0x0008,AltnGearNoseBodyWord,20);}
+void Gear.AltnGearNoseBody.Off (void) { AltnGearNoseBodyWord = AltnGearNoseBodyWord ^ 0x0001;nqw(0x0008,AltnGearNoseBodyWord,20);}
+void Gear.AltnGearWings.On (void) { AltnGearWingsWord = AltnGearWingsWord ^ 0x0001;nqw(0x0009,AltnGearWingsWord,20);}
+void Gear.AltnGearWings.Off (void) { AltnGearWingsWord = AltnGearWingsWord ^ 0x0001;nqw(0x0009,AltnGearWingsWord,20);}
+
+//************************************
+// GPWS buttons
+void GPWS.GS.On (void) { GPWSGSWord = GPWSGSWord ^ 0x0001;nqw(0x0009,GPWSGSWord,20);}
+void GPWS.GS.Off (void) { GPWSGSWord = GPWSGSWord ^ 0x0001;nqw(0x0009,GPWSGSWord,20);}
+void GPWS.Flap.On (void) { GPWSFlapWord = GPWSFlapWord ^ 0x0001;nqw(0x0009,GPWSFlapWord,20);}
+void GPWS.Flap.Off (void) { GPWSFlapWord = GPWSFlapWord ^ 0x0001;nqw(0x0009,GPWSFlapWord,20);}
+void GPWS.Gear.On (void) { GPWSGearWord = GPWSGearWord ^ 0x0001;nqw(0x0009,GPWSGearWord,20);}
+void GPWS.Gear.Off (void) { GPWSGearWord = GPWSGearWord ^ 0x0001;nqw(0x0009,GPWSGearWord,20);}
+
+
+
 
 //************************************
 // RTPLeft buttons
