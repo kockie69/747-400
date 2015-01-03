@@ -11,17 +11,20 @@
 #include "747-400-devices.hpl"	
 
 //====================================================================
-// Definition of Rotary Types
+// Definition of Rotary Types and Rotary turning constants
 //====================================================================
 #define TYPE0 0b00000000	// ALPS
 #define TYPE1 0b01010101	// rotary two phase type1
 #define TYPE2 0b10101010	// rotary two phase type2
 #define TYPE3 0b11111111	// Grayhil
 
+
 #define HFSens_FAST_DELTA 8
 #define HFSens_SLOW_DELTA 1
 #define FreqSelector_FAST_DELTA 8
 #define FreqSelector_SLOW_DELTA 1
+#define BrtUpr_DELTA 8
+#define BrtLwr_DELTA 8
 
 #define HFSens_TIMER 5
 #define FreqSelector_TIMER 5
@@ -29,22 +32,21 @@
 //--------------------------------
 // Define variables and flags
 //--------------------------------
-flag QPflag=false;			// declare a flag preset to "false"	
-flag inLoopFlag=false;
-flag RightMostFreqSelectorLeft=false;
-flag RightMostFreqSelectorCenter=false;
-flag RightMostFreqSelectorRight=false;
+
+flag InnerFreqSelectorLeft=false;	// In real life the Frequency selector has an inner and outer knob. In my sim this
+flag InnerFreqSelectorCenter=false;	// is simulated by a push button. When pushed these variables will
+flag InnerFreqSelectorRight=false;	// be true.
 flag f_FreqSelectorTiming = false; // 
 flag f_HFSensTiming = false;
+flag BrtUprInitialized=false;
+flag BrtLwrInitialized=false;
 
-byte testData; 				//declare a byte(8 bit) variable
-byte loopCount;
+//byte testData; 				//declare a byte(8 bit) variable
+//byte loopCount;
 byte byt_Tick=0;
 byte byt_FreqSelectorTime=0;
 byte byt_HFSensTime=0;
 
-word testWord; 				//declare a word(16 bit) variable
-word testCount=0;				//declare a word preset to 0
 word frac;
 word preFrac;
 word AltnFlapsArmWord;
@@ -53,65 +55,20 @@ word AltnGearWingsWord;
 word GPWSGSWord;
 word GPWSFlapWord;
 word GPWSGearWord;
-word testrvarWord;
-word eventCount;
-word temp;
 word wrd_HFSens;
 word wrd_FreqSelector;
-
-rvar (testrvar,0,0xFF,0,true);	//declare a rotary variable "testrvar" with a range of 0 to 0xFF(255 decimal)
-						//  true indicates the "No wrap" flag is set. This will cause the variable 
-						//  to stay in the range 0 to 0xFF. Less than min (0 here) will cause variable to = 0
-						//  greater than 0xFF will cause varible to be set to 0xFF. Default for "No wrap flag" is false(rotate)
+word wrd_BrtUpr;
+word wrd_BrtLwr;
 
 //--------------------------------
 // Including Qproc Config and functions called by Qprocs
 //--------------------------------
 #include "747-400-qproc.inc"
 
-//====================================================================
-// Function Definition 
-// Name:		RadioPanelLeftOff
-// Called by:	defineqproc(1,RadioPanelLeftOff) 
-//====================================================================
-defineqproc(1,RadioPanelLeftOff)
-
-void RadioPanelLeftOff()
-{
-// Check if next lines are ok. Purpose is to simulate displays off
-	DisplayLeftOff.standby = blank;	
-	DisplayLeftOff.active = blank;
-}
-
-//====================================================================
-// Function Definition 
-// Name:		RadioPanelCenterOff
-// Called by:	defineqproc(1,RadioPanelCenterOff) 
-//====================================================================
-defineqproc(2,RadioPanelCenterOff)
-
-void RadioPanelCenterOff()
-{
-// Check if next lines are ok. Purpose is to simulate displays off
-	DisplayLeftOff.standby = blank;	
-	DisplayLeftOff.active = blank;
-}
-
-//====================================================================
-// Function Definition 
-// Name:		RadioPanelRightOff
-// Called by:	defineqproc(1,RadioPanelRightOff) 
-//====================================================================
-defineqproc(3,RadioPanelRightOff)
-
-void RadioPanelRightOff()
-{
-// Check if next lines are ok. Purpose is to simulate displays off
-	DisplayLeftOff.standby = blank;	
-	DisplayLeftOff.active = blank;
-}
-
-
+//--------------------------------
+// Including Pigeon Holes functions
+//--------------------------------
+#include "747-400-ph.inc"
 
 
 void CheckSpeedTimers (void)
@@ -137,6 +94,80 @@ void CheckSpeedTimers (void)
 	}	
 }
 
+
+//-------------------------------------------------------------------------
+// Main Timing Loop
+//-------------------------------------------------------------------------
+void MainLoop (void)
+{
+  call(CheckSpeedTimers);		// check to see if switch timers have expired and if so , handle them
+  byt_Tick++;
+  if (byt_Tick > 49)
+  {
+    byt_Tick = 0;
+  }
+  delay(1);					// wait 20msec
+  jump(MainLoop);				// restart the main Loop
+}
+
+//INIT must be spelled in caps. This will be executed when Project|Load completes.
+
+void INIT (void)
+{
+  // First init rotaries
+  senddata(7,0,TYPE2);
+  senddata(7,1,TYPE2);
+
+  setqlogon(0x11);	// bit 0 allows tracing of EPL code, bit 4 allows user control of TP2 using exec(138); to turn on and exec(139); to turn off
+  exec(139);		// turn off TP2
+  jump(MainLoop);				
+  // once finished, jump to the main timing loop
+}
+
+//************************************
+// All the rotary definitions 
+
+void handle_BrtUpr_rot(void)
+{
+	if (EHRFMC.r_dir_BrtUpr)
+	{
+		wrd_BrtUpr -= BrtUpr_DELTA;
+
+	}
+	else
+	{
+		wrd_BrtUpr += BrtUpr_DELTA;
+	}
+}
+
+void EHRFMC.r_cnt_BrtUpr.On(void){
+jump(handle_BrtUpr_rot);	
+}
+
+void EHRFMC.r_cnt_BrtUpr.Off(void){
+jump(handle_BrtUpr_rot);	
+}
+
+void handle_BrtLwr_rot(void)
+{
+	if (EHRFMC.r_dir_BrtLwr)
+	{
+		wrd_BrtLwr -= BrtLwr_DELTA;
+
+	}
+	else
+	{
+		wrd_BrtLwr += BrtLwr_DELTA;
+	}
+}
+
+void EHRFMC.r_cnt_BrtLwr.On(void){
+jump(handle_BrtLwr_rot);	
+}
+
+void EHRFMC.r_cnt_BrtLwr.Off(void){
+jump(handle_BrtLwr_rot);	
+}
 
 void handle_HFSens_rot(void)
 {
@@ -184,7 +215,7 @@ void handle_FreqSelector_rot(void)
 // 0,-1,0 =-2 Turn high frequency knob anti-clockwise slow
 // 0,-8,0 =-16 Turn high frequency knob anti-clockwise fast
 {
-	if (RightMostFreqSelectorLeft)
+	if (InnerFreqSelectorLeft)
 	// The small frequency knob
 	{
 		if (RTPLeft.r_dir_FreqSelector)
@@ -261,176 +292,6 @@ jump(handle_FreqSelector_rot);
 }
 
 
-//-------------------------------------------------------------------------
-// Main Timing Loop
-//-------------------------------------------------------------------------
-void MainLoop (void)
-{
-  call(CheckSpeedTimers);		// check to see if switch timers have expired and if so , handle them
-  byt_Tick++;
-  if (byt_Tick > 49)
-  {
-    byt_Tick = 0;
-  }
-  delay(1);					// wait 20msec
-  jump(MainLoop);				// restart the main Loop
-}
-
-//INIT must be spelled in caps. This will be executed when Project|Load completes.
-
-void INIT (void)
-{
-  // First init rotaries
-  senddata(7,0,TYPE2);
-  senddata(7,1,TYPE2);
-
-  eventCount = 0;
-  setqlogon(0x11);	// bit 0 allows tracing of EPL code, bit 4 allows user control of TP2 using exec(138); to turn on and exec(139); to turn off
-  exec(139);		// turn off TP2
-  jump(MainLoop);				
-  // once finished, jump to the main timing loop
-  				
-}
-
-
-//************************************
-ph AltnFlapsArm(1)
-{
-  word W1;
-  word W0;
-  AltnFlapsArmWord = AltnFlapsArm.W0;
-  
-  if (AltnFlapsArmWord && 0x0001) {
-  	Gear.leds0.led_ARM = on;
-  }
-  else {
-  	Gear.leds0.led_ARM = off;
-  }    
-};
-
-//************************************
-ph AltnGearNoseBody(2)
-{
-  word W1;
-  word W0;
-  AltnGearNoseBodyWord = AltnGearNoseBody.W0;
-  
-  if (AltnGearNoseBodyWord && 0x0001) {
-  	Gear.leds0.led_NOSE = on;
-  }
-  else {
-  	Gear.leds0.led_NOSE = off;
-  }
-};
-
-//************************************
-ph AltnGearWings(3)
-{
-  word W1;
-  word W0;
-  AltnGearWingsWord = AltnGearWings.W0;
-  
-  if (AltnGearWingsWord && 0x0001) {
-    	Gear.leds0.led_WING = on;
-  }
-  else {
-  	Gear.leds0.led_WING = off;
-  }	
-};
-
-//************************************
-ph RadioPanelLeftHF(4)
-{
-  word W1;
-  word W0;
-  preFrac = RadioPanelLeftHF.W0/1000;
-  frac = RadioPanelLeftHF.W0 % 1000;
-  DisplayLeftHF.active = preFrac;	//display number to PH10
-  DisplayLeftHF.activeFrac = frac;
-  preFrac = RadioPanelLeftHF.W1/1000;
-  frac = RadioPanelLeftHF.W1 % 1000;
-  DisplayLeftHF.standby = preFrac;	//display number to PH10
-  DisplayLeftHF.standbyFrac = frac;
- 
-};
-
-//************************************
-ph RadioPanelLeftVHF(5)
-{
-  word W1;
-  word W0;
-  preFrac = RadioPanelLeftVHF.W0/100;
-  frac = RadioPanelLeftVHF.W0 % 100;
-  DisplayLeftVHF.active = preFrac;	//display number to PH10
-  DisplayLeftVHF.activeFrac = frac;
-  preFrac = RadioPanelLeftVHF.W1/100;
-  frac = RadioPanelLeftVHF.W1 % 100;
-  DisplayLeftVHF.standby = preFrac;	//display number to PH10
-  DisplayLeftVHF.standbyFrac = frac;
- 
-};
-
-//************************************
-ph RadioPanelLeftSen(6)
-{
-  word W1;
-  word W0;
-  preFrac = RadioPanelLeftSen.W0/1000;
-  frac = RadioPanelLeftSen.W0 % 1000;
-  DisplayLeftSen.active = preFrac;	//display number to PH10
-  DisplayLeftSen.activeFrac = frac;
-
-  frac = 5;
-  preFrac = RadioPanelLeftSen.W1;
-  DisplayLeftSen.standbySen = preFrac;	//display number to PH10
-  DisplayLeftSen.standbySenNr = frac;
-};
-
-//************************************
-ph GPWSGS(7)
-{
-  word W1;
-  word W0;
-  GPWSGSWord = GPWSGS.W0;
-  
-  if (GPWSGSWord && 0x0001) {
-  	GPWS.leds0.led_GS = on;
-  }
-  else {
-  	GPWS.leds0.led_GS = off;
-  }
-};
-
-//************************************
-ph GPWSFlap(8)
-{
-  word W1;
-  word W0;
-  GPWSFlapWord = GPWSFlap.W0;
-  
-  if (GPWSFlapWord && 0x0001) {
-  	GPWS.leds0.led_Flap = on;
-  }
-  else {
-  	GPWS.leds0.led_Flap = off;
-  }
-};
-
-//************************************
-ph GPWSGear(9)
-{
-  word W1;
-  word W0;
-  GPWSGearWord = GPWSGear.W0;
-  
-  if (GPWSGearWord && 0x0001) {
-  	GPWS.leds0.led_Gear = on;
-  }
-  else {
-  	GPWS.leds0.led_Gear = off;
-  }
-};
-
 //************************************
 // Autobrakes buttons
 
@@ -471,12 +332,12 @@ void Gear.AltnGearWings.Off (void) { AltnGearWingsWord = AltnGearWingsWord ^ 0x0
 
 //************************************
 // GPWS buttons
-void GPWS.GS.On (void) { GPWSGSWord = GPWSGSWord ^ 0x0001;nqw(0x0009,GPWSGSWord,20);}
-void GPWS.GS.Off (void) { GPWSGSWord = GPWSGSWord ^ 0x0001;nqw(0x0009,GPWSGSWord,20);}
-void GPWS.Flap.On (void) { GPWSFlapWord = GPWSFlapWord ^ 0x0001;nqw(0x0009,GPWSFlapWord,20);}
-void GPWS.Flap.Off (void) { GPWSFlapWord = GPWSFlapWord ^ 0x0001;nqw(0x0009,GPWSFlapWord,20);}
-void GPWS.Gear.On (void) { GPWSGearWord = GPWSGearWord ^ 0x0001;nqw(0x0009,GPWSGearWord,20);}
-void GPWS.Gear.Off (void) { GPWSGearWord = GPWSGearWord ^ 0x0001;nqw(0x0009,GPWSGearWord,20);}
+void GPWS.GS.On (void) { GPWSGSWord = GPWSGSWord ^ 0x0001;nqw(0x0011,GPWSGSWord,20);}
+void GPWS.GS.Off (void) { GPWSGSWord = GPWSGSWord ^ 0x0001;nqw(0x0011,GPWSGSWord,20);}
+void GPWS.Flap.On (void) { GPWSFlapWord = GPWSFlapWord ^ 0x0001;nqw(0x0012,GPWSFlapWord,20);}
+void GPWS.Flap.Off (void) { GPWSFlapWord = GPWSFlapWord ^ 0x0001;nqw(0x0012,GPWSFlapWord,20);}
+void GPWS.Gear.On (void) { GPWSGearWord = GPWSGearWord ^ 0x0001;nqw(0x0013,GPWSGearWord,20);}
+void GPWS.Gear.Off (void) { GPWSGearWord = GPWSGearWord ^ 0x0001;nqw(0x0013,GPWSGearWord,20);}
 
 
 
@@ -484,11 +345,11 @@ void GPWS.Gear.Off (void) { GPWSGearWord = GPWSGearWord ^ 0x0001;nqw(0x0009,GPWS
 //************************************
 // RTPLeft buttons
 void RTPLeft.FreqSelector.On (void) { 
-	if (RightMostFreqSelectorLeft) { 
-		RightMostFreqSelectorLeft=false;
+	if (InnerFreqSelectorLeft) { 
+		InnerFreqSelectorLeft=false;
 	}
 	else {
-		RightMostFreqSelectorLeft=true;
+		InnerFreqSelectorLeft=true;
 	}
 }
 
@@ -505,11 +366,11 @@ void RTPLeft.HFR.On (void) {nqw(0x000b,0x0006,20);}
 //************************************
 // RTPCenter buttons
 void RTPCenter.FreqSelector.On (void) { 
-	if (RightMostFreqSelectorCenter) { 
-		RightMostFreqSelectorCenter=false;
+	if (InnerFreqSelectorCenter) { 
+		InnerFreqSelectorCenter=false;
 	}
 	else {
-		RightMostFreqSelectorCenter=true;
+		InnerFreqSelectorCenter=true;
 	}
 }
 
@@ -526,11 +387,11 @@ void RTPCenter.HFR.On (void) {nqw(0x000c,0x0006,20);}
 //************************************
 // RTPRight buttons
 void RTPRight.FreqSelector.On (void) { 
-	if (RightMostFreqSelectorRight) { 
-		RightMostFreqSelectorRight=false;
+	if (InnerFreqSelectorRight) { 
+		InnerFreqSelectorRight=false;
 	}
 	else {
-		RightMostFreqSelectorRight=true;
+		InnerFreqSelectorRight=true;
 	}
 }
 
@@ -543,3 +404,18 @@ void RTPRight.VHFR.On (void) {nqw(0x000d,0x0003,20);}
 void RTPRight.AM.On (void) {nqw(0x000d,0x0005,20);}
 void RTPRight.HFL.On (void) {nqw(0x000d,0x0004,20);}
 void RTPRight.HFR.On (void) {nqw(0x000d,0x0006,20);}
+
+
+//*********************************************
+// Define EHRFMC buttons
+
+void EHRFMC.EIUSelL.On (void) {nqw(0x0014,0x0000,20);}
+void EHRFMC.EIUSelAuto.On (void) {nqw(0x0014,0x0001,20);}
+void EHRFMC.EIUSelC.On (void) {nqw(0x0014,0x0002,20);}
+void EHRFMC.EIUSelR.On (void) {nqw(0x0014,0x0003,20);}
+void EHRFMC.FMCL.On (void) {nqw(0x0015,0x0000,20);}
+void EHRFMC.FMCR.On (void) {nqw(0x0015,0x0001,20);}
+void EHRFMC.EventRCD.On (void) {nqw(0x0016,0x0001,20);}
+void EHRFMC.EventRCD.Off (void) {nqw(0x0016,0x0000,20);}
+void EHRFMC.HdgTrue.On (void) {nqw(0x0017,0x0001,20);}
+void EHRFMC.HdgTrue.Off (void) {nqw(0x0017,0x0000,20);}

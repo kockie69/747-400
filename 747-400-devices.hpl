@@ -232,6 +232,29 @@ device(GPWS)
 	};
 };
 
+device(EHRFMC)
+// 747 EICAS, Heading Reference &FMC Master Controls
+{
+	connector(Forward);
+	button(7,7,EventRCD);
+	button(7,7,EIUSelL);
+	button(7,7,EIUSelAuto);
+	button(7,7,EIUSelC);
+	button(7,7,EIUSelR);
+	button(7,7,HdgTrue);
+	button(7,7,FMCL);
+	button(7,7,FMCR);
+	
+	// Rotary Module 7, Rotary3 
+	button(0,4,r_cnt_BrtUpr);		
+	button(0,5,r_dir_BrtUpr);		
+	
+	// Rotary Module 7, Rotary4 
+	button(0,6,r_cnt_BrtLwr);		
+	button(0,7,r_dir_BrtLwr);
+	
+};
+
 device(DisplayLeftVHF)
 {
 	display(standby,2,0,"999.00",true);
