@@ -422,3 +422,13 @@ void EHRFMC.EventRCD.On (void) {nqw(0x0016,0x0001,20);}
 void EHRFMC.EventRCD.Off (void) {nqw(0x0016,0x0000,20);}
 void EHRFMC.HdgTrue.On (void) {nqw(0x0017,0x0001,20);}
 void EHRFMC.HdgTrue.Off (void) {nqw(0x0017,0x0000,20);}
+
+//*********************************************
+// Define CaptCRTSelector buttons
+
+void CaptCRTSelector.InbdCRTEicas.On (void) {nqw(0x001a,0x0000,20);}
+void CaptCRTSelector.InbdCRTNorm.On (void) {nqw(0x001a,0x0001,20);}
+void CaptCRTSelector.InbdCRTPfd.On (void) {nqw(0x001a,0x0002,20);}
+void CaptCRTSelector.LwrCRTEicasPri.On (void) {nqw(0x001b,0x0000,20);}
+void CaptCRTSelector.LwrCRTNorm.On (void) {nqw(0x001b,0x0001,20);}
+void CaptCRTSelector.LwrCRTNd.On (void) {nqw(0x001b,0x0002,20);}

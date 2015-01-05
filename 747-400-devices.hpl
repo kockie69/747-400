@@ -255,6 +255,19 @@ device(EHRFMC)
 	
 };
 
+device(CaptCRTSelector)
+{
+	connector(Forward);
+	button(7,7,InbdCRTEicas);
+	button(7,7,InbdCRTNorm);
+	button(7,7,InbdCRTPfd);
+	button(7,7,LwrCRTEicasPri);
+	button(7,7,LwrCRTNorm);
+	button(7,7,LwrCRTNd);
+//	button(7,7,StbyEFISCapt);
+//	button(7,7,StbyEFISFO);
+};
+
 device(DisplayLeftVHF)
 {
 	display(standby,2,0,"999.00",true);
