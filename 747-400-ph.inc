@@ -120,10 +120,10 @@ ph GPWSFlap(8)
   GPWSFlapWord = GPWSFlap.W0;
   
   if (GPWSFlapWord && 0x0001) {
-  	GPWS.leds0.led_Flap = on;
+  	GPWS.leds0.led_FLAP = on;
   }
   else {
-  	GPWS.leds0.led_Flap = off;
+  	GPWS.leds0.led_FLAP = off;
   }
 };
 
@@ -135,10 +135,10 @@ ph GPWSGear(9)
   GPWSGearWord = GPWSGear.W0;
   
   if (GPWSGearWord && 0x0001) {
-  	GPWS.leds0.led_Gear = on;
+  	GPWS.leds0.led_GEAR = on;
   }
   else {
-  	GPWS.leds0.led_Gear = off;
+  	GPWS.leds0.led_GEAR = off;
   }
 };
 

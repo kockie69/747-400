@@ -41,8 +41,6 @@ flag f_HFSensTiming = false;
 flag BrtUprInitialized=false;
 flag BrtLwrInitialized=false;
 
-//byte testData; 				//declare a byte(8 bit) variable
-//byte loopCount;
 byte byt_Tick=0;
 byte byt_FreqSelectorTime=0;
 byte byt_HFSensTime=0;
@@ -57,8 +55,9 @@ word GPWSFlapWord;
 word GPWSGearWord;
 word wrd_HFSens;
 word wrd_FreqSelector;
-word wrd_BrtUpr;
-word wrd_BrtLwr;
+
+rvar(wrd_BrtUpr,0,4713,1500,true);
+rvar(wrd_BrtLwr,0,4713,1500,true);
 
 //--------------------------------
 // Including Qproc Config and functions called by Qprocs
@@ -70,7 +69,9 @@ word wrd_BrtLwr;
 //--------------------------------
 #include "747-400-ph.inc"
 
-
+//-------------------------------------------------------------------------
+// Main Timing Loop
+//-------------------------------------------------------------------------
 void CheckSpeedTimers (void)
 {
 	if (f_FreqSelectorTiming)							// is FreqSelector knob turning
@@ -95,9 +96,7 @@ void CheckSpeedTimers (void)
 }
 
 
-//-------------------------------------------------------------------------
-// Main Timing Loop
-//-------------------------------------------------------------------------
+
 void MainLoop (void)
 {
   call(CheckSpeedTimers);		// check to see if switch timers have expired and if so , handle them
@@ -110,7 +109,9 @@ void MainLoop (void)
   jump(MainLoop);				// restart the main Loop
 }
 
+//-------------------------------------------------------------------------
 //INIT must be spelled in caps. This will be executed when Project|Load completes.
+//-------------------------------------------------------------------------
 
 void INIT (void)
 {
@@ -131,13 +132,14 @@ void handle_BrtUpr_rot(void)
 {
 	if (EHRFMC.r_dir_BrtUpr)
 	{
-		wrd_BrtUpr -= BrtUpr_DELTA;
-
+		wrd_BrtUpr = wrd_BrtUpr - BrtUpr_DELTA;
 	}
 	else
 	{
-		wrd_BrtUpr += BrtUpr_DELTA;
+		wrd_BrtUpr = wrd_BrtUpr + BrtUpr_DELTA;
+
 	}
+	nqw(0x0018,wrd_BrtUpr,20);
 }
 
 void EHRFMC.r_cnt_BrtUpr.On(void){
@@ -152,13 +154,14 @@ void handle_BrtLwr_rot(void)
 {
 	if (EHRFMC.r_dir_BrtLwr)
 	{
-		wrd_BrtLwr -= BrtLwr_DELTA;
+		wrd_BrtLwr = wrd_BrtLwr - BrtLwr_DELTA;
 
 	}
 	else
 	{
-		wrd_BrtLwr += BrtLwr_DELTA;
+		wrd_BrtLwr = wrd_BrtLwr + BrtLwr_DELTA;
 	}
+	nqw(0x0019,wrd_BrtLwr,20);
 }
 
 void EHRFMC.r_cnt_BrtLwr.On(void){
@@ -318,10 +321,10 @@ void Gear.AltnFlapsOff.On (void) { nqw(0x0005,0x0001,20);}
 void Gear.AltnFlapsExt.On (void) { nqw(0x0005,0x0002,20);}
 void Gear.AltnFlapsArm.On (void) { AltnFlapsArmWord = AltnFlapsArmWord ^ 0x0001;nqw(0x000A,AltnFlapsArmWord ,20);}
 void Gear.AltnFlapsArm.Off (void) { AltnFlapsArmWord = AltnFlapsArmWord ^ 0x0001;nqw(0x000A,AltnFlapsArmWord ,20);}
-void Gear.GearDown.On (void) { nqw(0x0006,0x0001,20);}
+void Gear.GearDown.On (void) { nqw(0x0006,0x0003,20);}
 void Gear.GearDown.Off (void) { nqw(0x0006,0x0002,20);}
 // void Gear.GearOff.On (void) { nqw(0x0006,0x0002,20);}
-void Gear.GearUp.On (void) { nqw(0x0006,0x0003,20);}
+void Gear.GearUp.On (void) { nqw(0x0006,0x0001,20);}
 void Gear.GearUp.Off (void) { nqw(0x0006,0x0002,20);}
 void Gear.GearLockOvrd.On (void) { nqw(0x0007,0x0001,20);}
 void Gear.GearLockOvrd.Off (void) { nqw(0x0007,0x0000,20);}

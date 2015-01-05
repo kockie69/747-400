@@ -132,16 +132,16 @@ device(ThrottleQuadrant)
 device(Gear)
 {
 	connector(Forward);
-	button(1,1,AltnFlapsRet);
-	button(1,2,AltnFlapsOff);
-	button(1,3,AltnFlapsExt);
-	button(1,4,AltnFlapsArm);
-	button(1,5,GearDown);
-	button(1,6,GearOff);
-	button(1,7,GearUp);
+	button(1,3,AltnFlapsRet);
+	button(1,4,AltnFlapsOff);
+	button(1,5,AltnFlapsExt);
+	button(1,7,AltnFlapsArm);
+	button(1,2,GearDown);
+//	button(7,7,GearOff);
+	button(1,1,GearUp);
 	button(2,0,GearLockOvrd);
-	button(2,1,AltnGearNoseBody);
-	button(7,7,AltnGearWings);
+	button(1,6,AltnGearNoseBody);
+	button(2,1,AltnGearWings);
 	
 	output(leds0,0,0)
 	{
@@ -226,9 +226,9 @@ device(GPWS)
 	
 	output(leds0,0,0)
 	{
-		led_GS = 0x01;
-		led_Flap = 0x02;
-		led_Gear = 0x04;
+		led_GS = 0x08;
+		led_FLAP = 0x10;
+		led_GEAR = 0x20;
 	};
 };
 
