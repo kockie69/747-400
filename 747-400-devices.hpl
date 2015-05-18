@@ -136,9 +136,9 @@ device(Gear)
 	button(1,4,AltnFlapsOff);
 	button(1,5,AltnFlapsExt);
 	button(1,7,AltnFlapsArm);
-	button(1,2,GearDown);
+	button(1,1,GearDown);
 //	button(7,7,GearOff);
-	button(1,1,GearUp);
+	button(1,2,GearUp);
 	button(2,0,GearLockOvrd);
 	button(1,6,AltnGearNoseBody);
 	button(2,1,AltnGearWings);
